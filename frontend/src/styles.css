@@ -1,0 +1,256 @@
+* { box-sizing: border-box; }
+html, body, #root { height: 100%; margin: 0; }
+body {
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  font-size: 13px;
+  color: #e6e6e6;
+  background: #1e1e1e;
+}
+.app { display: flex; flex-direction: column; height: 100vh; }
+
+/* top bar */
+.topbar {
+  display: flex; align-items: center; gap: 16px;
+  padding: 6px 12px; background: #252526; border-bottom: 1px solid #333;
+}
+.brand { font-weight: 700; color: #4fc1ff; }
+.scope { color: #9cdcfe; }
+.tabs { margin-left: auto; display: flex; gap: 4px; }
+.tab {
+  background: #2d2d2d; color: #ccc; border: 1px solid #3a3a3a;
+  padding: 4px 12px; border-radius: 4px; cursor: pointer;
+}
+.tab.active { background: #094771; color: #fff; border-color: #1177bb; }
+.live { color: #777; }
+.live.on { color: #f0c040; }
+
+/* ---------- workspace ---------- */
+.workspace { display: grid; grid-template-columns: 210px 1fr 240px; flex: 1; min-height: 0; }
+.left-sidebar { background: #252526; border-right: 1px solid #333; overflow: auto;
+  display: flex; flex-direction: column; }
+.explorer-section { padding: 8px; border-bottom: 1px solid #333; }
+.fn-list { border-left: 1px solid #333; background: #252526; overflow: auto; padding: 8px; }
+.panel-title { font-size: 11px; text-transform: uppercase; color: #888; margin: 4px 0 8px; letter-spacing: .5px; }
+
+.file-row { display: flex; align-items: center; gap: 6px; padding: 4px 6px; border-radius: 4px; cursor: pointer; }
+.file-row:hover { background: #2a2d2e; }
+.file-row.active { background: #094771; }
+.file-row .fname { flex: 1; }
+.file-row .del { color: #777; visibility: hidden; }
+.file-row:hover .del { visibility: visible; }
+.file-row .del:hover { color: #f06060; }
+.explorer-actions { display: flex; gap: 4px; margin-top: 6px; }
+.mini-btn { background: #0e639c; color: #fff; border: none; border-radius: 4px;
+  padding: 3px 8px; cursor: pointer; font-size: 11px; }
+.mini-btn:hover { background: #1177bb; }
+
+.dep-row, .fn-row {
+  display: flex; align-items: center; gap: 6px;
+  padding: 5px 6px; border-radius: 4px;
+}
+.fn-row { justify-content: space-between; cursor: default; }
+.dep-row .name { flex: 1; }
+.status { font-size: 11px; }
+.status.ready { color: #6ac46a; }
+.status.building { color: #f0c040; }
+.status.error { color: #f06060; }
+.attach-btn, .debug-btn {
+  background: #0e639c; color: #fff; border: none; border-radius: 4px;
+  padding: 3px 8px; cursor: pointer; font-size: 12px;
+}
+.debug-btn { background: #2d6b2d; }
+
+.marker { width: 14px; text-align: center; }
+.marker.Violated { color: #f06060; }
+.marker.Warning { color: #f0c040; }
+.marker.Satisfied { color: #6ac46a; }
+.marker.Unreachable { color: #6b6b6b; }
+.marker.none { color: #555; }
+
+.editor-wrap { min-width: 0; }
+
+/* ---------- debug view ---------- */
+.debug {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr;   /* 코드(좌, 크게) | 우측 사이드바 */
+  grid-template-rows: auto auto 1fr;   /* 상단 툴바 | (에러 배너) | 본문 */
+  gap: 1px; background: #333; flex: 1; min-height: 0;
+}
+/* 분석 실패 배너 (전체 폭, 조건부 — 없으면 행 붕괴) */
+.analyze-error {
+  grid-column: 1 / 3; grid-row: 2;
+  background: #4a1e1e; color: #ffb4b4; border-left: 3px solid #e05555;
+  padding: 5px 10px; font-size: 12px;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+/* debug 값 입력 오류 목록 (슬롯 위) */
+.value-errors { margin: 6px 0; }
+.value-error {
+  background: #3a2323; color: #ffb4b4; border-left: 3px solid #e05555;
+  padding: 3px 8px; font-size: 11px; margin-bottom: 2px; border-radius: 2px;
+}
+.dpanel { background: #1e1e1e; overflow: auto; padding: 8px; min-height: 0; }
+/* 상단 가로 툴바 (디버거 컨트롤) */
+.dtoolbar {
+  grid-column: 1 / 3; background: #252526;
+  padding: 4px 8px; display: flex; align-items: center;
+}
+.dtoolbar .ctrl-row { margin-bottom: 0; }
+/* 코드 = 좌측, 본문 행 */
+.dpanel.code { grid-column: 1; grid-row: 3; padding: 0; }
+/* 우측 사이드바 = 세로 3분할: Intent+Verdict(위) / Debug Input(중) / State/Locals(아래) */
+.dright {
+  grid-column: 2; grid-row: 3;
+  display: grid; grid-template-rows: 1.3fr 1fr 1fr;
+  gap: 1px; min-height: 0; background: #333;
+}
+.dright .dpanel { overflow: auto; }
+.dright .dsec-title {
+  font-size: 11px; color: #888; text-transform: uppercase;
+  letter-spacing: 0.5px; margin: 0 0 6px; font-weight: 600;
+}
+
+.ctrl-row { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 10px; }
+.ctrl-row button {
+  background: #2d2d2d; color: #ddd; border: 1px solid #3a3a3a;
+  border-radius: 4px; padding: 4px 8px; cursor: pointer; font-size: 12px;
+}
+.ctrl-row button:hover { background: #094771; }
+
+.kv { display: flex; justify-content: space-between; padding: 2px 0; border-bottom: 1px solid #2a2a2a; }
+.kv .v { color: #b5cea8; font-family: 'Consolas', monospace; }
+.kv .v.top { color: #f0c040; }
+.kv .v.neg { color: #f06060; }
+
+.state-note { font-size: 11px; color: #6ac46a; margin-bottom: 5px; font-style: italic; }
+
+.globals { margin-top: 6px; }
+.dbg-globals { margin: 6px 0 8px; }
+.globals > summary {
+  cursor: pointer; color: #888; font-size: 11px; padding: 2px 0;
+  list-style: none; user-select: none;
+}
+.globals > summary::before { content: '▸ '; color: #666; }
+.globals[open] > summary::before { content: '▾ '; }
+.globals > summary:hover { color: #b5cea8; }
+
+.path { margin-top: 8px; color: #888; font-size: 12px; }
+.preds { margin-top: 6px; color: #f0c040; font-size: 12px; }
+
+/* N2+N3: 접힌 루프의 효과(loop_delta) */
+.loop-fold {
+  margin-top: 8px; padding: 6px 8px; background: #252526;
+  border-left: 3px solid #4ec9b0; border-radius: 2px;
+}
+.loop-fold-title { color: #4ec9b0; font-size: 12px; font-weight: 600; }
+.loop-fold-sub { color: #777; font-size: 11px; font-style: italic; margin: 3px 0 4px; }
+.loop-fold-none { color: #777; font-size: 11px; margin-top: 3px; }
+
+.verdict-item { border-left: 3px solid; padding: 6px 8px; margin-bottom: 8px; cursor: pointer; background: #252526; }
+.verdict-item.Violated { border-color: #f06060; }
+.verdict-item.Warning { border-color: #f0c040; }
+.verdict-item.Satisfied { border-color: #6ac46a; }
+.verdict-item.Unreachable { border-color: #6b6b6b; opacity: 0.7; } /* 검증 대상 아님(죽은 코드) */
+.verdict-item .risk { float: right; color: #f06060; font-weight: 700; }
+.verdict-item .msg { color: #bbb; font-size: 12px; margin-top: 3px; }
+
+.dbg-group { margin-bottom: 8px; }
+.dbg-group-title { font-size: 11px; color: #c586c0; font-weight: 600; margin: 6px 0 2px; }
+.input-row { display: flex; align-items: center; gap: 6px; padding: 3px 0; }
+.input-row .var { min-width: 90px; max-width: 130px; color: #9cdcfe; overflow: hidden;
+  text-overflow: ellipsis; white-space: nowrap; }
+.input-row select {
+  background: #2d2d2d; color: #b5cea8; border: 1px solid #3a3a3a; border-radius: 3px; padding: 2px 6px;
+}
+.interval-in { display: inline-flex; align-items: center; gap: 3px; color: #888;
+  font-family: 'Consolas', monospace; }
+.interval-in .num {
+  width: 52px; background: #2d2d2d; color: #b5cea8; border: 1px solid #3a3a3a;
+  border-radius: 3px; padding: 2px 4px; font-family: 'Consolas', monospace;
+}
+.apply-btn {
+  margin-top: 8px; width: 100%;
+  background: #2d6b2d; color: #fff; border: 1px solid #3a8a3a;
+  border-radius: 4px; padding: 6px 10px; cursor: pointer; font-size: 12px; font-weight: 600;
+}
+.apply-btn:hover:not(:disabled) { background: #348034; }
+.apply-btn:disabled { background: #3a3a3a; color: #888; cursor: default; border-color: #444; }
+
+/* 백엔드 분석 중 indeterminate 진행 바 ("렉 아님" 피드백) */
+.analyzing-bar { margin-top: 6px; }
+.analyzing-track {
+  position: relative; height: 3px; background: #333; border-radius: 2px; overflow: hidden;
+}
+.analyzing-fill {
+  position: absolute; top: 0; height: 100%; width: 40%;
+  background: #4fc1ff; border-radius: 2px;
+  animation: indeterminate 1.1s ease-in-out infinite;
+}
+@keyframes indeterminate {
+  0%   { left: -40%; }
+  100% { left: 100%; }
+}
+.analyzing-label { display: block; font-size: 11px; color: #4fc1ff; margin-top: 3px; }
+
+.badge { font-size: 10px; padding: 1px 5px; border-radius: 8px; }
+.badge.opaque { background: #5a3a1a; color: #f0c040; }
+/* (2026-10-23) 구체 인덱스 지정 */
+.spec-btn { background: #2d2d2d; color: #4fc1ff; border: 1px solid #3a3a3a; border-radius: 3px;
+  font-size: 10px; padding: 1px 6px; cursor: pointer; }
+.spec-btn:hover { border-color: #4fc1ff; }
+.spec-row { padding-left: 14px; }
+.spec-key { display: inline-flex; align-items: center; gap: 3px; color: #888; min-width: 76px; }
+.spec-key .idx { width: 40px; background: #2d2d2d; color: #b5cea8; border: 1px solid #3a3a3a;
+  border-radius: 3px; padding: 2px 4px; font-family: 'Consolas', monospace; }
+.needs-index { font-size: 11px; color: #d7ba7d; font-style: italic; }
+.badge.custom { background: #1f3a4f; color: #4fc1ff; margin-right: 3px; }
+.spec-note { font-size: 11px; color: #9a9a9a; margin: 0 0 4px 14px; }
+.input-row .var.bad { color: #f48771; }
+.ghost { color: #777; font-style: italic; font-size: 12px; margin: 2px 0 6px 60px; }
+.ghost .accept { color: #4fc1ff; cursor: pointer; margin-left: 6px; }
+
+.intent-list { margin-bottom: 8px; }
+.intent-line { display: inline-block; margin-right: 14px; padding: 2px 0; }
+.intent-line .tag { color: #c586c0; font-weight: 600; margin-right: 4px; }
+.intent-line .del { color: #666; margin-left: 6px; cursor: pointer; }
+.intent-line .del:hover { color: #f06060; }
+.intent-form { display: flex; gap: 6px; align-items: center; }
+.intent-form select, .intent-form input {
+  background: #2d2d2d; color: #ddd; border: 1px solid #3a3a3a; border-radius: 3px; padding: 3px 6px;
+}
+.intent-form .line-in { width: 48px; }
+.intent-form .text-in { flex: 1; font-family: 'Consolas', monospace; color: #b5cea8; }
+.intent-glyph { background: #c586c0; width: 6px !important; height: 6px !important;
+  border-radius: 50%; margin: 6px 0 0 7px; }
+
+/* Monaco line decorations (debug CodePane) */
+.cursor-line { background: rgba(38, 79, 120, 0.5); }
+.cursor-glyph::before { content: '▶'; color: #4fc1ff; margin-left: 4px; }
+.pred-line { background: rgba(240, 192, 64, 0.18); }
+/* N1: forward 분기의 다른 feasible successor — pred(노랑)와 구분되는 청록 */
+.succ-line { background: rgba(78, 201, 176, 0.16); }
+/* N2: 접어서 지나온 루프 헤더 — 점선 테두리로 "여긴 통째로 지나갔다" 표시 */
+.loop-fold-line { background: rgba(78, 201, 176, 0.08); border-left: 2px dashed #4ec9b0; }
+.violated-line { background: rgba(240, 96, 96, 0.18); }
+.bp-glyph { background: #f06060; border-radius: 50%; width: 8px !important; height: 8px !important;
+  margin: 5px 0 0 6px; }
+/* N5: 도달 불가(⊥) 라인의 breakpoint — 걸 수는 있지만 Continue 가 멈추지 않는다 */
+.bp-glyph-unreachable { background: transparent; border: 2px solid #6b6b6b; border-radius: 50%;
+  width: 8px !important; height: 8px !important; margin: 5px 0 0 6px; box-sizing: border-box; }
+
+/* ---------- N4: Call Stack ---------- */
+.callstack { margin-bottom: 4px; }
+.cs-frame {
+  display: flex; align-items: baseline; gap: 6px;
+  padding: 2px 4px; border-radius: 3px; cursor: pointer; font-size: 12px;
+}
+.cs-frame:hover { background: #2a2d2e; }
+.cs-frame.active { background: #094771; cursor: default; }
+.cs-depth { color: #666; }
+.cs-label { color: #9cdcfe; }
+.cs-at { color: #888; font-size: 11px; }
+.cs-hint { margin-top: 4px; font-size: 11px; color: #4ec9b0; }
+.cs-opaque { margin-top: 4px; font-size: 11px; color: #f0c040; }
+.cs-reason { color: #888; font-size: 11px; margin-left: 12px; }
+/* 소스를 못 구한 프레임 안내 */
+.pane-note { padding: 16px; color: #888; font-size: 12px; line-height: 1.6; }

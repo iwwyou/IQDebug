@@ -1,0 +1,57 @@
+{
+  "scope": { "contract": "Vault", "function": "withdraw" },
+  "cfg": {
+    "entry": "n0",
+    "exit": "n8",
+    "return_exit": "n8",
+    "error_exit": "nE",
+    "nodes": [
+      { "id": "n0", "src_line": 1, "flags": [], "state": {} },
+      { "id": "n1", "src_line": 2, "flags": [], "state": { "a": "[0,500]", "bal": "[0,1000]" } },
+      { "id": "n2", "src_line": 3, "flags": ["condition"], "cond_type": "require", "state": { "a": "[0,500]", "bal": "[0,1000]" } },
+      { "id": "n3", "src_line": 4, "flags": ["condition"], "cond_type": "if", "state": { "a": "[0,500]", "bal": "[0,1000]" } },
+      { "id": "n4", "src_line": 5, "flags": ["branch_then"], "state": { "a": "[101,500]", "fee": "[10,50]", "bal": "[0,1000]" } },
+      { "id": "n5", "src_line": 7, "flags": ["branch_else"], "state": { "a": "[0,100]", "fee": "[0,0]", "bal": "[0,1000]" } },
+      { "id": "n6", "src_line": 8, "flags": ["merge"], "join_from": ["n4", "n5"], "state": { "a": "[0,500]", "fee": "[0,50]", "bal": "[0,1000]" } },
+      { "id": "n7", "src_line": 9, "flags": [], "state": { "balance": "[-500,1000]" } },
+      { "id": "n8", "src_line": 10, "flags": ["exit"], "state": {} }
+    ],
+    "edges": [
+      { "from": "n0", "to": "n1", "kind": "normal" },
+      { "from": "n1", "to": "n2", "kind": "normal" },
+      { "from": "n2", "to": "n3", "kind": "normal" },
+      { "from": "n3", "to": "n4", "kind": "true" },
+      { "from": "n3", "to": "n5", "kind": "false" },
+      { "from": "n4", "to": "n6", "kind": "normal" },
+      { "from": "n5", "to": "n6", "kind": "normal" },
+      { "from": "n6", "to": "n7", "kind": "normal" },
+      { "from": "n7", "to": "n8", "kind": "normal" }
+    ]
+  },
+  "verdict": [
+    {
+      "line": 9,
+      "node": "n7",
+      "type": "underflow",
+      "status": "Violated",
+      "risk": 7,
+      "region": [9, 9],
+      "message": "bal - a may underflow: result range [-500,1000] crosses 0"
+    }
+  ],
+  "top_vars": [],
+  "intents": [],
+  "debugSlots": [
+    { "kind": "Param", "key": "a", "label": "a", "valueKind": "interval" },
+    { "kind": "StateVar", "key": "balance", "label": "balance", "valueKind": "interval" },
+    { "kind": "StateVar", "key": "fee", "label": "fee", "valueKind": "interval" },
+    { "kind": "GlobalVar", "key": "msg.sender", "label": "msg.sender", "valueKind": "address" },
+    { "kind": "GlobalVar", "key": "msg.value", "label": "msg.value", "valueKind": "interval" },
+    { "kind": "GlobalVar", "key": "block.timestamp", "label": "block.timestamp", "valueKind": "interval" },
+    {
+      "kind": "IReturn", "key": "token.balanceOf()", "label": "token.balanceOf()",
+      "valueKind": "interval", "opaque": true,
+      "suggestion": { "value": { "t": "interval", "lo": "0", "hi": "1000" }, "backend": "solver", "confidence": 0.6 }
+    }
+  ]
+}
