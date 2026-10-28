@@ -1,0 +1,143 @@
+{
+ "fileset": "option2prime",
+ "files_selected": 569,
+ "files_parsed": 568,
+ "files_unparsed": [
+  "QuillAudits-FutiraCoin Smart Contract/code/token_audit.sol"
+ ],
+ "snapshots": 101,
+ "by_tier": {
+  "T2": 2126,
+  "empty_body": 33,
+  "declaration_only": 237,
+  "T1": 2602,
+  "special": 284
+ },
+ "T1_by_label": {
+  "abi_visible_contract_function": 2602
+ },
+ "T2_by_label": {
+  "library_function": 1049,
+  "internal_contract_function": 1077
+ },
+ "T1_in_abstract_contract": 278,
+ "library_by_visibility": {
+  "internal": 901,
+  "private": 96,
+  "public": 31,
+  "external": 21
+ },
+ "real_targets": 1941,
+ "excluded_from_T1": {
+  "total": 661,
+  "by_reason": {
+   "trivial_view_pure_getter": 462,
+   "other": 33,
+   "access_control_guarded_setter": 166
+  }
+ },
+ "access_control_setters": {
+  "count": 166,
+  "modifier_names": {
+   "onlyOwner": 62,
+   "onlyByOwnerOrGovernance": 61,
+   "onlyAdmin": 9,
+   "onlyOwnerOrMaster": 7,
+   "onlyByOwnerGovernanceOrPool": 6,
+   "onlyPoolConfigurator": 5,
+   "onlyAdminOrOwnerOrGovernance": 3,
+   "initializer": 3,
+   "onlyOperator": 3,
+   "onlyByControllerOrGovernance": 3,
+   "nonZeroAddress": 2,
+   "onlyCollateralRatioPauser": 1,
+   "ifAdmin": 1,
+   "onlyPoolAdmin": 1
+  },
+  "placeholder_counts": {
+   "null": 38,
+   "1": 129
+  },
+  "bodies_with_no_feature": 145,
+  "function_names": {
+   "setTimelock": 9,
+   "setOwner": 8,
+   "greylistAddress": 4,
+   "unlockStakes": 4,
+   "initialize": 4,
+   "changeOwnership": 4,
+   "excludeFromFee": 2,
+   "setFees": 2,
+   "setAdmin": 2,
+   "setOracle": 2,
+   "setOwnerAndTimelock": 2,
+   "setARTHController": 2
+  }
+ },
+ "overloads": {
+  "groups": 26,
+  "definitions": 56,
+  "unreachable_by_name_only": 30,
+  "real_targets_in_overload_groups": 54,
+  "names": {
+   "safeTransferFrom": 6,
+   "withdraw": 3,
+   "claimComp": 2,
+   "setPair": 2,
+   "transfer": 1,
+   "claimAMPT": 1,
+   "balanceOf": 1,
+   "lockedOf": 1,
+   "exit": 1,
+   "work": 1
+  }
+ },
+ "duplicate_files": {
+  "groups": 43,
+  "files_dropped": 63
+ },
+ "real_targets_deduped": 1900,
+ "real_target_shape": {
+  "param_count": {
+   "0": 333,
+   "1": 785,
+   "2": 471,
+   "3": 167,
+   "4": 185
+  },
+  "no_params": 333,
+  "param_type_buckets": {
+   "int_scalar": 1319,
+   "address": 1277,
+   "bytes_string": 333,
+   "user_defined": 127,
+   "bool": 72,
+   "address_array": 49,
+   "int_array": 33,
+   "other": 3
+  },
+  "with_int_scalar_param": 957,
+  "with_int_array_but_no_scalar": 24,
+  "unnamed_params": 8,
+  "state_mutability": {
+   "nonpayable": 1363,
+   "view": 502,
+   "pure": 21,
+   "payable": 55
+  }
+ },
+ "modifiers": {
+  "uses_total": 928,
+  "by_resolution": {
+   "declaring_contract": 576,
+   "unresolved": 296,
+   "same_file_unique": 56
+  },
+  "functions_with_use": 856,
+  "functions_with_unresolved": 264,
+  "T1_with_unresolved": 232,
+  "base_constructor_specifiers": 44,
+  "multi_placeholder_resolved_only": 0,
+  "split_body_resolved_only": 623
+ }
+}

@@ -1,0 +1,22 @@
+# IntentChecker — runtime dependencies
+#
+# Tested on Python 3.10.11. Any Python >= 3.10 should work.
+
+# Solidity parser runtime (must match the ANTLR version that generated
+# Parser/SolidityLexer.py and Parser/SolidityParser.py)
+antlr4-python3-runtime==4.13.2
+
+# CFG / interval-topology graph backend
+networkx>=3.4,<4.0
+
+# WebSocket bridge for the VSCode extension (intent-checker/)
+fastapi>=0.115
+uvicorn[standard]>=0.30
+websockets>=12
+
+# Plotting and stats used by evaluation/RQ1, evaluation/RQ3, and
+# evaluation/validation_soundness (figure regeneration + correlation
+# analysis)
+matplotlib>=3.8
+numpy>=1.26
+scipy>=1.11

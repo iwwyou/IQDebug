@@ -1,0 +1,1400 @@
+{
+ "scale_of_defects": {},
+ "flatten_rule_counts": {
+  "weak_decl_only": 528,
+  "marker_raw": 92,
+  "path_name_flat": 53
+ },
+ "variant_sizes": {
+  "V0_v2재현": 682,
+  "V1_import수정": 682,
+  "V2_공통컴파일러": 682,
+  "V3_문자열마스킹": 682,
+  "V4_flatten수정": 782
+ },
+ "V0_rejected": {
+  "below_0.8": 17097,
+  "no_body_function": 1084,
+  "tag_excluded": 1466,
+  "no_real_pragma": 138,
+  "closure_unresolved": 965,
+  "closure_below_0.8": 25
+ },
+ "V4_rejected": {
+  "below_0.8": 17097,
+  "no_body_function": 1095,
+  "tag_excluded": 1357,
+  "no_real_pragma": 138,
+  "contradictory_pragma": 7,
+  "closure_unresolved": 956,
+  "closure_below_0.8": 25
+ },
+ "V0_import_resolution": {
+  "unresolved_nonrelative": 11297,
+  "relative": 38122,
+  "relative_missing": 1093,
+  "snapshot_relative": 108,
+  "unique_suffix": 3,
+  "same_dir": 10
+ },
+ "V4_import_resolution": {
+  "unresolved_nonrelative": 11297,
+  "relative": 38122,
+  "relative_missing": 1093,
+  "snapshot_relative": 108,
+  "unique_suffix": 3,
+  "same_dir": 10
+ },
+ "V4_per_snapshot": [
+  [
+   "Chainsulting-Global Rockstar/openzeppelin-contracts-upgradeable-master",
+   103
+  ],
+  [
+   "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2",
+   74
+  ],
+  [
+   "Chainsulting-SWAPP Protocol-project2/openzeppelin-contracts-4.2.0",
+   72
+  ],
+  [
+   "PeckShield-AaveV3/code",
+   35
+  ],
+  [
+   "QuillAudits-Amplify Smart Contract/contracts-d8af5f11f3b6ab59d09a56ebc229012900dc1cc8",
+   29
+  ],
+  [
+   "Chainsecurity-Compound  cToken unredacted/compound-protocol-4a54ec5c55b66ea67d44b76f3056f0ed7229db8c",
+   26
+  ],
+  [
+   "Trail_of_Bits-FraxFinance/frax-solidity-3f0993a70e3496fd27887db7754d68709c84015e",
+   24
+  ],
+  [
+   "consensys-Zer0_zAuction/zAuction-50d3b6ce6d7ee00e7181d5b2a9a2eedcdd3fdb72",
+   23
+  ],
+  [
+   "Hacken-Valhalla/Solidity-70de7d9daccb6d812b2ab96f20fb4aa2605e2601",
+   16
+  ],
+  [
+   "Trail_of_Bits-API3/airnode-991af4d69e82c1954a5c6c8e247cde8eb76101de",
+   16
+  ],
+  [
+   "SlowMist-eden-network Smart Contract Security Audit Report/governance-e7b55f6e3f9c0d3ede7fd8bb39ae4fa7a4f4e79e",
+   15
+  ],
+  [
+   "BlockSec-blocksec_stnd_v1.7_signed/standard-evm-d7c016ca098a4e5a554583c499fc0cead4db7088",
+   13
+  ],
+  [
+   "QuillAudits-Yearn Finance-ySwaps/hardhat-monorepo-ecc0b5147992b34c315e08af170ceb4a5fe071ee",
+   12
+  ],
+  [
+   "Chainsecurity-Primitive Finance  Core engine smart contracts/rmm-core-c44f8ca1ee43772ec4ba56e031bdb6fb8aac0ca3",
+   10
+  ],
+  [
+   "Inspex-ThorusDummy/contracts-main",
+   10
+  ],
+  [
+   "Coinfabrik-MintingFactoryV2, BaseUpgradableMarketplace & KODAV3UpgradableGatedMarketplace/known-origin-contracts-v3-d592c5f4fa4e0b6fc65a1fce43e302706aedf607",
+   9
+  ],
+  [
+   "Runtime_Vеrification-ElementFinance/elf-contracts-637c6f959315cbb11a164555e588520c7d89122b",
+   9
+  ],
+  [
+   "Runtime_Vеrification-ElementFinance/elf-contracts-b9ab6095a211ccb81941a5104c581e3564a97502",
+   9
+  ],
+  [
+   "Runtime_Vеrification-ElementFinance/elf-contracts-eed369562ac50398c10fd0a56dc287a29002d3f8",
+   9
+  ],
+  [
+   "Inspex-AutoCompound/auto-compound-v2-92626a1dcfc55a28afdf4f996d600fe8bbfd6efd",
+   8
+  ],
+  [
+   "Runtime_Vеrification-Element_Finance_Governance_Security_Audit_Report/council-3d751c959b42573c78ccd0bccbc80424bf6d9a90",
+   8
+  ],
+  [
+   "Hacken-Forbitspace/forbitspaceX-bep20-19fc2b037b743e9f795709c72f004efe1109aaaf",
+   7
+  ],
+  [
+   "Hacken-PolkaBridge/PolkaBridge-DEX-21b662c48caf08242bfa01621bbbafc957e4ff31",
+   7
+  ],
+  [
+   "Inspex-AutoStake, ThorusMaster & Token/contracts-ea34f1b89a39b89ae12ea6a0a5be0cad81cf464e",
+   7
+  ],
+  [
+   "Runtime_Vеrification-stakefish_ethereum_staking_audit_report/eth2-validation-services-contract-d91928f3a270f6115831fe3a21a69eb98bf57b26",
+   7
+  ],
+  [
+   "BlockSec-blocksec_alpaca_v1.0_signed/bsc-alpaca-contract-e7c3899416e86a045011febec7a5cc986176e406",
+   6
+  ],
+  [
+   "PeckShield-LensProtocol/lens-protocol-dd137b2dee64c5edf288df297ee4249a0e6c11d4",
+   6
+  ],
+  [
+   "Solidified-Origin Governance/origin-dollar-30564e25d640749af447fb9e5d7c4fb00c37779f",
+   6
+  ],
+  [
+   "Solidity_Finance-RevomonVR Smart Contract/Contracts-9d0da49342a1a87b6cafebd4945612c2cfb8669d",
+   6
+  ],
+  [
+   "Inspex-SimpliChef, Token, ZapBSC & Broker/simpli-smart-contract-4823d1ebbd84a35dd7e8f9fd7f5207ef5c85c419",
+   5
+  ],
+  [
+   "Inspex-WusdAaveStrategy/WUSD-main",
+   5
+  ],
+  [
+   "QuillAudits-DEFINE Token Smart Contract/definetics-023ddbd2182d96306fb020573a64b50eaed0a87a",
+   5
+  ],
+  [
+   "BlockSec-blocksec_alpaca_v1.0_signed/bsc-alpaca-contract-cb13e32fe5a4ba6f63b0235bd4624715592e4abe",
+   4
+  ],
+  [
+   "Chainsecurity-Angle Protocol/angle-core-46e6d32837cbe97a4af0adb693e63afa0d01fc3e",
+   4
+  ],
+  [
+   "Coinbae-SpaceMonkey/SpaceMonkey0x9298f766581650e81357f5C66C91cc003f2b75Aa",
+   4
+  ],
+  [
+   "HAECHI_AUDIT-Fractional/contracts-37f9428fe9a5596c93ed9dfccb7be41afc0646ee",
+   4
+  ],
+  [
+   "Hacken-CGU/CGUToken0x747D74dB20cc422F39ab54EDB2A3Ce21f3C98AF1",
+   4
+  ],
+  [
+   "Trail_of_Bits-MapleFinance/proxy-factory-0b5968b9d7def2426b4f84cc08e9c77b79e26f1c",
+   4
+  ],
+  [
+   "Trail_of_Bits-Primitive/rmm-core-5dcf4306fc32fb9a4e3c154deb86f6b9d513c344",
+   4
+  ],
+  [
+   "consensys-Fei_Protocol_v2_Phase_1/fei-protocol-core-5e3e2ab889f06831f4fe2e8460066ded40ccf0a8",
+   4
+  ],
+  [
+   "Hacken-Bitcoin SB-V2/code",
+   3
+  ],
+  [
+   "Hacken-Tenderize/tender-core-1fd606141625171fe792045ae9233890262d2d62",
+   3
+  ],
+  [
+   "Hacken-Tenderize/tender-core-5b3b625d09e0bc02529946d9f2128af0c08c1a31",
+   3
+  ],
+  [
+   "Inspex-Admin & Poll/iAM-Admin-Poll-Token-main",
+   3
+  ],
+  [
+   "Inspex-Token/iAM-Admin-Poll-Token-0f8bb7a04c439286a5dffa223c3b30265acb4b5c",
+   3
+  ],
+  [
+   "Inspex-WUSDMaster/WUSD-5f50a2c7ffff7828c70299e8a9217cfbb926b8c1",
+   3
+  ],
+  [
+   "Inspex-WUSDMaster/WUSD-91c541c2f1c0ac781ddcfb2be6a62555a5e1e8d1",
+   3
+  ],
+  [
+   "Inspex-xALPACA/xALPACA-contract-ef03ba7873f7f252b074e0b521ea93537abdedb9",
+   3
+  ],
+  [
+   "PeckShield-Convex_Frax/frax-cvx-platform-2f8573ee796daa022c1050b4a749bf08049c439b",
+   3
+  ],
+  [
+   "PeckShield-Duet_Bond/duet-bond-contract-549f7d3a4973a918cb12059cc1ef3f2ace56d9bc",
+   3
+  ],
+  [
+   "QuillAudits-AQEX Token Smart Contract/erc-20-token-3628abfa6ea2636866f7d5ad1f8cc570b0d5bb1b",
+   3
+  ],
+  [
+   "QuillAudits-AgriUT Smart Contract/AgriUT-2b175e68240e67cfebe30272cb374555f2a460fb",
+   3
+  ],
+  [
+   "QuillAudits-Checkdot Smart Contract/CheckdotERC20Contract-8a47ef13ace93e0bd473fb1c3893790569a2adc8",
+   3
+  ],
+  [
+   "QuillAudits-Lido-Lido KSM/lido-dot-ksm-76a10efa5f223c4c613f26794802b8fb9bb188e1",
+   3
+  ],
+  [
+   "QuillAudits-Lido-Lido Protocol/lido-dao-801d3e854efb33ff33a59fe51187e187047a6be2",
+   3
+  ],
+  [
+   "SlowMist-wault.finance(WUSD) Smart Contract Security Audit Report/WUSD-91c541c2f1c0ac781ddcfb2be6a62555a5e1e8d1",
+   3
+  ],
+  [
+   "Trail_of_Bits-FujiProtocol/fuji-protocol-933ea57b11889d87744efa23e95c90b7bf589402",
+   3
+  ],
+  [
+   "BlockSec-blocksec_multichain_vemult_v1.0_signed/veMULTI-bac804399d1ea280e5bd8cdc9488b6fa6a0a7fcc",
+   2
+  ],
+  [
+   "Chainsulting-ApeCoin/0x4d224452801ACEd8B2F0aebE155379bb5D594381",
+   2
+  ],
+  [
+   "Coinspect-Tempus Audit/tempus-protocol-ee5964bd416770e00639a4053b45f346e4bf8b93",
+   2
+  ],
+  [
+   "Cystack-AOC BEP-20 - v1.3/AOC_BEP0x53cB59f3Ee1035daD6b63F88d9150EA70a1f2605",
+   2
+  ],
+  [
+   "Cystack-AOC ERC-20 V2 - v1.2/AOC_ERC200x41cc978FaE6f34B25553A498D1e245FDF944FF3E",
+   2
+  ],
+  [
+   "Hacken-Arkania Protocol/Code-4fe28aed2e2549ba649ed2edb6a11ef7d2ac73fd",
+   2
+  ],
+  [
+   "Hacken-DeHealth HLT Network/code",
+   2
+  ],
+  [
+   "Hacken-GOGOcoin/gogo-contracts-0204c6d60f7aaa5c195573fbd0e8388c9bc4a2ef",
+   2
+  ],
+  [
+   "Hacken-Overnight/ovnstable-core-e76b55af45a5125a99c4d32da8702123d0662ea7",
+   2
+  ],
+  [
+   "Hacken-Samurai Legends/contract_samurai-legends-tokens-aff9f451dffc6854f29375ac21f8cedba8ee1101",
+   2
+  ],
+  [
+   "Inspex-xALPACA/xALPACA-contract-8c58dd3aaade09ae51de49dc44e7784fd63efa53",
+   2
+  ],
+  [
+   "PeckShield-Donut/crossroad-550a8c3c010dc8c1a46ea9191d3841462bd58d82",
+   2
+  ],
+  [
+   "PeckShield-Hegic_HardCore_Beta/hegic-hardcore-beta-e22e6f67f1ce99e1317fc52fa325b496464a95bd",
+   2
+  ],
+  [
+   "PeckShield-VeChain/vvet-818fa11f7595e257cb28fa5475c17c60c11a4902",
+   2
+  ],
+  [
+   "QuillAudits-AgriUT Smart Contract/AgriUT-a3638774be81be9f113ae0ddc54f4a5b84038947",
+   2
+  ],
+  [
+   "QuillAudits-GoGocoin Smart Contract/gogo-contracts-f952d59650263cd8e0d403d5a8f3d94890869ba1",
+   2
+  ],
+  [
+   "QuillAudits-Keep3r.Network-Keep3r.Network/StakingRewardsV3-13ecc6966ae1a413f62224382bfd4d64b1a22351",
+   2
+  ],
+  [
+   "QuillAudits-MetaGameStarter Smart Contract/Tokenomics-Contracts-f3899d0a31dbb7386eacb7efefbff2ac32ce7cbb",
+   2
+  ],
+  [
+   "Solidified-Aztec Element Bridge/aztec-connect-bridges-ac2e7194b5887ea11a607b4cf8de0547b3d7fdd0",
+   2
+  ],
+  [
+   "Solidified-Aztec Lido Bridge/aztec-connect-bridges-d5aca13d4d0a17b21eeddf77f49f4c6613461fb0",
+   2
+  ],
+  [
+   "Solidity_Finance-OKLG - Smart Contract/contracts-e167d0d742d21bcc62d7a5b770a1f0ed1cf31eca",
+   2
+  ],
+  [
+   "Trail_of_Bits-88mph/88mph-contracts-76cd9d1fc45e65f5d0f686621fe6af85c40aa140",
+   2
+  ],
+  [
+   "BlockSec-blocksec_aloe_1.1_signed/aloe-blend-fd1635d8928c74ed24550d3f0d9a63f284a7f872",
+   1
+  ],
+  [
+   "BlockSec-blocksec_coordinape_v1.1_signed/coordinape-protocol-7a8e6173305696c72195fa4242126d284611270c",
+   1
+  ],
+  [
+   "Chainsecurity-Angle Protocol  Borrowing Module/angle-borrow-0363b6a137a44e22ee06b3187ba74f7798c1af08",
+   1
+  ],
+  [
+   "Chainsulting-Curate-project/Curate",
+   1
+  ],
+  [
+   "Chainsulting-Curate-project2/Curate",
+   1
+  ],
+  [
+   "Chainsulting-GSPI Club-project3/code",
+   1
+  ],
+  [
+   "Hacken-Amoss/code",
+   1
+  ],
+  [
+   "Hacken-Fidometa-V1/Smart_Contract-66f43e8644a20ed2ebbc4db94d6b2dcc797ac1c7",
+   1
+  ],
+  [
+   "Hacken-Fidometa-V1/Smart_Contract-7bb7d6d237f8a6ff97470a8969f42a9bb78a6db5",
+   1
+  ],
+  [
+   "Hacken-Fidometa-V1/Smart_Contract-ad56b0ce678f77d162752dbb5d987d2f4a29fddf",
+   1
+  ],
+  [
+   "Hacken-Fidometa-V2/Smart_Contract-66f43e8644a20ed2ebbc4db94d6b2dcc797ac1c7",
+   1
+  ],
+  [
+   "Hacken-Fidometa-V2/Smart_Contract-7bb7d6d237f8a6ff97470a8969f42a9bb78a6db5",
+   1
+  ],
+  [
+   "Hacken-Fidometa-V2/Smart_Contract-ad56b0ce678f77d162752dbb5d987d2f4a29fddf",
+   1
+  ],
+  [
+   "Hacken-Fidometa-V2/Smart_Contract-cfa7cbe26661482efaf0b71e2c86e690ac52244c",
+   1
+  ],
+  [
+   "Hacken-FoilNetwork/tge-seed-round-smart-contract-D3522A4628CE735058E57852AB1425600D296FC8",
+   1
+  ],
+  [
+   "Hacken-Galeon/code",
+   1
+  ],
+  [
+   "Hacken-MetagamZ/MetagamZ-bbcc0341d584ddbfe46d0e9e5ae957a100158b6b",
+   1
+  ],
+  [
+   "Hacken-Oracula/Oracula0x85f3ec4EC49aB6a5901278176235957ef521970d",
+   1
+  ],
+  [
+   "Hacken-QANplatform/qanx-token-ebf0352af6ccb8d991827a0fba3ac5cfe9ca6b70",
+   1
+  ],
+  [
+   "Hacken-Splash/splash-core-b38add0749f450a528197909005f6666cf609960",
+   1
+  ],
+  [
+   "Hacken-Travelcare/TravelCare0x826e5Ec70DbC5607fF9218011FBb97F9a8D97953",
+   1
+  ],
+  [
+   "Hacken-ZIXXAR INTERNATIONAL DISTRIBUTION SRL/staking-smart-contracts-e6ba771bba2a1e2c438202e246c963da2f3aa00f",
+   1
+  ],
+  [
+   "ImmuneBytes-Pluteus-Audit Report/code",
+   1
+  ],
+  [
+   "ImmuneBytes-Pluteus-Final Audit Report/code",
+   1
+  ],
+  [
+   "ImmuneBytes-WadzPay-Audit Report/code",
+   1
+  ],
+  [
+   "Inspex-Revenue Sharing Pool & Shield/LuckyLion-RevenueSharing-342db925e80c9e62fce7505d24431e3d82199b87",
+   1
+  ],
+  [
+   "Inspex-Token & Vesting/MooMonster-Contract-2d07e927e5e8f66afea5cbdfb89b32ef74cfe385",
+   1
+  ],
+  [
+   "PeckShield-COGI/cogi_contracts-c5dc614395f77a5b07c83223e5c8bac9d14d2e2c",
+   1
+  ],
+  [
+   "PeckShield-Double/double-contract-5489c0618f381df1e8d5ebb55f430db1b8bffeea",
+   1
+  ],
+  [
+   "PeckShield-Hegic(v8888)/Hegic-v8888-2dcd44dc1ae07881e94d52fa618f9704bfd4ffda",
+   1
+  ],
+  [
+   "PeckShield-KaoyaSwap/contracts-8273073f1d6914f372790399378f177573c52e37",
+   1
+  ],
+  [
+   "QuillAudits-1inch-Farming/farming-7a007ec7784cca2899889e99e46cf06d5788a7d9",
+   1
+  ],
+  [
+   "QuillAudits-1inch-Fee Collector/fee-collector-3c2626763fd829500496f15476d5e98fbdf4f574",
+   1
+  ],
+  [
+   "QuillAudits-AVX Smart Contract/code",
+   1
+  ],
+  [
+   "QuillAudits-Amplify_Child_Token_Smart_Contract/contracts-31526ea5e5c5a1c308d0065aab1f57ec8d765fc6",
+   1
+  ],
+  [
+   "QuillAudits-Big League Smart Contract/code",
+   1
+  ],
+  [
+   "QuillAudits-BigDog Smart Contract/code",
+   1
+  ],
+  [
+   "QuillAudits-BitDiamond Smart Contract/code",
+   1
+  ],
+  [
+   "QuillAudits-Bitbook Smart Contract V2/code",
+   1
+  ],
+  [
+   "QuillAudits-Bridge Network Smart Contract/bridgeToken-9636c155e8fcfff5cda8b609a77c7d4527b5b402",
+   1
+  ],
+  [
+   "QuillAudits-BscDragon Smart Contract/bridgeToken-9636c155e8fcfff5cda8b609a77c7d4527b5b402",
+   1
+  ],
+  [
+   "QuillAudits-Citrus Smart Contract/CitrusTechContract-e50a2a983928c10b76e6bc374ae6267f51af99b6",
+   1
+  ],
+  [
+   "QuillAudits-CoinDogg Smart Contract/code",
+   1
+  ],
+  [
+   "QuillAudits-CronosPad Smart Contract/cronospad-1605d38fab314cab399093f756b41093fdbc859f",
+   1
+  ],
+  [
+   "QuillAudits-CryptoGamez Smart Contract/CryptoGamez",
+   1
+  ],
+  [
+   "QuillAudits-DOXY - v1.3/code",
+   1
+  ],
+  [
+   "QuillAudits-DictatorDOGE Smart Contract/code",
+   1
+  ],
+  [
+   "QuillAudits-FutiraCoin Smart Contract/code",
+   1
+  ],
+  [
+   "QuillAudits-GameZilla Token Smart Contract/code",
+   1
+  ],
+  [
+   "QuillAudits-HE - v1.2/heroes-empires-contract-08cc390408d36de4d10ab5f822adf2d842145073",
+   1
+  ],
+  [
+   "QuillAudits-HE - v1.2/heroes-empires-contract-f24ba85db4bf40e39caaa5fc322a02cd8e82c2c7",
+   1
+  ],
+  [
+   "QuillAudits-Lido-Deposit Security Module/lido-dao-5b449b740cddfbef5c107505677e6a576e2c2b69",
+   1
+  ],
+  [
+   "QuillAudits-MetaWaferse Smart Contract/code",
+   1
+  ],
+  [
+   "QuillAudits-MiniDOGE Smart Contract/code",
+   1
+  ],
+  [
+   "Trail_of_Bits-MapleFinance/debt-locker-05b4f2fe119e2ddf3dc0e441055c602f748e7d52",
+   1
+  ],
+  [
+   "Trail_of_Bits-SeaportProtocol/seaport-f17082fca3e99b409f53040d8858e84b0246aa22",
+   1
+  ],
+  [
+   "consensys-Connext NXTP — Noncustodial Xchain Transfer Protocol/nxtp-0656436d654cfe0313fa3c2bbc81aa86232ade16",
+   1
+  ],
+  [
+   "openzeppelin-UMA_Across_V2/contracts-v2-bf03255cbd1db3045cd2fbf1580f24081f46b43a",
+   1
+  ]
+ ],
+ "oz_named_snapshots": {
+  "Chainsulting-Global Rockstar/openzeppelin-contracts-upgradeable-master": 103,
+  "Chainsulting-SWAPP Protocol-project2/openzeppelin-contracts-4.2.0": 72
+ },
+ "lib_libs_only_excluded": 79,
+ "lib_libs_only_nested_in_contracts_or_src": 78,
+ "V4_closure_size": {
+  "1": 312,
+  "2-4": 212,
+  "5+": 258
+ },
+ "v1_v2_overlap": {
+  "v1": 642,
+  "v2": 682,
+  "both": 439,
+  "v1_only": 203,
+  "v2_only": 243
+ },
+ "V4_files": [
+  "BlockSec-blocksec_aloe_1.1_signed/aloe-blend-fd1635d8928c74ed24550d3f0d9a63f284a7f872/contracts/libraries/Math.sol",
+  "BlockSec-blocksec_alpaca_v1.0_signed/bsc-alpaca-contract-cb13e32fe5a4ba6f63b0235bd4624715592e4abe/contracts/8.10/protocol/interfaces/IBSCPool.sol",
+  "BlockSec-blocksec_alpaca_v1.0_signed/bsc-alpaca-contract-cb13e32fe5a4ba6f63b0235bd4624715592e4abe/contracts/8.10/utils/AlpacaMath.sol",
+  "BlockSec-blocksec_alpaca_v1.0_signed/bsc-alpaca-contract-cb13e32fe5a4ba6f63b0235bd4624715592e4abe/contracts/8.10/utils/Math.sol",
+  "BlockSec-blocksec_alpaca_v1.0_signed/bsc-alpaca-contract-cb13e32fe5a4ba6f63b0235bd4624715592e4abe/contracts/8.10/utils/SafeToken.sol",
+  "BlockSec-blocksec_alpaca_v1.0_signed/bsc-alpaca-contract-e7c3899416e86a045011febec7a5cc986176e406/contracts/8.10/protocol/interfaces/IBSCPool.sol",
+  "BlockSec-blocksec_alpaca_v1.0_signed/bsc-alpaca-contract-e7c3899416e86a045011febec7a5cc986176e406/contracts/8.10/utils/AlpacaMath.sol",
+  "BlockSec-blocksec_alpaca_v1.0_signed/bsc-alpaca-contract-e7c3899416e86a045011febec7a5cc986176e406/contracts/8.10/utils/FixedPointMathLib.sol",
+  "BlockSec-blocksec_alpaca_v1.0_signed/bsc-alpaca-contract-e7c3899416e86a045011febec7a5cc986176e406/contracts/8.10/utils/FullMath.sol",
+  "BlockSec-blocksec_alpaca_v1.0_signed/bsc-alpaca-contract-e7c3899416e86a045011febec7a5cc986176e406/contracts/8.10/utils/Math.sol",
+  "BlockSec-blocksec_alpaca_v1.0_signed/bsc-alpaca-contract-e7c3899416e86a045011febec7a5cc986176e406/contracts/8.10/utils/SafeToken.sol",
+  "BlockSec-blocksec_coordinape_v1.1_signed/coordinape-protocol-7a8e6173305696c72195fa4242126d284611270c/contracts/ApeProtocol/ApeAllowanceModule.sol",
+  "BlockSec-blocksec_multichain_vemult_v1.0_signed/veMULTI-bac804399d1ea280e5bd8cdc9488b6fa6a0a7fcc/contracts/VEReward.sol",
+  "BlockSec-blocksec_multichain_vemult_v1.0_signed/veMULTI-bac804399d1ea280e5bd8cdc9488b6fa6a0a7fcc/contracts/ve.sol",
+  "BlockSec-blocksec_stnd_v1.7_signed/standard-evm-d7c016ca098a4e5a554583c499fc0cead4db7088/contracts/oracle/DiaCoinInfo.sol",
+  "BlockSec-blocksec_stnd_v1.7_signed/standard-evm-d7c016ca098a4e5a554583c499fc0cead4db7088/contracts/oracle/DiaKeyValue.sol",
+  "BlockSec-blocksec_stnd_v1.7_signed/standard-evm-d7c016ca098a4e5a554583c499fc0cead4db7088/contracts/oracle/Price.sol",
+  "BlockSec-blocksec_stnd_v1.7_signed/standard-evm-d7c016ca098a4e5a554583c499fc0cead4db7088/contracts/pools/bond/Equation.sol",
+  "BlockSec-blocksec_stnd_v1.7_signed/standard-evm-d7c016ca098a4e5a554583c499fc0cead4db7088/contracts/pools/dividend/legacy/ClaimAll.sol",
+  "BlockSec-blocksec_stnd_v1.7_signed/standard-evm-d7c016ca098a4e5a554583c499fc0cead4db7088/contracts/pools/liquidation/TransferHelper.sol",
+  "BlockSec-blocksec_stnd_v1.7_signed/standard-evm-d7c016ca098a4e5a554583c499fc0cead4db7088/contracts/tokens/multichain/anyswap/AnyswapV5ERC20.sol",
+  "BlockSec-blocksec_stnd_v1.7_signed/standard-evm-d7c016ca098a4e5a554583c499fc0cead4db7088/contracts/vaults/meter/libraries/Math.sol",
+  "BlockSec-blocksec_stnd_v1.7_signed/standard-evm-d7c016ca098a4e5a554583c499fc0cead4db7088/contracts/vaults/meter/libraries/SafeMath.sol",
+  "BlockSec-blocksec_stnd_v1.7_signed/standard-evm-d7c016ca098a4e5a554583c499fc0cead4db7088/contracts/vaults/meter/libraries/TransferHelper.sol",
+  "BlockSec-blocksec_stnd_v1.7_signed/standard-evm-d7c016ca098a4e5a554583c499fc0cead4db7088/contracts/vaults/meter/libraries/UQ112x112.sol",
+  "BlockSec-blocksec_stnd_v1.7_signed/standard-evm-d7c016ca098a4e5a554583c499fc0cead4db7088/contracts/vaults/meter/libraries/VaultLibrary.sol",
+  "BlockSec-blocksec_stnd_v1.7_signed/standard-evm-d7c016ca098a4e5a554583c499fc0cead4db7088/misc/UsingLiquidityProtectionService.sol",
+  "Chainsecurity-Angle Protocol  Borrowing Module/angle-borrow-0363b6a137a44e22ee06b3187ba74f7798c1af08/contracts/keeperMulticall/RevertReasonParser.sol",
+  "Chainsecurity-Angle Protocol/angle-core-46e6d32837cbe97a4af0adb693e63afa0d01fc3e/contracts/dao/Timelock.sol",
+  "Chainsecurity-Angle Protocol/angle-core-46e6d32837cbe97a4af0adb693e63afa0d01fc3e/contracts/oracle/OracleAbstract.sol",
+  "Chainsecurity-Angle Protocol/angle-core-46e6d32837cbe97a4af0adb693e63afa0d01fc3e/contracts/utils/FunctionUtils.sol",
+  "Chainsecurity-Angle Protocol/angle-core-46e6d32837cbe97a4af0adb693e63afa0d01fc3e/contracts/utils/PausableMapUpgradeable.sol",
+  "Chainsecurity-Compound  cToken unredacted/compound-protocol-4a54ec5c55b66ea67d44b76f3056f0ed7229db8c/contracts/BaseJumpRateModelV2.sol",
+  "Chainsecurity-Compound  cToken unredacted/compound-protocol-4a54ec5c55b66ea67d44b76f3056f0ed7229db8c/contracts/CDaiDelegate.sol",
+  "Chainsecurity-Compound  cToken unredacted/compound-protocol-4a54ec5c55b66ea67d44b76f3056f0ed7229db8c/contracts/CErc20.sol",
+  "Chainsecurity-Compound  cToken unredacted/compound-protocol-4a54ec5c55b66ea67d44b76f3056f0ed7229db8c/contracts/CErc20Delegate.sol",
+  "Chainsecurity-Compound  cToken unredacted/compound-protocol-4a54ec5c55b66ea67d44b76f3056f0ed7229db8c/contracts/CErc20Delegator.sol",
+  "Chainsecurity-Compound  cToken unredacted/compound-protocol-4a54ec5c55b66ea67d44b76f3056f0ed7229db8c/contracts/CEther.sol",
+  "Chainsecurity-Compound  cToken unredacted/compound-protocol-4a54ec5c55b66ea67d44b76f3056f0ed7229db8c/contracts/CToken.sol",
+  "Chainsecurity-Compound  cToken unredacted/compound-protocol-4a54ec5c55b66ea67d44b76f3056f0ed7229db8c/contracts/Comptroller.sol",
+  "Chainsecurity-Compound  cToken unredacted/compound-protocol-4a54ec5c55b66ea67d44b76f3056f0ed7229db8c/contracts/ComptrollerG7.sol",
+  "Chainsecurity-Compound  cToken unredacted/compound-protocol-4a54ec5c55b66ea67d44b76f3056f0ed7229db8c/contracts/DAIInterestRateModelV3.sol",
+  "Chainsecurity-Compound  cToken unredacted/compound-protocol-4a54ec5c55b66ea67d44b76f3056f0ed7229db8c/contracts/ErrorReporter.sol",
+  "Chainsecurity-Compound  cToken unredacted/compound-protocol-4a54ec5c55b66ea67d44b76f3056f0ed7229db8c/contracts/ExponentialNoError.sol",
+  "Chainsecurity-Compound  cToken unredacted/compound-protocol-4a54ec5c55b66ea67d44b76f3056f0ed7229db8c/contracts/Governance/Comp.sol",
+  "Chainsecurity-Compound  cToken unredacted/compound-protocol-4a54ec5c55b66ea67d44b76f3056f0ed7229db8c/contracts/Governance/GovernorAlpha.sol",
+  "Chainsecurity-Compound  cToken unredacted/compound-protocol-4a54ec5c55b66ea67d44b76f3056f0ed7229db8c/contracts/Governance/GovernorBravoDelegate.sol",
+  "Chainsecurity-Compound  cToken unredacted/compound-protocol-4a54ec5c55b66ea67d44b76f3056f0ed7229db8c/contracts/Governance/GovernorBravoDelegator.sol",
+  "Chainsecurity-Compound  cToken unredacted/compound-protocol-4a54ec5c55b66ea67d44b76f3056f0ed7229db8c/contracts/JumpRateModel.sol",
+  "Chainsecurity-Compound  cToken unredacted/compound-protocol-4a54ec5c55b66ea67d44b76f3056f0ed7229db8c/contracts/JumpRateModelV2.sol",
+  "Chainsecurity-Compound  cToken unredacted/compound-protocol-4a54ec5c55b66ea67d44b76f3056f0ed7229db8c/contracts/Lens/CompoundLens.sol",
+  "Chainsecurity-Compound  cToken unredacted/compound-protocol-4a54ec5c55b66ea67d44b76f3056f0ed7229db8c/contracts/Maximillion.sol",
+  "Chainsecurity-Compound  cToken unredacted/compound-protocol-4a54ec5c55b66ea67d44b76f3056f0ed7229db8c/contracts/Reservoir.sol",
+  "Chainsecurity-Compound  cToken unredacted/compound-protocol-4a54ec5c55b66ea67d44b76f3056f0ed7229db8c/contracts/SafeMath.sol",
+  "Chainsecurity-Compound  cToken unredacted/compound-protocol-4a54ec5c55b66ea67d44b76f3056f0ed7229db8c/contracts/SimplePriceOracle.sol",
+  "Chainsecurity-Compound  cToken unredacted/compound-protocol-4a54ec5c55b66ea67d44b76f3056f0ed7229db8c/contracts/Timelock.sol",
+  "Chainsecurity-Compound  cToken unredacted/compound-protocol-4a54ec5c55b66ea67d44b76f3056f0ed7229db8c/contracts/Unitroller.sol",
+  "Chainsecurity-Compound  cToken unredacted/compound-protocol-4a54ec5c55b66ea67d44b76f3056f0ed7229db8c/contracts/WhitePaperInterestRateModel.sol",
+  "Chainsecurity-Primitive Finance  Core engine smart contracts/rmm-core-c44f8ca1ee43772ec4ba56e031bdb6fb8aac0ca3/contracts/PrimitiveEngine.sol",
+  "Chainsecurity-Primitive Finance  Core engine smart contracts/rmm-core-c44f8ca1ee43772ec4ba56e031bdb6fb8aac0ca3/contracts/PrimitiveFactory.sol",
+  "Chainsecurity-Primitive Finance  Core engine smart contracts/rmm-core-c44f8ca1ee43772ec4ba56e031bdb6fb8aac0ca3/contracts/libraries/ABDKMath64x64.sol",
+  "Chainsecurity-Primitive Finance  Core engine smart contracts/rmm-core-c44f8ca1ee43772ec4ba56e031bdb6fb8aac0ca3/contracts/libraries/CumulativeNormalDistribution.sol",
+  "Chainsecurity-Primitive Finance  Core engine smart contracts/rmm-core-c44f8ca1ee43772ec4ba56e031bdb6fb8aac0ca3/contracts/libraries/Margin.sol",
+  "Chainsecurity-Primitive Finance  Core engine smart contracts/rmm-core-c44f8ca1ee43772ec4ba56e031bdb6fb8aac0ca3/contracts/libraries/ReplicationMath.sol",
+  "Chainsecurity-Primitive Finance  Core engine smart contracts/rmm-core-c44f8ca1ee43772ec4ba56e031bdb6fb8aac0ca3/contracts/libraries/Reserve.sol",
+  "Chainsecurity-Primitive Finance  Core engine smart contracts/rmm-core-c44f8ca1ee43772ec4ba56e031bdb6fb8aac0ca3/contracts/libraries/SafeCast.sol",
+  "Chainsecurity-Primitive Finance  Core engine smart contracts/rmm-core-c44f8ca1ee43772ec4ba56e031bdb6fb8aac0ca3/contracts/libraries/Transfers.sol",
+  "Chainsecurity-Primitive Finance  Core engine smart contracts/rmm-core-c44f8ca1ee43772ec4ba56e031bdb6fb8aac0ca3/contracts/libraries/Units.sol",
+  "Chainsulting-ApeCoin/0x4d224452801ACEd8B2F0aebE155379bb5D594381/token/ERC20/ERC20.sol",
+  "Chainsulting-ApeCoin/0x4d224452801ACEd8B2F0aebE155379bb5D594381/utils/Context.sol",
+  "Chainsulting-Curate-project/Curate/IERC20Metadata.sol",
+  "Chainsulting-Curate-project2/Curate/IERC20Metadata.sol",
+  "Chainsulting-GSPI Club-project3/code/Staking.sol",
+  "Chainsulting-Global Rockstar/openzeppelin-contracts-upgradeable-master/contracts/access/AccessControlCrossChainUpgradeable.sol",
+  "Chainsulting-Global Rockstar/openzeppelin-contracts-upgradeable-master/contracts/access/AccessControlEnumerableUpgradeable.sol",
+  "Chainsulting-Global Rockstar/openzeppelin-contracts-upgradeable-master/contracts/access/AccessControlUpgradeable.sol",
+  "Chainsulting-Global Rockstar/openzeppelin-contracts-upgradeable-master/contracts/access/OwnableUpgradeable.sol",
+  "Chainsulting-Global Rockstar/openzeppelin-contracts-upgradeable-master/contracts/crosschain/CrossChainEnabledUpgradeable.sol",
+  "Chainsulting-Global Rockstar/openzeppelin-contracts-upgradeable-master/contracts/crosschain/amb/CrossChainEnabledAMBUpgradeable.sol",
+  "Chainsulting-Global Rockstar/openzeppelin-contracts-upgradeable-master/contracts/crosschain/amb/LibAMBUpgradeable.sol",
+  "Chainsulting-Global Rockstar/openzeppelin-contracts-upgradeable-master/contracts/crosschain/arbitrum/CrossChainEnabledArbitrumL1Upgradeable.sol",
+  "Chainsulting-Global Rockstar/openzeppelin-contracts-upgradeable-master/contracts/crosschain/arbitrum/LibArbitrumL1Upgradeable.sol",
+  "Chainsulting-Global Rockstar/openzeppelin-contracts-upgradeable-master/contracts/crosschain/polygon/CrossChainEnabledPolygonChildUpgradeable.sol",
+  "Chainsulting-Global Rockstar/openzeppelin-contracts-upgradeable-master/contracts/finance/PaymentSplitterUpgradeable.sol",
+  "Chainsulting-Global Rockstar/openzeppelin-contracts-upgradeable-master/contracts/finance/VestingWalletUpgradeable.sol",
+  "Chainsulting-Global Rockstar/openzeppelin-contracts-upgradeable-master/contracts/governance/GovernorUpgradeable.sol",
+  "Chainsulting-Global Rockstar/openzeppelin-contracts-upgradeable-master/contracts/governance/IGovernorUpgradeable.sol",
+  "Chainsulting-Global Rockstar/openzeppelin-contracts-upgradeable-master/contracts/governance/TimelockControllerUpgradeable.sol",
+  "Chainsulting-Global Rockstar/openzeppelin-contracts-upgradeable-master/contracts/governance/compatibility/GovernorCompatibilityBravoUpgradeable.sol",
+  "Chainsulting-Global Rockstar/openzeppelin-contracts-upgradeable-master/contracts/governance/compatibility/IGovernorCompatibilityBravoUpgradeable.sol",
+  "Chainsulting-Global Rockstar/openzeppelin-contracts-upgradeable-master/contracts/governance/extensions/GovernorCountingSimpleUpgradeable.sol",
+  "Chainsulting-Global Rockstar/openzeppelin-contracts-upgradeable-master/contracts/governance/extensions/GovernorPreventLateQuorumUpgradeable.sol",
+  "Chainsulting-Global Rockstar/openzeppelin-contracts-upgradeable-master/contracts/governance/extensions/GovernorProposalThresholdUpgradeable.sol",
+  "Chainsulting-Global Rockstar/openzeppelin-contracts-upgradeable-master/contracts/governance/extensions/GovernorSettingsUpgradeable.sol",
+  "Chainsulting-Global Rockstar/openzeppelin-contracts-upgradeable-master/contracts/governance/extensions/GovernorTimelockCompoundUpgradeable.sol",
+  "Chainsulting-Global Rockstar/openzeppelin-contracts-upgradeable-master/contracts/governance/extensions/GovernorTimelockControlUpgradeable.sol",
+  "Chainsulting-Global Rockstar/openzeppelin-contracts-upgradeable-master/contracts/governance/extensions/GovernorVotesCompUpgradeable.sol",
+  "Chainsulting-Global Rockstar/openzeppelin-contracts-upgradeable-master/contracts/governance/extensions/GovernorVotesQuorumFractionUpgradeable.sol",
+  "Chainsulting-Global Rockstar/openzeppelin-contracts-upgradeable-master/contracts/governance/extensions/GovernorVotesUpgradeable.sol",
+  "Chainsulting-Global Rockstar/openzeppelin-contracts-upgradeable-master/contracts/governance/extensions/IGovernorTimelockUpgradeable.sol",
+  "Chainsulting-Global Rockstar/openzeppelin-contracts-upgradeable-master/contracts/governance/utils/VotesUpgradeable.sol",
+  "Chainsulting-Global Rockstar/openzeppelin-contracts-upgradeable-master/contracts/metatx/ERC2771ContextUpgradeable.sol",
+  "Chainsulting-Global Rockstar/openzeppelin-contracts-upgradeable-master/contracts/metatx/MinimalForwarderUpgradeable.sol",
+  "Chainsulting-Global Rockstar/openzeppelin-contracts-upgradeable-master/contracts/proxy/ClonesUpgradeable.sol",
+  "Chainsulting-Global Rockstar/openzeppelin-contracts-upgradeable-master/contracts/proxy/ERC1967/ERC1967UpgradeUpgradeable.sol",
+  "Chainsulting-Global Rockstar/openzeppelin-contracts-upgradeable-master/contracts/proxy/utils/Initializable.sol",
+  "Chainsulting-Global Rockstar/openzeppelin-contracts-upgradeable-master/contracts/proxy/utils/UUPSUpgradeable.sol",
+  "Chainsulting-Global Rockstar/openzeppelin-contracts-upgradeable-master/contracts/security/PausableUpgradeable.sol",
+  "Chainsulting-Global Rockstar/openzeppelin-contracts-upgradeable-master/contracts/security/PullPaymentUpgradeable.sol",
+  "Chainsulting-Global Rockstar/openzeppelin-contracts-upgradeable-master/contracts/security/ReentrancyGuardUpgradeable.sol",
+  "Chainsulting-Global Rockstar/openzeppelin-contracts-upgradeable-master/contracts/token/ERC1155/ERC1155Upgradeable.sol",
+  "Chainsulting-Global Rockstar/openzeppelin-contracts-upgradeable-master/contracts/token/ERC1155/extensions/ERC1155BurnableUpgradeable.sol",
+  "Chainsulting-Global Rockstar/openzeppelin-contracts-upgradeable-master/contracts/token/ERC1155/extensions/ERC1155PausableUpgradeable.sol",
+  "Chainsulting-Global Rockstar/openzeppelin-contracts-upgradeable-master/contracts/token/ERC1155/extensions/ERC1155SupplyUpgradeable.sol",
+  "Chainsulting-Global Rockstar/openzeppelin-contracts-upgradeable-master/contracts/token/ERC1155/extensions/ERC1155URIStorageUpgradeable.sol",
+  "Chainsulting-Global Rockstar/openzeppelin-contracts-upgradeable-master/contracts/token/ERC1155/presets/ERC1155PresetMinterPauserUpgradeable.sol",
+  "Chainsulting-Global Rockstar/openzeppelin-contracts-upgradeable-master/contracts/token/ERC1155/utils/ERC1155HolderUpgradeable.sol",
+  "Chainsulting-Global Rockstar/openzeppelin-contracts-upgradeable-master/contracts/token/ERC1155/utils/ERC1155ReceiverUpgradeable.sol",
+  "Chainsulting-Global Rockstar/openzeppelin-contracts-upgradeable-master/contracts/token/ERC20/ERC20Upgradeable.sol",
+  "Chainsulting-Global Rockstar/openzeppelin-contracts-upgradeable-master/contracts/token/ERC20/extensions/ERC20BurnableUpgradeable.sol",
+  "Chainsulting-Global Rockstar/openzeppelin-contracts-upgradeable-master/contracts/token/ERC20/extensions/ERC20CappedUpgradeable.sol",
+  "Chainsulting-Global Rockstar/openzeppelin-contracts-upgradeable-master/contracts/token/ERC20/extensions/ERC20FlashMintUpgradeable.sol",
+  "Chainsulting-Global Rockstar/openzeppelin-contracts-upgradeable-master/contracts/token/ERC20/extensions/ERC20PausableUpgradeable.sol",
+  "Chainsulting-Global Rockstar/openzeppelin-contracts-upgradeable-master/contracts/token/ERC20/extensions/ERC20SnapshotUpgradeable.sol",
+  "Chainsulting-Global Rockstar/openzeppelin-contracts-upgradeable-master/contracts/token/ERC20/extensions/ERC20VotesCompUpgradeable.sol",
+  "Chainsulting-Global Rockstar/openzeppelin-contracts-upgradeable-master/contracts/token/ERC20/extensions/ERC20VotesUpgradeable.sol",
+  "Chainsulting-Global Rockstar/openzeppelin-contracts-upgradeable-master/contracts/token/ERC20/extensions/ERC20WrapperUpgradeable.sol",
+  "Chainsulting-Global Rockstar/openzeppelin-contracts-upgradeable-master/contracts/token/ERC20/extensions/ERC4626Upgradeable.sol",
+  "Chainsulting-Global Rockstar/openzeppelin-contracts-upgradeable-master/contracts/token/ERC20/extensions/draft-ERC20PermitUpgradeable.sol",
+  "Chainsulting-Global Rockstar/openzeppelin-contracts-upgradeable-master/contracts/token/ERC20/presets/ERC20PresetFixedSupplyUpgradeable.sol",
+  "Chainsulting-Global Rockstar/openzeppelin-contracts-upgradeable-master/contracts/token/ERC20/presets/ERC20PresetMinterPauserUpgradeable.sol",
+  "Chainsulting-Global Rockstar/openzeppelin-contracts-upgradeable-master/contracts/token/ERC20/utils/SafeERC20Upgradeable.sol",
+  "Chainsulting-Global Rockstar/openzeppelin-contracts-upgradeable-master/contracts/token/ERC20/utils/TokenTimelockUpgradeable.sol",
+  "Chainsulting-Global Rockstar/openzeppelin-contracts-upgradeable-master/contracts/token/ERC721/ERC721Upgradeable.sol",
+  "Chainsulting-Global Rockstar/openzeppelin-contracts-upgradeable-master/contracts/token/ERC721/extensions/ERC721BurnableUpgradeable.sol",
+  "Chainsulting-Global Rockstar/openzeppelin-contracts-upgradeable-master/contracts/token/ERC721/extensions/ERC721EnumerableUpgradeable.sol",
+  "Chainsulting-Global Rockstar/openzeppelin-contracts-upgradeable-master/contracts/token/ERC721/extensions/ERC721PausableUpgradeable.sol",
+  "Chainsulting-Global Rockstar/openzeppelin-contracts-upgradeable-master/contracts/token/ERC721/extensions/ERC721RoyaltyUpgradeable.sol",
+  "Chainsulting-Global Rockstar/openzeppelin-contracts-upgradeable-master/contracts/token/ERC721/extensions/ERC721URIStorageUpgradeable.sol",
+  "Chainsulting-Global Rockstar/openzeppelin-contracts-upgradeable-master/contracts/token/ERC721/extensions/draft-ERC721VotesUpgradeable.sol",
+  "Chainsulting-Global Rockstar/openzeppelin-contracts-upgradeable-master/contracts/token/ERC721/presets/ERC721PresetMinterPauserAutoIdUpgradeable.sol",
+  "Chainsulting-Global Rockstar/openzeppelin-contracts-upgradeable-master/contracts/token/ERC721/utils/ERC721HolderUpgradeable.sol",
+  "Chainsulting-Global Rockstar/openzeppelin-contracts-upgradeable-master/contracts/token/ERC777/ERC777Upgradeable.sol",
+  "Chainsulting-Global Rockstar/openzeppelin-contracts-upgradeable-master/contracts/token/ERC777/presets/ERC777PresetFixedSupplyUpgradeable.sol",
+  "Chainsulting-Global Rockstar/openzeppelin-contracts-upgradeable-master/contracts/token/common/ERC2981Upgradeable.sol",
+  "Chainsulting-Global Rockstar/openzeppelin-contracts-upgradeable-master/contracts/utils/AddressUpgradeable.sol",
+  "Chainsulting-Global Rockstar/openzeppelin-contracts-upgradeable-master/contracts/utils/ArraysUpgradeable.sol",
+  "Chainsulting-Global Rockstar/openzeppelin-contracts-upgradeable-master/contracts/utils/Base64Upgradeable.sol",
+  "Chainsulting-Global Rockstar/openzeppelin-contracts-upgradeable-master/contracts/utils/CheckpointsUpgradeable.sol",
+  "Chainsulting-Global Rockstar/openzeppelin-contracts-upgradeable-master/contracts/utils/ContextUpgradeable.sol",
+  "Chainsulting-Global Rockstar/openzeppelin-contracts-upgradeable-master/contracts/utils/CountersUpgradeable.sol",
+  "Chainsulting-Global Rockstar/openzeppelin-contracts-upgradeable-master/contracts/utils/Create2Upgradeable.sol",
+  "Chainsulting-Global Rockstar/openzeppelin-contracts-upgradeable-master/contracts/utils/MulticallUpgradeable.sol",
+  "Chainsulting-Global Rockstar/openzeppelin-contracts-upgradeable-master/contracts/utils/StorageSlotUpgradeable.sol",
+  "Chainsulting-Global Rockstar/openzeppelin-contracts-upgradeable-master/contracts/utils/StringsUpgradeable.sol",
+  "Chainsulting-Global Rockstar/openzeppelin-contracts-upgradeable-master/contracts/utils/TimersUpgradeable.sol",
+  "Chainsulting-Global Rockstar/openzeppelin-contracts-upgradeable-master/contracts/utils/cryptography/ECDSAUpgradeable.sol",
+  "Chainsulting-Global Rockstar/openzeppelin-contracts-upgradeable-master/contracts/utils/cryptography/MerkleProofUpgradeable.sol",
+  "Chainsulting-Global Rockstar/openzeppelin-contracts-upgradeable-master/contracts/utils/cryptography/SignatureCheckerUpgradeable.sol",
+  "Chainsulting-Global Rockstar/openzeppelin-contracts-upgradeable-master/contracts/utils/cryptography/draft-EIP712Upgradeable.sol",
+  "Chainsulting-Global Rockstar/openzeppelin-contracts-upgradeable-master/contracts/utils/escrow/ConditionalEscrowUpgradeable.sol",
+  "Chainsulting-Global Rockstar/openzeppelin-contracts-upgradeable-master/contracts/utils/escrow/EscrowUpgradeable.sol",
+  "Chainsulting-Global Rockstar/openzeppelin-contracts-upgradeable-master/contracts/utils/escrow/RefundEscrowUpgradeable.sol",
+  "Chainsulting-Global Rockstar/openzeppelin-contracts-upgradeable-master/contracts/utils/introspection/ERC165CheckerUpgradeable.sol",
+  "Chainsulting-Global Rockstar/openzeppelin-contracts-upgradeable-master/contracts/utils/introspection/ERC165StorageUpgradeable.sol",
+  "Chainsulting-Global Rockstar/openzeppelin-contracts-upgradeable-master/contracts/utils/introspection/ERC165Upgradeable.sol",
+  "Chainsulting-Global Rockstar/openzeppelin-contracts-upgradeable-master/contracts/utils/introspection/ERC1820ImplementerUpgradeable.sol",
+  "Chainsulting-Global Rockstar/openzeppelin-contracts-upgradeable-master/contracts/utils/math/MathUpgradeable.sol",
+  "Chainsulting-Global Rockstar/openzeppelin-contracts-upgradeable-master/contracts/utils/math/SafeCastUpgradeable.sol",
+  "Chainsulting-Global Rockstar/openzeppelin-contracts-upgradeable-master/contracts/utils/math/SafeMathUpgradeable.sol",
+  "Chainsulting-Global Rockstar/openzeppelin-contracts-upgradeable-master/contracts/utils/math/SignedMathUpgradeable.sol",
+  "Chainsulting-Global Rockstar/openzeppelin-contracts-upgradeable-master/contracts/utils/math/SignedSafeMathUpgradeable.sol",
+  "Chainsulting-Global Rockstar/openzeppelin-contracts-upgradeable-master/contracts/utils/structs/BitMapsUpgradeable.sol",
+  "Chainsulting-Global Rockstar/openzeppelin-contracts-upgradeable-master/contracts/utils/structs/DoubleEndedQueueUpgradeable.sol",
+  "Chainsulting-Global Rockstar/openzeppelin-contracts-upgradeable-master/contracts/utils/structs/EnumerableMapUpgradeable.sol",
+  "Chainsulting-Global Rockstar/openzeppelin-contracts-upgradeable-master/contracts/utils/structs/EnumerableSetUpgradeable.sol",
+  "Chainsulting-SWAPP Protocol-project2/openzeppelin-contracts-4.2.0/contracts/access/AccessControl.sol",
+  "Chainsulting-SWAPP Protocol-project2/openzeppelin-contracts-4.2.0/contracts/access/AccessControlEnumerable.sol",
+  "Chainsulting-SWAPP Protocol-project2/openzeppelin-contracts-4.2.0/contracts/access/Ownable.sol",
+  "Chainsulting-SWAPP Protocol-project2/openzeppelin-contracts-4.2.0/contracts/finance/PaymentSplitter.sol",
+  "Chainsulting-SWAPP Protocol-project2/openzeppelin-contracts-4.2.0/contracts/governance/TimelockController.sol",
+  "Chainsulting-SWAPP Protocol-project2/openzeppelin-contracts-4.2.0/contracts/metatx/ERC2771Context.sol",
+  "Chainsulting-SWAPP Protocol-project2/openzeppelin-contracts-4.2.0/contracts/metatx/MinimalForwarder.sol",
+  "Chainsulting-SWAPP Protocol-project2/openzeppelin-contracts-4.2.0/contracts/proxy/Clones.sol",
+  "Chainsulting-SWAPP Protocol-project2/openzeppelin-contracts-4.2.0/contracts/proxy/ERC1967/ERC1967Proxy.sol",
+  "Chainsulting-SWAPP Protocol-project2/openzeppelin-contracts-4.2.0/contracts/proxy/ERC1967/ERC1967Upgrade.sol",
+  "Chainsulting-SWAPP Protocol-project2/openzeppelin-contracts-4.2.0/contracts/proxy/Proxy.sol",
+  "Chainsulting-SWAPP Protocol-project2/openzeppelin-contracts-4.2.0/contracts/proxy/beacon/BeaconProxy.sol",
+  "Chainsulting-SWAPP Protocol-project2/openzeppelin-contracts-4.2.0/contracts/proxy/beacon/UpgradeableBeacon.sol",
+  "Chainsulting-SWAPP Protocol-project2/openzeppelin-contracts-4.2.0/contracts/proxy/transparent/ProxyAdmin.sol",
+  "Chainsulting-SWAPP Protocol-project2/openzeppelin-contracts-4.2.0/contracts/proxy/transparent/TransparentUpgradeableProxy.sol",
+  "Chainsulting-SWAPP Protocol-project2/openzeppelin-contracts-4.2.0/contracts/proxy/utils/UUPSUpgradeable.sol",
+  "Chainsulting-SWAPP Protocol-project2/openzeppelin-contracts-4.2.0/contracts/security/Pausable.sol",
+  "Chainsulting-SWAPP Protocol-project2/openzeppelin-contracts-4.2.0/contracts/security/PullPayment.sol",
+  "Chainsulting-SWAPP Protocol-project2/openzeppelin-contracts-4.2.0/contracts/token/ERC1155/ERC1155.sol",
+  "Chainsulting-SWAPP Protocol-project2/openzeppelin-contracts-4.2.0/contracts/token/ERC1155/extensions/ERC1155Burnable.sol",
+  "Chainsulting-SWAPP Protocol-project2/openzeppelin-contracts-4.2.0/contracts/token/ERC1155/extensions/ERC1155Pausable.sol",
+  "Chainsulting-SWAPP Protocol-project2/openzeppelin-contracts-4.2.0/contracts/token/ERC1155/extensions/ERC1155Supply.sol",
+  "Chainsulting-SWAPP Protocol-project2/openzeppelin-contracts-4.2.0/contracts/token/ERC1155/presets/ERC1155PresetMinterPauser.sol",
+  "Chainsulting-SWAPP Protocol-project2/openzeppelin-contracts-4.2.0/contracts/token/ERC1155/utils/ERC1155Holder.sol",
+  "Chainsulting-SWAPP Protocol-project2/openzeppelin-contracts-4.2.0/contracts/token/ERC1155/utils/ERC1155Receiver.sol",
+  "Chainsulting-SWAPP Protocol-project2/openzeppelin-contracts-4.2.0/contracts/token/ERC20/ERC20.sol",
+  "Chainsulting-SWAPP Protocol-project2/openzeppelin-contracts-4.2.0/contracts/token/ERC20/extensions/ERC20Burnable.sol",
+  "Chainsulting-SWAPP Protocol-project2/openzeppelin-contracts-4.2.0/contracts/token/ERC20/extensions/ERC20Capped.sol",
+  "Chainsulting-SWAPP Protocol-project2/openzeppelin-contracts-4.2.0/contracts/token/ERC20/extensions/ERC20FlashMint.sol",
+  "Chainsulting-SWAPP Protocol-project2/openzeppelin-contracts-4.2.0/contracts/token/ERC20/extensions/ERC20Pausable.sol",
+  "Chainsulting-SWAPP Protocol-project2/openzeppelin-contracts-4.2.0/contracts/token/ERC20/extensions/ERC20Snapshot.sol",
+  "Chainsulting-SWAPP Protocol-project2/openzeppelin-contracts-4.2.0/contracts/token/ERC20/extensions/ERC20Votes.sol",
+  "Chainsulting-SWAPP Protocol-project2/openzeppelin-contracts-4.2.0/contracts/token/ERC20/extensions/ERC20VotesComp.sol",
+  "Chainsulting-SWAPP Protocol-project2/openzeppelin-contracts-4.2.0/contracts/token/ERC20/extensions/ERC20Wrapper.sol",
+  "Chainsulting-SWAPP Protocol-project2/openzeppelin-contracts-4.2.0/contracts/token/ERC20/extensions/draft-ERC20Permit.sol",
+  "Chainsulting-SWAPP Protocol-project2/openzeppelin-contracts-4.2.0/contracts/token/ERC20/presets/ERC20PresetMinterPauser.sol",
+  "Chainsulting-SWAPP Protocol-project2/openzeppelin-contracts-4.2.0/contracts/token/ERC20/utils/SafeERC20.sol",
+  "Chainsulting-SWAPP Protocol-project2/openzeppelin-contracts-4.2.0/contracts/token/ERC20/utils/TokenTimelock.sol",
+  "Chainsulting-SWAPP Protocol-project2/openzeppelin-contracts-4.2.0/contracts/token/ERC721/ERC721.sol",
+  "Chainsulting-SWAPP Protocol-project2/openzeppelin-contracts-4.2.0/contracts/token/ERC721/extensions/ERC721Burnable.sol",
+  "Chainsulting-SWAPP Protocol-project2/openzeppelin-contracts-4.2.0/contracts/token/ERC721/extensions/ERC721Enumerable.sol",
+  "Chainsulting-SWAPP Protocol-project2/openzeppelin-contracts-4.2.0/contracts/token/ERC721/extensions/ERC721Pausable.sol",
+  "Chainsulting-SWAPP Protocol-project2/openzeppelin-contracts-4.2.0/contracts/token/ERC721/extensions/ERC721URIStorage.sol",
+  "Chainsulting-SWAPP Protocol-project2/openzeppelin-contracts-4.2.0/contracts/token/ERC721/presets/ERC721PresetMinterPauserAutoId.sol",
+  "Chainsulting-SWAPP Protocol-project2/openzeppelin-contracts-4.2.0/contracts/token/ERC721/utils/ERC721Holder.sol",
+  "Chainsulting-SWAPP Protocol-project2/openzeppelin-contracts-4.2.0/contracts/token/ERC777/ERC777.sol",
+  "Chainsulting-SWAPP Protocol-project2/openzeppelin-contracts-4.2.0/contracts/utils/Address.sol",
+  "Chainsulting-SWAPP Protocol-project2/openzeppelin-contracts-4.2.0/contracts/utils/Arrays.sol",
+  "Chainsulting-SWAPP Protocol-project2/openzeppelin-contracts-4.2.0/contracts/utils/Context.sol",
+  "Chainsulting-SWAPP Protocol-project2/openzeppelin-contracts-4.2.0/contracts/utils/Counters.sol",
+  "Chainsulting-SWAPP Protocol-project2/openzeppelin-contracts-4.2.0/contracts/utils/Create2.sol",
+  "Chainsulting-SWAPP Protocol-project2/openzeppelin-contracts-4.2.0/contracts/utils/Multicall.sol",
+  "Chainsulting-SWAPP Protocol-project2/openzeppelin-contracts-4.2.0/contracts/utils/StorageSlot.sol",
+  "Chainsulting-SWAPP Protocol-project2/openzeppelin-contracts-4.2.0/contracts/utils/Strings.sol",
+  "Chainsulting-SWAPP Protocol-project2/openzeppelin-contracts-4.2.0/contracts/utils/cryptography/ECDSA.sol",
+  "Chainsulting-SWAPP Protocol-project2/openzeppelin-contracts-4.2.0/contracts/utils/cryptography/MerkleProof.sol",
+  "Chainsulting-SWAPP Protocol-project2/openzeppelin-contracts-4.2.0/contracts/utils/cryptography/SignatureChecker.sol",
+  "Chainsulting-SWAPP Protocol-project2/openzeppelin-contracts-4.2.0/contracts/utils/cryptography/draft-EIP712.sol",
+  "Chainsulting-SWAPP Protocol-project2/openzeppelin-contracts-4.2.0/contracts/utils/escrow/ConditionalEscrow.sol",
+  "Chainsulting-SWAPP Protocol-project2/openzeppelin-contracts-4.2.0/contracts/utils/escrow/Escrow.sol",
+  "Chainsulting-SWAPP Protocol-project2/openzeppelin-contracts-4.2.0/contracts/utils/escrow/RefundEscrow.sol",
+  "Chainsulting-SWAPP Protocol-project2/openzeppelin-contracts-4.2.0/contracts/utils/introspection/ERC165.sol",
+  "Chainsulting-SWAPP Protocol-project2/openzeppelin-contracts-4.2.0/contracts/utils/introspection/ERC165Checker.sol",
+  "Chainsulting-SWAPP Protocol-project2/openzeppelin-contracts-4.2.0/contracts/utils/introspection/ERC165Storage.sol",
+  "Chainsulting-SWAPP Protocol-project2/openzeppelin-contracts-4.2.0/contracts/utils/introspection/ERC1820Implementer.sol",
+  "Chainsulting-SWAPP Protocol-project2/openzeppelin-contracts-4.2.0/contracts/utils/math/Math.sol",
+  "Chainsulting-SWAPP Protocol-project2/openzeppelin-contracts-4.2.0/contracts/utils/math/SafeCast.sol",
+  "Chainsulting-SWAPP Protocol-project2/openzeppelin-contracts-4.2.0/contracts/utils/math/SafeMath.sol",
+  "Chainsulting-SWAPP Protocol-project2/openzeppelin-contracts-4.2.0/contracts/utils/math/SignedSafeMath.sol",
+  "Chainsulting-SWAPP Protocol-project2/openzeppelin-contracts-4.2.0/contracts/utils/structs/BitMaps.sol",
+  "Chainsulting-SWAPP Protocol-project2/openzeppelin-contracts-4.2.0/contracts/utils/structs/EnumerableMap.sol",
+  "Chainsulting-SWAPP Protocol-project2/openzeppelin-contracts-4.2.0/contracts/utils/structs/EnumerableSet.sol",
+  "Coinbae-SpaceMonkey/SpaceMonkey0x9298f766581650e81357f5C66C91cc003f2b75Aa/root/workspace/GXC/contracts/SPMK/SpaceMonkey.sol",
+  "Coinbae-SpaceMonkey/SpaceMonkey0x9298f766581650e81357f5C66C91cc003f2b75Aa/root/workspace/GXC/contracts/library/Address.sol",
+  "Coinbae-SpaceMonkey/SpaceMonkey0x9298f766581650e81357f5C66C91cc003f2b75Aa/root/workspace/GXC/contracts/library/Context.sol",
+  "Coinbae-SpaceMonkey/SpaceMonkey0x9298f766581650e81357f5C66C91cc003f2b75Aa/root/workspace/GXC/contracts/library/Ownable.sol",
+  "Coinfabrik-MintingFactoryV2, BaseUpgradableMarketplace & KODAV3UpgradableGatedMarketplace/known-origin-contracts-v3-d592c5f4fa4e0b6fc65a1fce43e302706aedf607/contracts/access/legacy/SelfServiceAccessControls.sol",
+  "Coinfabrik-MintingFactoryV2, BaseUpgradableMarketplace & KODAV3UpgradableGatedMarketplace/known-origin-contracts-v3-d592c5f4fa4e0b6fc65a1fce43e302706aedf607/contracts/collab/handlers/CollabFundsHandlerBase.sol",
+  "Coinfabrik-MintingFactoryV2, BaseUpgradableMarketplace & KODAV3UpgradableGatedMarketplace/known-origin-contracts-v3-d592c5f4fa4e0b6fc65a1fce43e302706aedf607/contracts/core/Konstants.sol",
+  "Coinfabrik-MintingFactoryV2, BaseUpgradableMarketplace & KODAV3UpgradableGatedMarketplace/known-origin-contracts-v3-d592c5f4fa4e0b6fc65a1fce43e302706aedf607/contracts/deployer/KOCreate2OmniDeployer.sol",
+  "Coinfabrik-MintingFactoryV2, BaseUpgradableMarketplace & KODAV3UpgradableGatedMarketplace/known-origin-contracts-v3-d592c5f4fa4e0b6fc65a1fce43e302706aedf607/contracts/spikes/collaborators/beacon/RoyaltyImplV1R1.sol",
+  "Coinfabrik-MintingFactoryV2, BaseUpgradableMarketplace & KODAV3UpgradableGatedMarketplace/known-origin-contracts-v3-d592c5f4fa4e0b6fc65a1fce43e302706aedf607/contracts/spikes/collaborators/handlers/FundsReceiver.sol",
+  "Coinfabrik-MintingFactoryV2, BaseUpgradableMarketplace & KODAV3UpgradableGatedMarketplace/known-origin-contracts-v3-d592c5f4fa4e0b6fc65a1fce43e302706aedf607/contracts/spikes/collaborators/handlers/FundsSplitter.sol",
+  "Coinfabrik-MintingFactoryV2, BaseUpgradableMarketplace & KODAV3UpgradableGatedMarketplace/known-origin-contracts-v3-d592c5f4fa4e0b6fc65a1fce43e302706aedf607/contracts/spikes/core/mixins/MintBatchViaSig.sol",
+  "Coinfabrik-MintingFactoryV2, BaseUpgradableMarketplace & KODAV3UpgradableGatedMarketplace/known-origin-contracts-v3-d592c5f4fa4e0b6fc65a1fce43e302706aedf607/contracts/spikes/core/mixins/NFTPermit.sol",
+  "Coinspect-Tempus Audit/tempus-protocol-ee5964bd416770e00639a4053b45f346e4bf8b93/contracts/math/Fixed256x18.sol",
+  "Coinspect-Tempus Audit/tempus-protocol-ee5964bd416770e00639a4053b45f346e4bf8b93/contracts/stats/ChainlinkTokenPairPriceFeed/ChainlinkTokenPairPriceFeed.sol",
+  "Cystack-AOC BEP-20 - v1.3/AOC_BEP0x53cB59f3Ee1035daD6b63F88d9150EA70a1f2605/contracts/AOC_BEP.sol",
+  "Cystack-AOC BEP-20 - v1.3/AOC_BEP0x53cB59f3Ee1035daD6b63F88d9150EA70a1f2605/contracts/library/DateTime.sol",
+  "Cystack-AOC ERC-20 V2 - v1.2/AOC_ERC200x41cc978FaE6f34B25553A498D1e245FDF944FF3E/contracts/AOC_ERC20.sol",
+  "Cystack-AOC ERC-20 V2 - v1.2/AOC_ERC200x41cc978FaE6f34B25553A498D1e245FDF944FF3E/contracts/library/DateTime.sol",
+  "HAECHI_AUDIT-Fractional/contracts-37f9428fe9a5596c93ed9dfccb7be41afc0646ee/src/ERC721TokenVault.sol",
+  "HAECHI_AUDIT-Fractional/contracts-37f9428fe9a5596c93ed9dfccb7be41afc0646ee/src/ERC721VaultFactory.sol",
+  "HAECHI_AUDIT-Fractional/contracts-37f9428fe9a5596c93ed9dfccb7be41afc0646ee/src/IndexERC721.sol",
+  "HAECHI_AUDIT-Fractional/contracts-37f9428fe9a5596c93ed9dfccb7be41afc0646ee/src/Settings.sol",
+  "Hacken-Amoss/code/Amoss.sol",
+  "Hacken-Arkania Protocol/Code-4fe28aed2e2549ba649ed2edb6a11ef7d2ac73fd/AniaLottery.sol",
+  "Hacken-Arkania Protocol/Code-4fe28aed2e2549ba649ed2edb6a11ef7d2ac73fd/AniaStake.sol",
+  "Hacken-Bitcoin SB-V2/code/BSB_StakingSmartStakers.sol",
+  "Hacken-Bitcoin SB-V2/code/BSB_StakingSoftStakers.sol",
+  "Hacken-Bitcoin SB-V2/code/BSB_StakingStrongStakers.sol",
+  "Hacken-CGU/CGUToken0x747D74dB20cc422F39ab54EDB2A3Ce21f3C98AF1/contracts/CGUToken.sol",
+  "Hacken-CGU/CGUToken0x747D74dB20cc422F39ab54EDB2A3Ce21f3C98AF1/contracts/ERC20.sol",
+  "Hacken-CGU/CGUToken0x747D74dB20cc422F39ab54EDB2A3Ce21f3C98AF1/contracts/access/Ownable.sol",
+  "Hacken-CGU/CGUToken0x747D74dB20cc422F39ab54EDB2A3Ce21f3C98AF1/contracts/utils/Context.sol",
+  "Hacken-DeHealth HLT Network/code/DProxy.sol",
+  "Hacken-DeHealth HLT Network/code/DeHealthToken.sol",
+  "Hacken-Fidometa-V1/Smart_Contract-66f43e8644a20ed2ebbc4db94d6b2dcc797ac1c7/FidoMeta.sol",
+  "Hacken-Fidometa-V1/Smart_Contract-7bb7d6d237f8a6ff97470a8969f42a9bb78a6db5/FidoMeta.sol",
+  "Hacken-Fidometa-V1/Smart_Contract-ad56b0ce678f77d162752dbb5d987d2f4a29fddf/FidoMeta.sol",
+  "Hacken-Fidometa-V2/Smart_Contract-66f43e8644a20ed2ebbc4db94d6b2dcc797ac1c7/FidoMeta.sol",
+  "Hacken-Fidometa-V2/Smart_Contract-7bb7d6d237f8a6ff97470a8969f42a9bb78a6db5/FidoMeta.sol",
+  "Hacken-Fidometa-V2/Smart_Contract-ad56b0ce678f77d162752dbb5d987d2f4a29fddf/FidoMeta.sol",
+  "Hacken-Fidometa-V2/Smart_Contract-cfa7cbe26661482efaf0b71e2c86e690ac52244c/FidoMeta.sol",
+  "Hacken-FoilNetwork/tge-seed-round-smart-contract-D3522A4628CE735058E57852AB1425600D296FC8/Lockup.sol",
+  "Hacken-Forbitspace/forbitspaceX-bep20-19fc2b037b743e9f795709c72f004efe1109aaaf/contracts-merged/forbitspaceX.sol",
+  "Hacken-Forbitspace/forbitspaceX-bep20-19fc2b037b743e9f795709c72f004efe1109aaaf/contracts/libraries/Address.sol",
+  "Hacken-Forbitspace/forbitspaceX-bep20-19fc2b037b743e9f795709c72f004efe1109aaaf/contracts/libraries/Context.sol",
+  "Hacken-Forbitspace/forbitspaceX-bep20-19fc2b037b743e9f795709c72f004efe1109aaaf/contracts/libraries/Ownable.sol",
+  "Hacken-Forbitspace/forbitspaceX-bep20-19fc2b037b743e9f795709c72f004efe1109aaaf/contracts/libraries/Payment.sol",
+  "Hacken-Forbitspace/forbitspaceX-bep20-19fc2b037b743e9f795709c72f004efe1109aaaf/contracts/libraries/SafeBEP20.sol",
+  "Hacken-Forbitspace/forbitspaceX-bep20-19fc2b037b743e9f795709c72f004efe1109aaaf/contracts/libraries/SafeMath.sol",
+  "Hacken-GOGOcoin/gogo-contracts-0204c6d60f7aaa5c195573fbd0e8388c9bc4a2ef/contracts/libraries/Babylonian.sol",
+  "Hacken-GOGOcoin/gogo-contracts-0204c6d60f7aaa5c195573fbd0e8388c9bc4a2ef/contracts/libraries/LowGasSafeMath.sol",
+  "Hacken-Galeon/code/code.sol",
+  "Hacken-MetagamZ/MetagamZ-bbcc0341d584ddbfe46d0e9e5ae957a100158b6b/Vesting/Vesting.sol",
+  "Hacken-Oracula/Oracula0x85f3ec4EC49aB6a5901278176235957ef521970d/Oracula0x85f3ec4EC49aB6a5901278176235957ef521970d.sol",
+  "Hacken-Overnight/ovnstable-core-e76b55af45a5125a99c4d32da8702123d0662ea7/contracts/price_getters/AbstractPriceGetter.sol",
+  "Hacken-Overnight/ovnstable-core-e76b55af45a5125a99c4d32da8702123d0662ea7/contracts/price_getters/UsdcPriceGetter.sol",
+  "Hacken-PolkaBridge/PolkaBridge-DEX-21b662c48caf08242bfa01621bbbafc957e4ff31/factory/contracts/UniswapV2ERC20.sol",
+  "Hacken-PolkaBridge/PolkaBridge-DEX-21b662c48caf08242bfa01621bbbafc957e4ff31/factory/contracts/UniswapV2Factory.sol",
+  "Hacken-PolkaBridge/PolkaBridge-DEX-21b662c48caf08242bfa01621bbbafc957e4ff31/factory/contracts/UniswapV2Pair.sol",
+  "Hacken-PolkaBridge/PolkaBridge-DEX-21b662c48caf08242bfa01621bbbafc957e4ff31/factory/contracts/libraries/Math.sol",
+  "Hacken-PolkaBridge/PolkaBridge-DEX-21b662c48caf08242bfa01621bbbafc957e4ff31/factory/contracts/libraries/SafeMath.sol",
+  "Hacken-PolkaBridge/PolkaBridge-DEX-21b662c48caf08242bfa01621bbbafc957e4ff31/factory/contracts/libraries/UQ112x112.sol",
+  "Hacken-PolkaBridge/PolkaBridge-DEX-21b662c48caf08242bfa01621bbbafc957e4ff31/factory/contracts/utils/OwnableFactory.sol",
+  "Hacken-QANplatform/qanx-token-ebf0352af6ccb8d991827a0fba3ac5cfe9ca6b70/QANX.sol",
+  "Hacken-Samurai Legends/contract_samurai-legends-tokens-aff9f451dffc6854f29375ac21f8cedba8ee1101/contracts/Array.sol",
+  "Hacken-Samurai Legends/contract_samurai-legends-tokens-aff9f451dffc6854f29375ac21f8cedba8ee1101/contracts/Generatable.sol",
+  "Hacken-Splash/splash-core-b38add0749f450a528197909005f6666cf609960/src/utils/ABDKMath64x64.sol",
+  "Hacken-Tenderize/tender-core-1fd606141625171fe792045ae9233890262d2d62/contracts/helpers/Multicall.sol",
+  "Hacken-Tenderize/tender-core-1fd606141625171fe792045ae9233890262d2d62/contracts/tenderizer/WithdrawalLocks.sol",
+  "Hacken-Tenderize/tender-core-1fd606141625171fe792045ae9233890262d2d62/contracts/tenderizer/WithdrawalPools.sol",
+  "Hacken-Tenderize/tender-core-5b3b625d09e0bc02529946d9f2128af0c08c1a31/contracts/helpers/Multicall.sol",
+  "Hacken-Tenderize/tender-core-5b3b625d09e0bc02529946d9f2128af0c08c1a31/contracts/tenderizer/WithdrawalLocks.sol",
+  "Hacken-Tenderize/tender-core-5b3b625d09e0bc02529946d9f2128af0c08c1a31/contracts/tenderizer/WithdrawalPools.sol",
+  "Hacken-Travelcare/TravelCare0x826e5Ec70DbC5607fF9218011FBb97F9a8D97953/contracts/TravelCare.sol",
+  "Hacken-Valhalla/Solidity-70de7d9daccb6d812b2ab96f20fb4aa2605e2601/erc20/Address.sol",
+  "Hacken-Valhalla/Solidity-70de7d9daccb6d812b2ab96f20fb4aa2605e2601/erc20/Context.sol",
+  "Hacken-Valhalla/Solidity-70de7d9daccb6d812b2ab96f20fb4aa2605e2601/erc20/ERC20.sol",
+  "Hacken-Valhalla/Solidity-70de7d9daccb6d812b2ab96f20fb4aa2605e2601/erc20/Ownable.sol",
+  "Hacken-Valhalla/Solidity-70de7d9daccb6d812b2ab96f20fb4aa2605e2601/erc721/Address.sol",
+  "Hacken-Valhalla/Solidity-70de7d9daccb6d812b2ab96f20fb4aa2605e2601/erc721/Context.sol",
+  "Hacken-Valhalla/Solidity-70de7d9daccb6d812b2ab96f20fb4aa2605e2601/erc721/ERC165.sol",
+  "Hacken-Valhalla/Solidity-70de7d9daccb6d812b2ab96f20fb4aa2605e2601/erc721/ERC721.sol",
+  "Hacken-Valhalla/Solidity-70de7d9daccb6d812b2ab96f20fb4aa2605e2601/erc721/ERC721Enumerable.sol",
+  "Hacken-Valhalla/Solidity-70de7d9daccb6d812b2ab96f20fb4aa2605e2601/erc721/Ownable.sol",
+  "Hacken-Valhalla/Solidity-70de7d9daccb6d812b2ab96f20fb4aa2605e2601/erc721/Strings.sol",
+  "Hacken-Valhalla/Solidity-70de7d9daccb6d812b2ab96f20fb4aa2605e2601/erc721/mynft.sol",
+  "Hacken-Valhalla/Solidity-70de7d9daccb6d812b2ab96f20fb4aa2605e2601/market/Address.sol",
+  "Hacken-Valhalla/Solidity-70de7d9daccb6d812b2ab96f20fb4aa2605e2601/market/Context.sol",
+  "Hacken-Valhalla/Solidity-70de7d9daccb6d812b2ab96f20fb4aa2605e2601/market/Ownable.sol",
+  "Hacken-Valhalla/Solidity-70de7d9daccb6d812b2ab96f20fb4aa2605e2601/market/SafeERC20.sol",
+  "Hacken-ZIXXAR INTERNATIONAL DISTRIBUTION SRL/staking-smart-contracts-e6ba771bba2a1e2c438202e246c963da2f3aa00f/Staking.sol",
+  "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/ARTHX/ARTHX.sol",
+  "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/ARTHX/ARTHXTaxController.sol",
+  "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/ARTHX/TokenVesting.sol",
+  "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/Arth/Arth.sol",
+  "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/Arth/ArthBridge.sol",
+  "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/Arth/ArthController.sol",
+  "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/Arth/IncentiveController.sol",
+  "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/Arth/IncentiveControllerRouter.sol",
+  "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/Arth/Pools/ArthPool.sol",
+  "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/Arth/Pools/ArthPoolLibrary.sol",
+  "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/Curves/Curve.sol",
+  "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/Curves/Sigmoid.sol",
+  "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/ERC20/AnyswapV4Token.sol",
+  "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/ERC20/ERC20.sol",
+  "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/ERC20/ERC20Custom.sol",
+  "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/ERC20/PoolToken.sol",
+  "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/ERC20/SafeERC20.sol",
+  "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/ERC20/Variants/Comp.sol",
+  "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/ERC20/Variants/SushiToken.sol",
+  "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/ERC20/WETH.sol",
+  "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/ERC20/extensions/ERC20Pausable.sol",
+  "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/ERC20/extensions/ERC20Permit.sol",
+  "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/ERC20/extensions/ERC20Snapshot.sol",
+  "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/Genesis/BondingCurve.sol",
+  "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/Genesis/Genesis.sol",
+  "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/Governance/Timelock.sol",
+  "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/Oracle/ChainlinkETHUSDPriceConsumer.sol",
+  "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/Oracle/ChainlinkETHUSDPriceConsumerTest.sol",
+  "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/Oracle/SimpleOracle.sol",
+  "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/Oracle/UniswapPairOracle.sol",
+  "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/Router/ArthPoolRouter.sol",
+  "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/Router/ArthPoolRouterWithPermit.sol",
+  "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/Staking/Owned.sol",
+  "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/Staking/Pausable.sol",
+  "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/Staking/RewardsDistributionRecipient.sol",
+  "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/Staking/StakingRewards.sol",
+  "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/Staking/StakingRewardsDual.sol",
+  "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/Staking/StakingRewardsDualV2.sol",
+  "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/access/AccessControl.sol",
+  "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/access/Ownable.sol",
+  "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/amos/ArthLendingAMO.sol",
+  "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/amos/ArthPoolInvestorForV2.sol",
+  "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/amos/harvest/IHARVESTNoMintRewardPool_Partial.sol",
+  "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/security/Pausable.sol",
+  "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/security/PullPayment.sol",
+  "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/utils/Address.sol",
+  "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/utils/Arrays.sol",
+  "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/utils/BlockMiner.sol",
+  "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/utils/Context.sol",
+  "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/utils/Counters.sol",
+  "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/utils/EnumerableSet.sol",
+  "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/utils/StringHelpers.sol",
+  "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/utils/Strings.sol",
+  "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/utils/cryptography/ECDSA.sol",
+  "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/utils/cryptography/MerkleProof.sol",
+  "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/utils/cryptography/draft-EIP712.sol",
+  "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/utils/escrow/ConditionalEscrow.sol",
+  "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/utils/escrow/Escrow.sol",
+  "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/utils/escrow/RefundEscrow.sol",
+  "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/utils/introspection/ERC165.sol",
+  "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/utils/introspection/ERC165Checker.sol",
+  "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/utils/introspection/ERC165Storage.sol",
+  "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/utils/introspection/ERC1820Implementer.sol",
+  "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/utils/math/Babylonian.sol",
+  "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/utils/math/FixedPoint.sol",
+  "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/utils/math/MagnitudesAndPowers.sol",
+  "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/utils/math/Math.sol",
+  "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/utils/math/SafeCast.sol",
+  "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/utils/math/SafeDecimalMath.sol",
+  "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/utils/math/SafeMath.sol",
+  "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/utils/math/SignedSafeMath.sol",
+  "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/utils/math/UQ112x112.sol",
+  "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/utils/structs/EnumerableMap.sol",
+  "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/utils/structs/EnumerableSet.sol",
+  "ImmuneBytes-Pluteus-Audit Report/code/Pluteus (1).sol",
+  "ImmuneBytes-Pluteus-Final Audit Report/code/Pluteus (1).sol",
+  "ImmuneBytes-WadzPay-Audit Report/code/WadzPayToken.sol",
+  "Inspex-Admin & Poll/iAM-Admin-Poll-Token-main/access/Adminnable.sol",
+  "Inspex-Admin & Poll/iAM-Admin-Poll-Token-main/admin/adminManage.sol",
+  "Inspex-Admin & Poll/iAM-Admin-Poll-Token-main/libraries/Bytes32.sol",
+  "Inspex-AutoCompound/auto-compound-v2-92626a1dcfc55a28afdf4f996d600fe8bbfd6efd/AllocKafra.sol",
+  "Inspex-AutoCompound/auto-compound-v2-92626a1dcfc55a28afdf4f996d600fe8bbfd6efd/Emperium.sol",
+  "Inspex-AutoCompound/auto-compound-v2-92626a1dcfc55a28afdf4f996d600fe8bbfd6efd/FeeKafra.sol",
+  "Inspex-AutoCompound/auto-compound-v2-92626a1dcfc55a28afdf4f996d600fe8bbfd6efd/GasPrice.sol",
+  "Inspex-AutoCompound/auto-compound-v2-92626a1dcfc55a28afdf4f996d600fe8bbfd6efd/IzludeV2.sol",
+  "Inspex-AutoCompound/auto-compound-v2-92626a1dcfc55a28afdf4f996d600fe8bbfd6efd/PancakeByalanLP.sol",
+  "Inspex-AutoCompound/auto-compound-v2-92626a1dcfc55a28afdf4f996d600fe8bbfd6efd/PronteraReserve.sol",
+  "Inspex-AutoCompound/auto-compound-v2-92626a1dcfc55a28afdf4f996d600fe8bbfd6efd/PronteraV2.sol",
+  "Inspex-AutoStake, ThorusMaster & Token/contracts-ea34f1b89a39b89ae12ea6a0a5be0cad81cf464e/StatikMaster.sol",
+  "Inspex-AutoStake, ThorusMaster & Token/contracts-ea34f1b89a39b89ae12ea6a0a5be0cad81cf464e/StatikToken.sol",
+  "Inspex-AutoStake, ThorusMaster & Token/contracts-ea34f1b89a39b89ae12ea6a0a5be0cad81cf464e/StatikWithdrawer.sol",
+  "Inspex-AutoStake, ThorusMaster & Token/contracts-ea34f1b89a39b89ae12ea6a0a5be0cad81cf464e/ThorusAutoStake.sol",
+  "Inspex-AutoStake, ThorusMaster & Token/contracts-ea34f1b89a39b89ae12ea6a0a5be0cad81cf464e/ThorusBond.sol",
+  "Inspex-AutoStake, ThorusMaster & Token/contracts-ea34f1b89a39b89ae12ea6a0a5be0cad81cf464e/ThorusMaster.sol",
+  "Inspex-AutoStake, ThorusMaster & Token/contracts-ea34f1b89a39b89ae12ea6a0a5be0cad81cf464e/ThorusToken.sol",
+  "Inspex-Revenue Sharing Pool & Shield/LuckyLion-RevenueSharing-342db925e80c9e62fce7505d24431e3d82199b87/contracts/utils/Counters.sol",
+  "Inspex-SimpliChef, Token, ZapBSC & Broker/simpli-smart-contract-4823d1ebbd84a35dd7e8f9fd7f5207ef5c85c419/contracts/timelock/TimelockController.sol",
+  "Inspex-SimpliChef, Token, ZapBSC & Broker/simpli-smart-contract-4823d1ebbd84a35dd7e8f9fd7f5207ef5c85c419/contracts/timelock/access/AccessControl.sol",
+  "Inspex-SimpliChef, Token, ZapBSC & Broker/simpli-smart-contract-4823d1ebbd84a35dd7e8f9fd7f5207ef5c85c419/contracts/timelock/utils/Context.sol",
+  "Inspex-SimpliChef, Token, ZapBSC & Broker/simpli-smart-contract-4823d1ebbd84a35dd7e8f9fd7f5207ef5c85c419/contracts/timelock/utils/Strings.sol",
+  "Inspex-SimpliChef, Token, ZapBSC & Broker/simpli-smart-contract-4823d1ebbd84a35dd7e8f9fd7f5207ef5c85c419/contracts/timelock/utils/introspection/ERC165.sol",
+  "Inspex-ThorusDummy/contracts-main/StatikMaster.sol",
+  "Inspex-ThorusDummy/contracts-main/StatikToken.sol",
+  "Inspex-ThorusDummy/contracts-main/StatikWithdrawer.sol",
+  "Inspex-ThorusDummy/contracts-main/ThorusAutoStake.sol",
+  "Inspex-ThorusDummy/contracts-main/ThorusBond.sol",
+  "Inspex-ThorusDummy/contracts-main/ThorusDummy.sol",
+  "Inspex-ThorusDummy/contracts-main/ThorusLaunchpad.sol",
+  "Inspex-ThorusDummy/contracts-main/ThorusLottery.sol",
+  "Inspex-ThorusDummy/contracts-main/ThorusMaster.sol",
+  "Inspex-ThorusDummy/contracts-main/ThorusToken.sol",
+  "Inspex-Token & Vesting/MooMonster-Contract-2d07e927e5e8f66afea5cbdfb89b32ef74cfe385/contracts/TImelock.sol",
+  "Inspex-Token/iAM-Admin-Poll-Token-0f8bb7a04c439286a5dffa223c3b30265acb4b5c/access/Adminnable.sol",
+  "Inspex-Token/iAM-Admin-Poll-Token-0f8bb7a04c439286a5dffa223c3b30265acb4b5c/admin/adminManage.sol",
+  "Inspex-Token/iAM-Admin-Poll-Token-0f8bb7a04c439286a5dffa223c3b30265acb4b5c/libraries/Bytes32.sol",
+  "Inspex-WUSDMaster/WUSD-5f50a2c7ffff7828c70299e8a9217cfbb926b8c1/WUSD.sol",
+  "Inspex-WUSDMaster/WUSD-5f50a2c7ffff7828c70299e8a9217cfbb926b8c1/WUSDMaster.sol",
+  "Inspex-WUSDMaster/WUSD-5f50a2c7ffff7828c70299e8a9217cfbb926b8c1/WexWithdrawer.sol",
+  "Inspex-WUSDMaster/WUSD-91c541c2f1c0ac781ddcfb2be6a62555a5e1e8d1/WUSD.sol",
+  "Inspex-WUSDMaster/WUSD-91c541c2f1c0ac781ddcfb2be6a62555a5e1e8d1/WUSDMaster.sol",
+  "Inspex-WUSDMaster/WUSD-91c541c2f1c0ac781ddcfb2be6a62555a5e1e8d1/WexWithdrawer.sol",
+  "Inspex-WusdAaveStrategy/WUSD-main/WUSD.sol",
+  "Inspex-WusdAaveStrategy/WUSD-main/WUSDMaster.sol",
+  "Inspex-WusdAaveStrategy/WUSD-main/WexWithdrawer.sol",
+  "Inspex-WusdAaveStrategy/WUSD-main/WusdAaveStrategy.sol",
+  "Inspex-WusdAaveStrategy/WUSD-main/WusdAlpacaStrategy.sol",
+  "Inspex-xALPACA/xALPACA-contract-8c58dd3aaade09ae51de49dc44e7784fd63efa53/contracts/8.7/GrassHouseGateway.sol",
+  "Inspex-xALPACA/xALPACA-contract-8c58dd3aaade09ae51de49dc44e7784fd63efa53/contracts/8.7/SafeToken.sol",
+  "Inspex-xALPACA/xALPACA-contract-ef03ba7873f7f252b074e0b521ea93537abdedb9/contracts/8.10/GrassHouseGateway.sol",
+  "Inspex-xALPACA/xALPACA-contract-ef03ba7873f7f252b074e0b521ea93537abdedb9/contracts/8.10/SafeToken.sol",
+  "Inspex-xALPACA/xALPACA-contract-ef03ba7873f7f252b074e0b521ea93537abdedb9/contracts/8.10/utils/Math128.sol",
+  "PeckShield-AaveV3/code/aave-v3-core-14f6148e21b477d78347db6a1603039c9559e275/contracts/deployments/ReservesSetupHelper.sol",
+  "PeckShield-AaveV3/code/aave-v3-core-14f6148e21b477d78347db6a1603039c9559e275/contracts/misc/AaveOracle.sol",
+  "PeckShield-AaveV3/code/aave-v3-core-14f6148e21b477d78347db6a1603039c9559e275/contracts/misc/AaveProtocolDataProvider.sol",
+  "PeckShield-AaveV3/code/aave-v3-core-14f6148e21b477d78347db6a1603039c9559e275/contracts/protocol/configuration/ACLManager.sol",
+  "PeckShield-AaveV3/code/aave-v3-core-14f6148e21b477d78347db6a1603039c9559e275/contracts/protocol/configuration/PoolAddressesProvider.sol",
+  "PeckShield-AaveV3/code/aave-v3-core-14f6148e21b477d78347db6a1603039c9559e275/contracts/protocol/configuration/PoolAddressesProviderRegistry.sol",
+  "PeckShield-AaveV3/code/aave-v3-core-14f6148e21b477d78347db6a1603039c9559e275/contracts/protocol/configuration/PriceOracleSentinel.sol",
+  "PeckShield-AaveV3/code/aave-v3-core-14f6148e21b477d78347db6a1603039c9559e275/contracts/protocol/libraries/aave-upgradeability/BaseImmutableAdminUpgradeabilityProxy.sol",
+  "PeckShield-AaveV3/code/aave-v3-core-14f6148e21b477d78347db6a1603039c9559e275/contracts/protocol/libraries/aave-upgradeability/InitializableImmutableAdminUpgradeabilityProxy.sol",
+  "PeckShield-AaveV3/code/aave-v3-core-14f6148e21b477d78347db6a1603039c9559e275/contracts/protocol/libraries/aave-upgradeability/VersionedInitializable.sol",
+  "PeckShield-AaveV3/code/aave-v3-core-14f6148e21b477d78347db6a1603039c9559e275/contracts/protocol/libraries/configuration/ReserveConfiguration.sol",
+  "PeckShield-AaveV3/code/aave-v3-core-14f6148e21b477d78347db6a1603039c9559e275/contracts/protocol/libraries/configuration/UserConfiguration.sol",
+  "PeckShield-AaveV3/code/aave-v3-core-14f6148e21b477d78347db6a1603039c9559e275/contracts/protocol/libraries/helpers/Helpers.sol",
+  "PeckShield-AaveV3/code/aave-v3-core-14f6148e21b477d78347db6a1603039c9559e275/contracts/protocol/libraries/logic/BorrowLogic.sol",
+  "PeckShield-AaveV3/code/aave-v3-core-14f6148e21b477d78347db6a1603039c9559e275/contracts/protocol/libraries/logic/BridgeLogic.sol",
+  "PeckShield-AaveV3/code/aave-v3-core-14f6148e21b477d78347db6a1603039c9559e275/contracts/protocol/libraries/logic/ConfiguratorLogic.sol",
+  "PeckShield-AaveV3/code/aave-v3-core-14f6148e21b477d78347db6a1603039c9559e275/contracts/protocol/libraries/logic/EModeLogic.sol",
+  "PeckShield-AaveV3/code/aave-v3-core-14f6148e21b477d78347db6a1603039c9559e275/contracts/protocol/libraries/logic/FlashLoanLogic.sol",
+  "PeckShield-AaveV3/code/aave-v3-core-14f6148e21b477d78347db6a1603039c9559e275/contracts/protocol/libraries/logic/GenericLogic.sol",
+  "PeckShield-AaveV3/code/aave-v3-core-14f6148e21b477d78347db6a1603039c9559e275/contracts/protocol/libraries/logic/LiquidationLogic.sol",
+  "PeckShield-AaveV3/code/aave-v3-core-14f6148e21b477d78347db6a1603039c9559e275/contracts/protocol/libraries/logic/ReserveLogic.sol",
+  "PeckShield-AaveV3/code/aave-v3-core-14f6148e21b477d78347db6a1603039c9559e275/contracts/protocol/libraries/logic/SupplyLogic.sol",
+  "PeckShield-AaveV3/code/aave-v3-core-14f6148e21b477d78347db6a1603039c9559e275/contracts/protocol/libraries/logic/ValidationLogic.sol",
+  "PeckShield-AaveV3/code/aave-v3-core-14f6148e21b477d78347db6a1603039c9559e275/contracts/protocol/libraries/math/MathUtils.sol",
+  "PeckShield-AaveV3/code/aave-v3-core-14f6148e21b477d78347db6a1603039c9559e275/contracts/protocol/libraries/math/PercentageMath.sol",
+  "PeckShield-AaveV3/code/aave-v3-core-14f6148e21b477d78347db6a1603039c9559e275/contracts/protocol/libraries/math/WadRayMath.sol",
+  "PeckShield-AaveV3/code/aave-v3-core-14f6148e21b477d78347db6a1603039c9559e275/contracts/protocol/pool/DefaultReserveInterestRateStrategy.sol",
+  "PeckShield-AaveV3/code/aave-v3-core-14f6148e21b477d78347db6a1603039c9559e275/contracts/protocol/pool/Pool.sol",
+  "PeckShield-AaveV3/code/aave-v3-core-14f6148e21b477d78347db6a1603039c9559e275/contracts/protocol/pool/PoolConfigurator.sol",
+  "PeckShield-AaveV3/code/aave-v3-core-14f6148e21b477d78347db6a1603039c9559e275/contracts/protocol/tokenization/AToken.sol",
+  "PeckShield-AaveV3/code/aave-v3-core-14f6148e21b477d78347db6a1603039c9559e275/contracts/protocol/tokenization/DelegationAwareAToken.sol",
+  "PeckShield-AaveV3/code/aave-v3-core-14f6148e21b477d78347db6a1603039c9559e275/contracts/protocol/tokenization/IncentivizedERC20.sol",
+  "PeckShield-AaveV3/code/aave-v3-core-14f6148e21b477d78347db6a1603039c9559e275/contracts/protocol/tokenization/StableDebtToken.sol",
+  "PeckShield-AaveV3/code/aave-v3-core-14f6148e21b477d78347db6a1603039c9559e275/contracts/protocol/tokenization/VariableDebtToken.sol",
+  "PeckShield-AaveV3/code/aave-v3-core-14f6148e21b477d78347db6a1603039c9559e275/contracts/protocol/tokenization/base/DebtTokenBase.sol",
+  "PeckShield-COGI/cogi_contracts-c5dc614395f77a5b07c83223e5c8bac9d14d2e2c/contracts/common/meta-transactions/ContextMixin.sol",
+  "PeckShield-Convex_Frax/frax-cvx-platform-2f8573ee796daa022c1050b4a749bf08049c439b/contracts/contracts/FeeRegistry.sol",
+  "PeckShield-Convex_Frax/frax-cvx-platform-2f8573ee796daa022c1050b4a749bf08049c439b/contracts/contracts/PoolRegistry.sol",
+  "PeckShield-Convex_Frax/frax-cvx-platform-2f8573ee796daa022c1050b4a749bf08049c439b/contracts/contracts/interfaces/MathUtil.sol",
+  "PeckShield-Donut/crossroad-550a8c3c010dc8c1a46ea9191d3841462bd58d82/contracts/utils/ContractGuard.sol",
+  "PeckShield-Donut/crossroad-550a8c3c010dc8c1a46ea9191d3841462bd58d82/contracts/utils/TransferHelper.sol",
+  "PeckShield-Double/double-contract-5489c0618f381df1e8d5ebb55f430db1b8bffeea/contracts/OwnableContract.sol",
+  "PeckShield-Duet_Bond/duet-bond-contract-549f7d3a4973a918cb12059cc1ef3f2ace56d9bc/contracts/CloneFactory.sol",
+  "PeckShield-Duet_Bond/duet-bond-contract-549f7d3a4973a918cb12059cc1ef3f2ace56d9bc/contracts/ERC20Clonable.sol",
+  "PeckShield-Duet_Bond/duet-bond-contract-549f7d3a4973a918cb12059cc1ef3f2ace56d9bc/contracts/Pool.sol",
+  "PeckShield-Hegic(v8888)/Hegic-v8888-2dcd44dc1ae07881e94d52fa618f9704bfd4ffda/contracts/utils/Math.sol",
+  "PeckShield-Hegic_HardCore_Beta/hegic-hardcore-beta-e22e6f67f1ce99e1317fc52fa325b496464a95bd/contracts/BondingCurve/buysell.sol",
+  "PeckShield-Hegic_HardCore_Beta/hegic-hardcore-beta-e22e6f67f1ce99e1317fc52fa325b496464a95bd/contracts/utils/Math.sol",
+  "PeckShield-KaoyaSwap/contracts-8273073f1d6914f372790399378f177573c52e37/betting.sol",
+  "PeckShield-LensProtocol/lens-protocol-dd137b2dee64c5edf288df297ee4249a0e6c11d4/contracts/core/base/LensMultiState.sol",
+  "PeckShield-LensProtocol/lens-protocol-dd137b2dee64c5edf288df297ee4249a0e6c11d4/contracts/core/modules/FeeModuleBase.sol",
+  "PeckShield-LensProtocol/lens-protocol-dd137b2dee64c5edf288df297ee4249a0e6c11d4/contracts/core/modules/ModuleGlobals.sol",
+  "PeckShield-LensProtocol/lens-protocol-dd137b2dee64c5edf288df297ee4249a0e6c11d4/contracts/core/modules/collect/RevertCollectModule.sol",
+  "PeckShield-LensProtocol/lens-protocol-dd137b2dee64c5edf288df297ee4249a0e6c11d4/contracts/libraries/Helpers.sol",
+  "PeckShield-LensProtocol/lens-protocol-dd137b2dee64c5edf288df297ee4249a0e6c11d4/contracts/libraries/PublishingLogic.sol",
+  "PeckShield-VeChain/vvet-818fa11f7595e257cb28fa5475c17c60c11a4902/vvet/contracts/StakingModel.sol",
+  "PeckShield-VeChain/vvet-818fa11f7595e257cb28fa5475c17c60c11a4902/vvet/contracts/VVET9.sol",
+  "QuillAudits-1inch-Farming/farming-7a007ec7784cca2899889e99e46cf06d5788a7d9/contracts/accounting/UserAccounting.sol",
+  "QuillAudits-1inch-Fee Collector/fee-collector-3c2626763fd829500496f15476d5e98fbdf4f574/contracts/utils/BalanceAccounting.sol",
+  "QuillAudits-AQEX Token Smart Contract/erc-20-token-3628abfa6ea2636866f7d5ad1f8cc570b0d5bb1b/Context.sol",
+  "QuillAudits-AQEX Token Smart Contract/erc-20-token-3628abfa6ea2636866f7d5ad1f8cc570b0d5bb1b/Ownable.sol",
+  "QuillAudits-AQEX Token Smart Contract/erc-20-token-3628abfa6ea2636866f7d5ad1f8cc570b0d5bb1b/Token.sol",
+  "QuillAudits-AVX Smart Contract/code/code.sol",
+  "QuillAudits-AgriUT Smart Contract/AgriUT-2b175e68240e67cfebe30272cb374555f2a460fb/AgriUTToken.sol",
+  "QuillAudits-AgriUT Smart Contract/AgriUT-2b175e68240e67cfebe30272cb374555f2a460fb/OwnableToken.sol",
+  "QuillAudits-AgriUT Smart Contract/AgriUT-2b175e68240e67cfebe30272cb374555f2a460fb/PayableToken.sol",
+  "QuillAudits-AgriUT Smart Contract/AgriUT-a3638774be81be9f113ae0ddc54f4a5b84038947/AgriUTToken.sol",
+  "QuillAudits-AgriUT Smart Contract/AgriUT-a3638774be81be9f113ae0ddc54f4a5b84038947/OwnableToken.sol",
+  "QuillAudits-Amplify Smart Contract/contracts-d8af5f11f3b6ab59d09a56ebc229012900dc1cc8/protocol/contracts/Asset/Asset.sol",
+  "QuillAudits-Amplify Smart Contract/contracts-d8af5f11f3b6ab59d09a56ebc229012900dc1cc8/protocol/contracts/Asset/RiskModel.sol",
+  "QuillAudits-Amplify Smart Contract/contracts-d8af5f11f3b6ab59d09a56ebc229012900dc1cc8/protocol/contracts/Controller/Controller.sol",
+  "QuillAudits-Amplify Smart Contract/contracts-d8af5f11f3b6ab59d09a56ebc229012900dc1cc8/protocol/contracts/Controller/Rewards.sol",
+  "QuillAudits-Amplify Smart Contract/contracts-d8af5f11f3b6ab59d09a56ebc229012900dc1cc8/protocol/contracts/Controller/StableCoin.sol",
+  "QuillAudits-Amplify Smart Contract/contracts-d8af5f11f3b6ab59d09a56ebc229012900dc1cc8/protocol/contracts/ERC20/ERC20.sol",
+  "QuillAudits-Amplify Smart Contract/contracts-d8af5f11f3b6ab59d09a56ebc229012900dc1cc8/protocol/contracts/ERC20/ERC20Burnable.sol",
+  "QuillAudits-Amplify Smart Contract/contracts-d8af5f11f3b6ab59d09a56ebc229012900dc1cc8/protocol/contracts/ERC20/ERC20Mintable.sol",
+  "QuillAudits-Amplify Smart Contract/contracts-d8af5f11f3b6ab59d09a56ebc229012900dc1cc8/protocol/contracts/ERC721/ERC721.sol",
+  "QuillAudits-Amplify Smart Contract/contracts-d8af5f11f3b6ab59d09a56ebc229012900dc1cc8/protocol/contracts/ERC721/ERC721URIStorage.sol",
+  "QuillAudits-Amplify Smart Contract/contracts-d8af5f11f3b6ab59d09a56ebc229012900dc1cc8/protocol/contracts/Governance/AMPT.sol",
+  "QuillAudits-Amplify Smart Contract/contracts-d8af5f11f3b6ab59d09a56ebc229012900dc1cc8/protocol/contracts/Governance/AMPTChild.sol",
+  "QuillAudits-Amplify Smart Contract/contracts-d8af5f11f3b6ab59d09a56ebc229012900dc1cc8/protocol/contracts/Governance/VotingEscrow.sol",
+  "QuillAudits-Amplify Smart Contract/contracts-d8af5f11f3b6ab59d09a56ebc229012900dc1cc8/protocol/contracts/InterestRate/WhitePaperInterestRateModel.sol",
+  "QuillAudits-Amplify Smart Contract/contracts-d8af5f11f3b6ab59d09a56ebc229012900dc1cc8/protocol/contracts/Liquidity/Borrower.sol",
+  "QuillAudits-Amplify Smart Contract/contracts-d8af5f11f3b6ab59d09a56ebc229012900dc1cc8/protocol/contracts/Liquidity/Lender.sol",
+  "QuillAudits-Amplify Smart Contract/contracts-d8af5f11f3b6ab59d09a56ebc229012900dc1cc8/protocol/contracts/Liquidity/Pool.sol",
+  "QuillAudits-Amplify Smart Contract/contracts-d8af5f11f3b6ab59d09a56ebc229012900dc1cc8/protocol/contracts/Liquidity/PoolToken.sol",
+  "QuillAudits-Amplify Smart Contract/contracts-d8af5f11f3b6ab59d09a56ebc229012900dc1cc8/protocol/contracts/LossProvisionPool/LossProvisionPool.sol",
+  "QuillAudits-Amplify Smart Contract/contracts-d8af5f11f3b6ab59d09a56ebc229012900dc1cc8/protocol/contracts/Vesting/Vesting.sol",
+  "QuillAudits-Amplify Smart Contract/contracts-d8af5f11f3b6ab59d09a56ebc229012900dc1cc8/protocol/contracts/Vesting/VestingFactory.sol",
+  "QuillAudits-Amplify Smart Contract/contracts-d8af5f11f3b6ab59d09a56ebc229012900dc1cc8/protocol/contracts/proxy/Clones.sol",
+  "QuillAudits-Amplify Smart Contract/contracts-d8af5f11f3b6ab59d09a56ebc229012900dc1cc8/protocol/contracts/security/Ownable.sol",
+  "QuillAudits-Amplify Smart Contract/contracts-d8af5f11f3b6ab59d09a56ebc229012900dc1cc8/protocol/contracts/utils/CarefulMath.sol",
+  "QuillAudits-Amplify Smart Contract/contracts-d8af5f11f3b6ab59d09a56ebc229012900dc1cc8/protocol/contracts/utils/Counters.sol",
+  "QuillAudits-Amplify Smart Contract/contracts-d8af5f11f3b6ab59d09a56ebc229012900dc1cc8/protocol/contracts/utils/ErrorReporter.sol",
+  "QuillAudits-Amplify Smart Contract/contracts-d8af5f11f3b6ab59d09a56ebc229012900dc1cc8/protocol/contracts/utils/Exponential.sol",
+  "QuillAudits-Amplify Smart Contract/contracts-d8af5f11f3b6ab59d09a56ebc229012900dc1cc8/protocol/contracts/utils/ExponentialDouble.sol",
+  "QuillAudits-Amplify Smart Contract/contracts-d8af5f11f3b6ab59d09a56ebc229012900dc1cc8/protocol/contracts/utils/SmartWalletWhitelist.sol",
+  "QuillAudits-Amplify_Child_Token_Smart_Contract/contracts-31526ea5e5c5a1c308d0065aab1f57ec8d765fc6/AMPTChild.sol",
+  "QuillAudits-Big League Smart Contract/code/StandardToken.sol",
+  "QuillAudits-BigDog Smart Contract/code/StandardToken.sol",
+  "QuillAudits-BitDiamond Smart Contract/code/bitdiamond.sol",
+  "QuillAudits-Bitbook Smart Contract V2/code/BitBookStake.sol",
+  "QuillAudits-Bridge Network Smart Contract/bridgeToken-9636c155e8fcfff5cda8b609a77c7d4527b5b402/bridgeToken.sol",
+  "QuillAudits-BscDragon Smart Contract/bridgeToken-9636c155e8fcfff5cda8b609a77c7d4527b5b402/bridgeToken.sol",
+  "QuillAudits-Checkdot Smart Contract/CheckdotERC20Contract-8a47ef13ace93e0bd473fb1c3893790569a2adc8/contracts/CheckDot.sol",
+  "QuillAudits-Checkdot Smart Contract/CheckdotERC20Contract-8a47ef13ace93e0bd473fb1c3893790569a2adc8/contracts/erc20/Context.sol",
+  "QuillAudits-Checkdot Smart Contract/CheckdotERC20Contract-8a47ef13ace93e0bd473fb1c3893790569a2adc8/contracts/erc20/ERC20.sol",
+  "QuillAudits-Citrus Smart Contract/CitrusTechContract-e50a2a983928c10b76e6bc374ae6267f51af99b6/CitrusToken.sol",
+  "QuillAudits-CoinDogg Smart Contract/code/CoinDogg.sol",
+  "QuillAudits-CronosPad Smart Contract/cronospad-1605d38fab314cab399093f756b41093fdbc859f/contracts/cronospad.sol",
+  "QuillAudits-CryptoGamez Smart Contract/CryptoGamez/CryptoGamez.sol",
+  "QuillAudits-DEFINE Token Smart Contract/definetics-023ddbd2182d96306fb020573a64b50eaed0a87a/contracts/Context.sol",
+  "QuillAudits-DEFINE Token Smart Contract/definetics-023ddbd2182d96306fb020573a64b50eaed0a87a/contracts/libraries/IterableMapping.sol",
+  "QuillAudits-DEFINE Token Smart Contract/definetics-023ddbd2182d96306fb020573a64b50eaed0a87a/contracts/libraries/SafeMath.sol",
+  "QuillAudits-DEFINE Token Smart Contract/definetics-023ddbd2182d96306fb020573a64b50eaed0a87a/contracts/libraries/SafeMathInt.sol",
+  "QuillAudits-DEFINE Token Smart Contract/definetics-023ddbd2182d96306fb020573a64b50eaed0a87a/contracts/libraries/SafeMathUint.sol",
+  "QuillAudits-DOXY - v1.3/code/DoxyFinance_V3.sol",
+  "QuillAudits-DictatorDOGE Smart Contract/code/DictatorDOGE.sol",
+  "QuillAudits-FutiraCoin Smart Contract/code/token_audit.sol",
+  "QuillAudits-GameZilla Token Smart Contract/code/GameZilla.sol",
+  "QuillAudits-GoGocoin Smart Contract/gogo-contracts-f952d59650263cd8e0d403d5a8f3d94890869ba1/contracts/libraries/Babylonian.sol",
+  "QuillAudits-GoGocoin Smart Contract/gogo-contracts-f952d59650263cd8e0d403d5a8f3d94890869ba1/contracts/libraries/LowGasSafeMath.sol",
+  "QuillAudits-HE - v1.2/heroes-empires-contract-08cc390408d36de4d10ab5f822adf2d842145073/src/contracts/Stake.sol",
+  "QuillAudits-HE - v1.2/heroes-empires-contract-f24ba85db4bf40e39caaa5fc322a02cd8e82c2c7/src/contracts/Stake.sol",
+  "QuillAudits-Keep3r.Network-Keep3r.Network/StakingRewardsV3-13ecc6966ae1a413f62224382bfd4d64b1a22351/contracts/StakingRewardsV3-1.sol",
+  "QuillAudits-Keep3r.Network-Keep3r.Network/StakingRewardsV3-13ecc6966ae1a413f62224382bfd4d64b1a22351/contracts/StakingRewardsV3.sol",
+  "QuillAudits-Lido-Deposit Security Module/lido-dao-5b449b740cddfbef5c107505677e6a576e2c2b69/contracts/0.8.9/DepositSecurityModule.sol",
+  "QuillAudits-Lido-Lido KSM/lido-dot-ksm-76a10efa5f223c4c613f26794802b8fb9bb188e1/contracts/Oracle.sol",
+  "QuillAudits-Lido-Lido KSM/lido-dot-ksm-76a10efa5f223c4c613f26794802b8fb9bb188e1/contracts/utils/LedgerUtils.sol",
+  "QuillAudits-Lido-Lido KSM/lido-dot-ksm-76a10efa5f223c4c613f26794802b8fb9bb188e1/contracts/utils/ReportUtils.sol",
+  "QuillAudits-Lido-Lido Protocol/lido-dao-801d3e854efb33ff33a59fe51187e187047a6be2/contracts/0.8.9/CompositePostRebaseBeaconReceiver.sol",
+  "QuillAudits-Lido-Lido Protocol/lido-dao-801d3e854efb33ff33a59fe51187e187047a6be2/contracts/0.8.9/DepositSecurityModule.sol",
+  "QuillAudits-Lido-Lido Protocol/lido-dao-801d3e854efb33ff33a59fe51187e187047a6be2/contracts/0.8.9/OrderedCallbacksArray.sol",
+  "QuillAudits-MetaGameStarter Smart Contract/Tokenomics-Contracts-f3899d0a31dbb7386eacb7efefbff2ac32ce7cbb/contracts/IFO/ClaimAggregator.sol",
+  "QuillAudits-MetaGameStarter Smart Contract/Tokenomics-Contracts-f3899d0a31dbb7386eacb7efefbff2ac32ce7cbb/contracts/ProxyClones/Proxy.sol",
+  "QuillAudits-MetaWaferse Smart Contract/code/MetaWaferse.sol",
+  "QuillAudits-MiniDOGE Smart Contract/code/MiniDOGE.sol",
+  "QuillAudits-Yearn Finance-ySwaps/hardhat-monorepo-ecc0b5147992b34c315e08af170ceb4a5fe071ee/packages/contract-utils/contracts/utils/Governable.sol",
+  "QuillAudits-Yearn Finance-ySwaps/hardhat-monorepo-ecc0b5147992b34c315e08af170ceb4a5fe071ee/packages/contract-utils/contracts/utils/Manageable.sol",
+  "QuillAudits-Yearn Finance-ySwaps/hardhat-monorepo-ecc0b5147992b34c315e08af170ceb4a5fe071ee/packages/contract-utils/contracts/utils/Migratable.sol",
+  "QuillAudits-Yearn Finance-ySwaps/hardhat-monorepo-ecc0b5147992b34c315e08af170ceb4a5fe071ee/packages/contract-utils/contracts/utils/OnlyStealthRelayer.sol",
+  "QuillAudits-Yearn Finance-ySwaps/hardhat-monorepo-ecc0b5147992b34c315e08af170ceb4a5fe071ee/packages/contract-utils/contracts/utils/Pausable.sol",
+  "QuillAudits-Yearn Finance-ySwaps/hardhat-monorepo-ecc0b5147992b34c315e08af170ceb4a5fe071ee/packages/stealth-txs/contracts/StealthTx.sol",
+  "QuillAudits-Yearn Finance-ySwaps/hardhat-monorepo-ecc0b5147992b34c315e08af170ceb4a5fe071ee/packages/stealth-txs/contracts/utils/OnlyStealthRelayer.sol",
+  "QuillAudits-Yearn Finance-ySwaps/hardhat-monorepo-ecc0b5147992b34c315e08af170ceb4a5fe071ee/packages/strategies-keep3r/contracts-no-compile/keep3r/Keep3rV2OracleFactory.sol",
+  "QuillAudits-Yearn Finance-ySwaps/hardhat-monorepo-ecc0b5147992b34c315e08af170ceb4a5fe071ee/packages/strategies-keep3r/contracts/interfaces/yearn/IVaultAPI_0_3_2.sol",
+  "QuillAudits-Yearn Finance-ySwaps/hardhat-monorepo-ecc0b5147992b34c315e08af170ceb4a5fe071ee/packages/strategies-keep3r/contracts/interfaces/yearn/IVaultAPI_0_3_2_s.sol",
+  "QuillAudits-Yearn Finance-ySwaps/hardhat-monorepo-ecc0b5147992b34c315e08af170ceb4a5fe071ee/packages/strategies-keep3r/contracts/utils/BaseFee.sol",
+  "QuillAudits-Yearn Finance-ySwaps/hardhat-monorepo-ecc0b5147992b34c315e08af170ceb4a5fe071ee/packages/strategies-keep3r/contracts/utils/GasPriceLimited.sol",
+  "Runtime_Vеrification-ElementFinance/elf-contracts-637c6f959315cbb11a164555e588520c7d89122b/contracts/InterestToken.sol",
+  "Runtime_Vеrification-ElementFinance/elf-contracts-637c6f959315cbb11a164555e588520c7d89122b/contracts/Tranche.sol",
+  "Runtime_Vеrification-ElementFinance/elf-contracts-637c6f959315cbb11a164555e588520c7d89122b/contracts/WrappedPosition.sol",
+  "Runtime_Vеrification-ElementFinance/elf-contracts-637c6f959315cbb11a164555e588520c7d89122b/contracts/YVaultAssetProxy.sol",
+  "Runtime_Vеrification-ElementFinance/elf-contracts-637c6f959315cbb11a164555e588520c7d89122b/contracts/factories/InterestTokenFactory.sol",
+  "Runtime_Vеrification-ElementFinance/elf-contracts-637c6f959315cbb11a164555e588520c7d89122b/contracts/factories/TrancheFactory.sol",
+  "Runtime_Vеrification-ElementFinance/elf-contracts-637c6f959315cbb11a164555e588520c7d89122b/contracts/libraries/DateString.sol",
+  "Runtime_Vеrification-ElementFinance/elf-contracts-637c6f959315cbb11a164555e588520c7d89122b/contracts/libraries/ERC20.sol",
+  "Runtime_Vеrification-ElementFinance/elf-contracts-637c6f959315cbb11a164555e588520c7d89122b/contracts/libraries/ERC20WithSupply.sol",
+  "Runtime_Vеrification-ElementFinance/elf-contracts-b9ab6095a211ccb81941a5104c581e3564a97502/contracts/InterestToken.sol",
+  "Runtime_Vеrification-ElementFinance/elf-contracts-b9ab6095a211ccb81941a5104c581e3564a97502/contracts/Tranche.sol",
+  "Runtime_Vеrification-ElementFinance/elf-contracts-b9ab6095a211ccb81941a5104c581e3564a97502/contracts/WrappedPosition.sol",
+  "Runtime_Vеrification-ElementFinance/elf-contracts-b9ab6095a211ccb81941a5104c581e3564a97502/contracts/YVaultAssetProxy.sol",
+  "Runtime_Vеrification-ElementFinance/elf-contracts-b9ab6095a211ccb81941a5104c581e3564a97502/contracts/factories/InterestTokenFactory.sol",
+  "Runtime_Vеrification-ElementFinance/elf-contracts-b9ab6095a211ccb81941a5104c581e3564a97502/contracts/factories/TrancheFactory.sol",
+  "Runtime_Vеrification-ElementFinance/elf-contracts-b9ab6095a211ccb81941a5104c581e3564a97502/contracts/libraries/DateString.sol",
+  "Runtime_Vеrification-ElementFinance/elf-contracts-b9ab6095a211ccb81941a5104c581e3564a97502/contracts/libraries/ERC20Permit.sol",
+  "Runtime_Vеrification-ElementFinance/elf-contracts-b9ab6095a211ccb81941a5104c581e3564a97502/contracts/libraries/ERC20PermitWithSupply.sol",
+  "Runtime_Vеrification-ElementFinance/elf-contracts-eed369562ac50398c10fd0a56dc287a29002d3f8/contracts/InterestToken.sol",
+  "Runtime_Vеrification-ElementFinance/elf-contracts-eed369562ac50398c10fd0a56dc287a29002d3f8/contracts/Tranche.sol",
+  "Runtime_Vеrification-ElementFinance/elf-contracts-eed369562ac50398c10fd0a56dc287a29002d3f8/contracts/WrappedPosition.sol",
+  "Runtime_Vеrification-ElementFinance/elf-contracts-eed369562ac50398c10fd0a56dc287a29002d3f8/contracts/YVaultAssetProxy.sol",
+  "Runtime_Vеrification-ElementFinance/elf-contracts-eed369562ac50398c10fd0a56dc287a29002d3f8/contracts/factories/InterestTokenFactory.sol",
+  "Runtime_Vеrification-ElementFinance/elf-contracts-eed369562ac50398c10fd0a56dc287a29002d3f8/contracts/factories/TrancheFactory.sol",
+  "Runtime_Vеrification-ElementFinance/elf-contracts-eed369562ac50398c10fd0a56dc287a29002d3f8/contracts/libraries/DateString.sol",
+  "Runtime_Vеrification-ElementFinance/elf-contracts-eed369562ac50398c10fd0a56dc287a29002d3f8/contracts/libraries/ERC20Permit.sol",
+  "Runtime_Vеrification-ElementFinance/elf-contracts-eed369562ac50398c10fd0a56dc287a29002d3f8/contracts/libraries/ERC20PermitWithSupply.sol",
+  "Runtime_Vеrification-Element_Finance_Governance_Security_Audit_Report/council-3d751c959b42573c78ccd0bccbc80424bf6d9a90/contracts/features/OptimisticGrants.sol",
+  "Runtime_Vеrification-Element_Finance_Governance_Security_Audit_Report/council-3d751c959b42573c78ccd0bccbc80424bf6d9a90/contracts/features/Treasury.sol",
+  "Runtime_Vеrification-Element_Finance_Governance_Security_Audit_Report/council-3d751c959b42573c78ccd0bccbc80424bf6d9a90/contracts/libraries/History.sol",
+  "Runtime_Vеrification-Element_Finance_Governance_Security_Audit_Report/council-3d751c959b42573c78ccd0bccbc80424bf6d9a90/contracts/libraries/Storage.sol",
+  "Runtime_Vеrification-Element_Finance_Governance_Security_Audit_Report/council-3d751c959b42573c78ccd0bccbc80424bf6d9a90/contracts/libraries/VestingVaultStorage.sol",
+  "Runtime_Vеrification-Element_Finance_Governance_Security_Audit_Report/council-3d751c959b42573c78ccd0bccbc80424bf6d9a90/contracts/simpleProxy.sol",
+  "Runtime_Vеrification-Element_Finance_Governance_Security_Audit_Report/council-3d751c959b42573c78ccd0bccbc80424bf6d9a90/contracts/vaults/LockingVault.sol",
+  "Runtime_Vеrification-Element_Finance_Governance_Security_Audit_Report/council-3d751c959b42573c78ccd0bccbc80424bf6d9a90/contracts/vaults/VestingVault.sol",
+  "Runtime_Vеrification-stakefish_ethereum_staking_audit_report/eth2-validation-services-contract-d91928f3a270f6115831fe3a21a69eb98bf57b26/contracts/StakefishERC20Wrapper.sol",
+  "Runtime_Vеrification-stakefish_ethereum_staking_audit_report/eth2-validation-services-contract-d91928f3a270f6115831fe3a21a69eb98bf57b26/contracts/StakefishERC721Wrapper.sol",
+  "Runtime_Vеrification-stakefish_ethereum_staking_audit_report/eth2-validation-services-contract-d91928f3a270f6115831fe3a21a69eb98bf57b26/contracts/StakefishServicesContract.sol",
+  "Runtime_Vеrification-stakefish_ethereum_staking_audit_report/eth2-validation-services-contract-d91928f3a270f6115831fe3a21a69eb98bf57b26/contracts/StakefishServicesContractFactory.sol",
+  "Runtime_Vеrification-stakefish_ethereum_staking_audit_report/eth2-validation-services-contract-d91928f3a270f6115831fe3a21a69eb98bf57b26/contracts/interfaces/deposit_contract.sol",
+  "Runtime_Vеrification-stakefish_ethereum_staking_audit_report/eth2-validation-services-contract-d91928f3a270f6115831fe3a21a69eb98bf57b26/contracts/libraries/Address.sol",
+  "Runtime_Vеrification-stakefish_ethereum_staking_audit_report/eth2-validation-services-contract-d91928f3a270f6115831fe3a21a69eb98bf57b26/contracts/libraries/ProxyFactory.sol",
+  "SlowMist-eden-network Smart Contract Security Audit Report/governance-e7b55f6e3f9c0d3ede7fd8bb39ae4fa7a4f4e79e/contracts/DistributorGovernance.sol",
+  "SlowMist-eden-network Smart Contract Security Audit Report/governance-e7b55f6e3f9c0d3ede7fd8bb39ae4fa7a4f4e79e/contracts/EdenNetwork.sol",
+  "SlowMist-eden-network Smart Contract Security Audit Report/governance-e7b55f6e3f9c0d3ede7fd8bb39ae4fa7a4f4e79e/contracts/EdenNetworkManager.sol",
+  "SlowMist-eden-network Smart Contract Security Audit Report/governance-e7b55f6e3f9c0d3ede7fd8bb39ae4fa7a4f4e79e/contracts/EdenNetworkProxy.sol",
+  "SlowMist-eden-network Smart Contract Security Audit Report/governance-e7b55f6e3f9c0d3ede7fd8bb39ae4fa7a4f4e79e/contracts/EdenToken.sol",
+  "SlowMist-eden-network Smart Contract Security Audit Report/governance-e7b55f6e3f9c0d3ede7fd8bb39ae4fa7a4f4e79e/contracts/LockManager.sol",
+  "SlowMist-eden-network Smart Contract Security Audit Report/governance-e7b55f6e3f9c0d3ede7fd8bb39ae4fa7a4f4e79e/contracts/MerkleDistributor.sol",
+  "SlowMist-eden-network Smart Contract Security Audit Report/governance-e7b55f6e3f9c0d3ede7fd8bb39ae4fa7a4f4e79e/contracts/Migrator.sol",
+  "SlowMist-eden-network Smart Contract Security Audit Report/governance-e7b55f6e3f9c0d3ede7fd8bb39ae4fa7a4f4e79e/contracts/Payments.sol",
+  "SlowMist-eden-network Smart Contract Security Audit Report/governance-e7b55f6e3f9c0d3ede7fd8bb39ae4fa7a4f4e79e/contracts/RewardsManager.sol",
+  "SlowMist-eden-network Smart Contract Security Audit Report/governance-e7b55f6e3f9c0d3ede7fd8bb39ae4fa7a4f4e79e/contracts/TokenRegistry.sol",
+  "SlowMist-eden-network Smart Contract Security Audit Report/governance-e7b55f6e3f9c0d3ede7fd8bb39ae4fa7a4f4e79e/contracts/Vault.sol",
+  "SlowMist-eden-network Smart Contract Security Audit Report/governance-e7b55f6e3f9c0d3ede7fd8bb39ae4fa7a4f4e79e/contracts/VotingPower.sol",
+  "SlowMist-eden-network Smart Contract Security Audit Report/governance-e7b55f6e3f9c0d3ede7fd8bb39ae4fa7a4f4e79e/contracts/formulas/EdenFormula.sol",
+  "SlowMist-eden-network Smart Contract Security Audit Report/governance-e7b55f6e3f9c0d3ede7fd8bb39ae4fa7a4f4e79e/contracts/formulas/SushiLPFormula.sol",
+  "SlowMist-wault.finance(WUSD) Smart Contract Security Audit Report/WUSD-91c541c2f1c0ac781ddcfb2be6a62555a5e1e8d1/WUSD.sol",
+  "SlowMist-wault.finance(WUSD) Smart Contract Security Audit Report/WUSD-91c541c2f1c0ac781ddcfb2be6a62555a5e1e8d1/WUSDMaster.sol",
+  "SlowMist-wault.finance(WUSD) Smart Contract Security Audit Report/WUSD-91c541c2f1c0ac781ddcfb2be6a62555a5e1e8d1/WexWithdrawer.sol",
+  "Solidified-Aztec Element Bridge/aztec-connect-bridges-ac2e7194b5887ea11a607b4cf8de0547b3d7fdd0/src/bridges/element/MinHeap.sol",
+  "Solidified-Aztec Element Bridge/aztec-connect-bridges-ac2e7194b5887ea11a607b4cf8de0547b3d7fdd0/src/libraries/TokenTransfers.sol",
+  "Solidified-Aztec Lido Bridge/aztec-connect-bridges-d5aca13d4d0a17b21eeddf77f49f4c6613461fb0/src/bridges/element/MinHeap.sol",
+  "Solidified-Aztec Lido Bridge/aztec-connect-bridges-d5aca13d4d0a17b21eeddf77f49f4c6613461fb0/src/libraries/TokenTransfers.sol",
+  "Solidified-Origin Governance/origin-dollar-30564e25d640749af447fb9e5d7c4fb00c37779f/contracts/contracts/governance/Governable.sol",
+  "Solidified-Origin Governance/origin-dollar-30564e25d640749af447fb9e5d7c4fb00c37779f/contracts/contracts/governance/InitializableGovernable.sol",
+  "Solidified-Origin Governance/origin-dollar-30564e25d640749af447fb9e5d7c4fb00c37779f/contracts/contracts/oracle/MixOracle.sol",
+  "Solidified-Origin Governance/origin-dollar-30564e25d640749af447fb9e5d7c4fb00c37779f/contracts/contracts/oracle/OracleRouter.sol",
+  "Solidified-Origin Governance/origin-dollar-30564e25d640749af447fb9e5d7c4fb00c37779f/contracts/contracts/token/OUSDResolutionUpgrade.sol",
+  "Solidified-Origin Governance/origin-dollar-30564e25d640749af447fb9e5d7c4fb00c37779f/contracts/contracts/utils/Helpers.sol",
+  "Solidity_Finance-OKLG - Smart Contract/contracts-e167d0d742d21bcc62d7a5b770a1f0ed1cf31eca/contracts/OKLGAtomicSwapInstHash.sol",
+  "Solidity_Finance-OKLG - Smart Contract/contracts-e167d0d742d21bcc62d7a5b770a1f0ed1cf31eca/contracts/utils/Counters.sol",
+  "Solidity_Finance-RevomonVR Smart Contract/Contracts-9d0da49342a1a87b6cafebd4945612c2cfb8669d/RevoFarming.sol",
+  "Solidity_Finance-RevomonVR Smart Contract/Contracts-9d0da49342a1a87b6cafebd4945612c2cfb8669d/RevoNFT.sol",
+  "Solidity_Finance-RevomonVR Smart Contract/Contracts-9d0da49342a1a87b6cafebd4945612c2cfb8669d/RevoNFTMinter.sol",
+  "Solidity_Finance-RevomonVR Smart Contract/Contracts-9d0da49342a1a87b6cafebd4945612c2cfb8669d/RevoNFTUtils.sol",
+  "Solidity_Finance-RevomonVR Smart Contract/Contracts-9d0da49342a1a87b6cafebd4945612c2cfb8669d/RevoStaking.sol",
+  "Solidity_Finance-RevomonVR Smart Contract/Contracts-9d0da49342a1a87b6cafebd4945612c2cfb8669d/RevoTier.sol",
+  "Trail_of_Bits-88mph/88mph-contracts-76cd9d1fc45e65f5d0f686621fe6af85c40aa140/contracts/models/interest/LinearDecayInterestModel.sol",
+  "Trail_of_Bits-88mph/88mph-contracts-76cd9d1fc45e65f5d0f686621fe6af85c40aa140/contracts/models/interest/LinearInterestModel.sol",
+  "Trail_of_Bits-API3/airnode-991af4d69e82c1954a5c6c8e247cde8eb76101de/packages/airnode-protocol-v1/contracts/access-control-registry/RoleDeriver.sol",
+  "Trail_of_Bits-API3/airnode-991af4d69e82c1954a5c6c8e247cde8eb76101de/packages/airnode-protocol-v1/contracts/dapis/DapiReader.sol",
+  "Trail_of_Bits-API3/airnode-991af4d69e82c1954a5c6c8e247cde8eb76101de/packages/airnode-protocol-v1/contracts/dapis/Median.sol",
+  "Trail_of_Bits-API3/airnode-991af4d69e82c1954a5c6c8e247cde8eb76101de/packages/airnode-protocol-v1/contracts/dapis/QuickSelect.sol",
+  "Trail_of_Bits-API3/airnode-991af4d69e82c1954a5c6c8e247cde8eb76101de/packages/airnode-protocol-v1/contracts/dapis/Sort.sol",
+  "Trail_of_Bits-API3/airnode-991af4d69e82c1954a5c6c8e247cde8eb76101de/packages/airnode-protocol-v1/contracts/protocol/AirnodeRequester.sol",
+  "Trail_of_Bits-API3/airnode-991af4d69e82c1954a5c6c8e247cde8eb76101de/packages/airnode-protocol-v1/contracts/protocol/SponsorshipUtils.sol",
+  "Trail_of_Bits-API3/airnode-991af4d69e82c1954a5c6c8e247cde8eb76101de/packages/airnode-protocol-v1/contracts/protocol/StorageUtils.sol",
+  "Trail_of_Bits-API3/airnode-991af4d69e82c1954a5c6c8e247cde8eb76101de/packages/airnode-protocol-v1/contracts/whitelist/Whitelist.sol",
+  "Trail_of_Bits-API3/airnode-991af4d69e82c1954a5c6c8e247cde8eb76101de/packages/airnode-protocol/contracts/access-control-registry/RoleDeriver.sol",
+  "Trail_of_Bits-API3/airnode-991af4d69e82c1954a5c6c8e247cde8eb76101de/packages/airnode-protocol/contracts/authorizers/RequesterAuthorizer.sol",
+  "Trail_of_Bits-API3/airnode-991af4d69e82c1954a5c6c8e247cde8eb76101de/packages/airnode-protocol/contracts/rrp/AuthorizationUtils.sol",
+  "Trail_of_Bits-API3/airnode-991af4d69e82c1954a5c6c8e247cde8eb76101de/packages/airnode-protocol/contracts/rrp/TemplateUtils.sol",
+  "Trail_of_Bits-API3/airnode-991af4d69e82c1954a5c6c8e247cde8eb76101de/packages/airnode-protocol/contracts/rrp/WithdrawalUtils.sol",
+  "Trail_of_Bits-API3/airnode-991af4d69e82c1954a5c6c8e247cde8eb76101de/packages/airnode-protocol/contracts/whitelist/Whitelist.sol",
+  "Trail_of_Bits-API3/airnode-991af4d69e82c1954a5c6c8e247cde8eb76101de/packages/airnode-protocol/contracts/whitelist/WhitelistRoles.sol",
+  "Trail_of_Bits-FraxFinance/frax-solidity-3f0993a70e3496fd27887db7754d68709c84015e/contracts/ERC165/ERC165.sol",
+  "Trail_of_Bits-FraxFinance/frax-solidity-3f0993a70e3496fd27887db7754d68709c84015e/contracts/ERC721/ERC721.sol",
+  "Trail_of_Bits-FraxFinance/frax-solidity-3f0993a70e3496fd27887db7754d68709c84015e/contracts/ERC721/V8_0_0/Common/Context.sol",
+  "Trail_of_Bits-FraxFinance/frax-solidity-3f0993a70e3496fd27887db7754d68709c84015e/contracts/ERC721/V8_0_0/Governance/AccessControl.sol",
+  "Trail_of_Bits-FraxFinance/frax-solidity-3f0993a70e3496fd27887db7754d68709c84015e/contracts/ERC721/V8_0_0/Math/SafeMath.sol",
+  "Trail_of_Bits-FraxFinance/frax-solidity-3f0993a70e3496fd27887db7754d68709c84015e/contracts/ERC721/V8_0_0/Utils/Address.sol",
+  "Trail_of_Bits-FraxFinance/frax-solidity-3f0993a70e3496fd27887db7754d68709c84015e/contracts/ERC721/V8_0_0/Utils/EnumerableMap.sol",
+  "Trail_of_Bits-FraxFinance/frax-solidity-3f0993a70e3496fd27887db7754d68709c84015e/contracts/ERC721/V8_0_0/Utils/EnumerableSet.sol",
+  "Trail_of_Bits-FraxFinance/frax-solidity-3f0993a70e3496fd27887db7754d68709c84015e/contracts/ERC721/V8_0_0/Utils/Strings.sol",
+  "Trail_of_Bits-FraxFinance/frax-solidity-3f0993a70e3496fd27887db7754d68709c84015e/contracts/FXB/NFT/FraxBond_NFT.sol",
+  "Trail_of_Bits-FraxFinance/frax-solidity-3f0993a70e3496fd27887db7754d68709c84015e/contracts/FXB/NFT/FraxBond_NFT_Library.sol",
+  "Trail_of_Bits-FraxFinance/frax-solidity-3f0993a70e3496fd27887db7754d68709c84015e/contracts/Proxy/Proxy.sol",
+  "Trail_of_Bits-FraxFinance/frax-solidity-3f0993a70e3496fd27887db7754d68709c84015e/contracts/Utils/StorageSlot.sol",
+  "Trail_of_Bits-FraxFinance/frax-solidity-3f0993a70e3496fd27887db7754d68709c84015e/contracts/__BSC/Access/Ownable.sol",
+  "Trail_of_Bits-FraxFinance/frax-solidity-3f0993a70e3496fd27887db7754d68709c84015e/contracts/__BSC/AnyswapV4ERC20/AnyswapV4ERC20.sol",
+  "Trail_of_Bits-FraxFinance/frax-solidity-3f0993a70e3496fd27887db7754d68709c84015e/contracts/__BSC/BEP20/BEP20.sol",
+  "Trail_of_Bits-FraxFinance/frax-solidity-3f0993a70e3496fd27887db7754d68709c84015e/contracts/__BSC/BEP20/SafeBEP20.sol",
+  "Trail_of_Bits-FraxFinance/frax-solidity-3f0993a70e3496fd27887db7754d68709c84015e/contracts/__BSC/GSN/Context.sol",
+  "Trail_of_Bits-FraxFinance/frax-solidity-3f0993a70e3496fd27887db7754d68709c84015e/contracts/__BSC/Math/Math.sol",
+  "Trail_of_Bits-FraxFinance/frax-solidity-3f0993a70e3496fd27887db7754d68709c84015e/contracts/__BSC/Math/SafeMath.sol",
+  "Trail_of_Bits-FraxFinance/frax-solidity-3f0993a70e3496fd27887db7754d68709c84015e/contracts/__BSC/Staking/MigratableFarmBSC.sol",
+  "Trail_of_Bits-FraxFinance/frax-solidity-3f0993a70e3496fd27887db7754d68709c84015e/contracts/__BSC/Staking/Owned.sol",
+  "Trail_of_Bits-FraxFinance/frax-solidity-3f0993a70e3496fd27887db7754d68709c84015e/contracts/__BSC/Staking/Pausable.sol",
+  "Trail_of_Bits-FraxFinance/frax-solidity-3f0993a70e3496fd27887db7754d68709c84015e/contracts/__BSC/Utils/Address.sol",
+  "Trail_of_Bits-FujiProtocol/fuji-protocol-933ea57b11889d87744efa23e95c90b7bf589402/contracts/Harvester.sol",
+  "Trail_of_Bits-FujiProtocol/fuji-protocol-933ea57b11889d87744efa23e95c90b7bf589402/contracts/flashloans/DyDxFlashLoans.sol",
+  "Trail_of_Bits-FujiProtocol/fuji-protocol-933ea57b11889d87744efa23e95c90b7bf589402/contracts/libraries/WadRayMath.sol",
+  "Trail_of_Bits-MapleFinance/debt-locker-05b4f2fe119e2ddf3dc0e441055c602f748e7d52/contracts/DebtLockerInitializer.sol",
+  "Trail_of_Bits-MapleFinance/proxy-factory-0b5968b9d7def2426b4f84cc08e9c77b79e26f1c/contracts/Proxied.sol",
+  "Trail_of_Bits-MapleFinance/proxy-factory-0b5968b9d7def2426b4f84cc08e9c77b79e26f1c/contracts/Proxy.sol",
+  "Trail_of_Bits-MapleFinance/proxy-factory-0b5968b9d7def2426b4f84cc08e9c77b79e26f1c/contracts/ProxyFactory.sol",
+  "Trail_of_Bits-MapleFinance/proxy-factory-0b5968b9d7def2426b4f84cc08e9c77b79e26f1c/contracts/SlotManipulatable.sol",
+  "Trail_of_Bits-Primitive/rmm-core-5dcf4306fc32fb9a4e3c154deb86f6b9d513c344/contracts/libraries/ABDKMath64x64.sol",
+  "Trail_of_Bits-Primitive/rmm-core-5dcf4306fc32fb9a4e3c154deb86f6b9d513c344/contracts/libraries/CumulativeNormalDistribution.sol",
+  "Trail_of_Bits-Primitive/rmm-core-5dcf4306fc32fb9a4e3c154deb86f6b9d513c344/contracts/libraries/ReplicationMath.sol",
+  "Trail_of_Bits-Primitive/rmm-core-5dcf4306fc32fb9a4e3c154deb86f6b9d513c344/contracts/libraries/Units.sol",
+  "Trail_of_Bits-SeaportProtocol/seaport-f17082fca3e99b409f53040d8858e84b0246aa22/contracts/Consideration.sol",
+  "consensys-Connext NXTP — Noncustodial Xchain Transfer Protocol/nxtp-0656436d654cfe0313fa3c2bbc81aa86232ade16/packages/contracts/contracts/ProposedOwnable.sol",
+  "consensys-Fei_Protocol_v2_Phase_1/fei-protocol-core-5e3e2ab889f06831f4fe2e8460066ded40ccf0a8/contracts/dao/GovernorAlpha.sol",
+  "consensys-Fei_Protocol_v2_Phase_1/fei-protocol-core-5e3e2ab889f06831f4fe2e8460066ded40ccf0a8/contracts/dao/Tribe.sol",
+  "consensys-Fei_Protocol_v2_Phase_1/fei-protocol-core-5e3e2ab889f06831f4fe2e8460066ded40ccf0a8/contracts/pcv/utils/PCVDepositWrapper.sol",
+  "consensys-Fei_Protocol_v2_Phase_1/fei-protocol-core-5e3e2ab889f06831f4fe2e8460066ded40ccf0a8/contracts/utils/Timed.sol",
+  "consensys-Zer0_zAuction/zAuction-50d3b6ce6d7ee00e7181d5b2a9a2eedcdd3fdb72/contracts/ERC721TestToken.sol",
+  "consensys-Zer0_zAuction/zAuction-50d3b6ce6d7ee00e7181d5b2a9a2eedcdd3fdb72/contracts/oz/erc1155/ERC1155.sol",
+  "consensys-Zer0_zAuction/zAuction-50d3b6ce6d7ee00e7181d5b2a9a2eedcdd3fdb72/contracts/oz/erc1155/ERC1155Burnable.sol",
+  "consensys-Zer0_zAuction/zAuction-50d3b6ce6d7ee00e7181d5b2a9a2eedcdd3fdb72/contracts/oz/erc1155/ERC1155Pausable.sol",
+  "consensys-Zer0_zAuction/zAuction-50d3b6ce6d7ee00e7181d5b2a9a2eedcdd3fdb72/contracts/oz/erc1155/ERC1155PresetMinterPauser.sol",
+  "consensys-Zer0_zAuction/zAuction-50d3b6ce6d7ee00e7181d5b2a9a2eedcdd3fdb72/contracts/oz/erc20/ERC20.sol",
+  "consensys-Zer0_zAuction/zAuction-50d3b6ce6d7ee00e7181d5b2a9a2eedcdd3fdb72/contracts/oz/erc721/ERC721.sol",
+  "consensys-Zer0_zAuction/zAuction-50d3b6ce6d7ee00e7181d5b2a9a2eedcdd3fdb72/contracts/oz/erc721/ERC721Burnable.sol",
+  "consensys-Zer0_zAuction/zAuction-50d3b6ce6d7ee00e7181d5b2a9a2eedcdd3fdb72/contracts/oz/erc721/ERC721Enumerable.sol",
+  "consensys-Zer0_zAuction/zAuction-50d3b6ce6d7ee00e7181d5b2a9a2eedcdd3fdb72/contracts/oz/erc721/ERC721Pausable.sol",
+  "consensys-Zer0_zAuction/zAuction-50d3b6ce6d7ee00e7181d5b2a9a2eedcdd3fdb72/contracts/oz/util/AccessControl.sol",
+  "consensys-Zer0_zAuction/zAuction-50d3b6ce6d7ee00e7181d5b2a9a2eedcdd3fdb72/contracts/oz/util/AccessControlEnumerable.sol",
+  "consensys-Zer0_zAuction/zAuction-50d3b6ce6d7ee00e7181d5b2a9a2eedcdd3fdb72/contracts/oz/util/Address.sol",
+  "consensys-Zer0_zAuction/zAuction-50d3b6ce6d7ee00e7181d5b2a9a2eedcdd3fdb72/contracts/oz/util/Context.sol",
+  "consensys-Zer0_zAuction/zAuction-50d3b6ce6d7ee00e7181d5b2a9a2eedcdd3fdb72/contracts/oz/util/Counters.sol",
+  "consensys-Zer0_zAuction/zAuction-50d3b6ce6d7ee00e7181d5b2a9a2eedcdd3fdb72/contracts/oz/util/ECDSA.sol",
+  "consensys-Zer0_zAuction/zAuction-50d3b6ce6d7ee00e7181d5b2a9a2eedcdd3fdb72/contracts/oz/util/ERC165.sol",
+  "consensys-Zer0_zAuction/zAuction-50d3b6ce6d7ee00e7181d5b2a9a2eedcdd3fdb72/contracts/oz/util/EnumerableSet.sol",
+  "consensys-Zer0_zAuction/zAuction-50d3b6ce6d7ee00e7181d5b2a9a2eedcdd3fdb72/contracts/oz/util/Pausable.sol",
+  "consensys-Zer0_zAuction/zAuction-50d3b6ce6d7ee00e7181d5b2a9a2eedcdd3fdb72/contracts/oz/util/SafeMath.sol",
+  "consensys-Zer0_zAuction/zAuction-50d3b6ce6d7ee00e7181d5b2a9a2eedcdd3fdb72/contracts/oz/util/Strings.sol",
+  "consensys-Zer0_zAuction/zAuction-50d3b6ce6d7ee00e7181d5b2a9a2eedcdd3fdb72/contracts/zAuction.sol",
+  "consensys-Zer0_zAuction/zAuction-50d3b6ce6d7ee00e7181d5b2a9a2eedcdd3fdb72/contracts/zAuctionAccountant.sol",
+  "openzeppelin-UMA_Across_V2/contracts-v2-bf03255cbd1db3045cd2fbf1580f24081f46b43a/contracts/Lockable.sol"
+ ]
+}

@@ -26,6 +26,14 @@ def min_minor(spec: str):
     return best
 
 
+
+def _lp(p):
+    r"""Windows MAX_PATH 회피: 260자 넘는 경로는 \\?\ 확장 경로로 연다."""
+    ap = os.path.abspath(p).replace("/", os.sep)
+    pre = "\\\\?\\"
+    return pre + ap if os.name == "nt" and not ap.startswith(pre) else ap
+
+
 def main():
     root = sys.argv[1]
     out = sys.argv[2] if len(sys.argv) > 2 else None
@@ -47,15 +55,17 @@ def main():
             files += 1
             projects.add(rel.split("/")[0])
             try:
-                with open(p, "r", encoding="utf-8", errors="replace") as fh:
+                with open(_lp(p), "r", encoding="utf-8", errors="replace") as fh:
                     txt = fh.read()
             except OSError:
                 continue
-            m = PRAGMA.search(txt)
-            if not m:
+            # ★ 2026-10-27: 파일 안 **모든** pragma 의 최소값 (flatten 파일은 pragma 가 여러 개)
+            specs = PRAGMA.findall(txt)
+            if not specs:
                 nopragma += 1
                 continue
-            mi = min_minor(m.group(1))
+            mins = [v for v in (min_minor(s) for s in specs) if v is not None]
+            mi = min(mins) if mins else None
             by_minor[mi if mi is not None else "?"] += 1
             if mi is not None and mi >= 8:
                 h = hashlib.sha256(txt.encode("utf-8", "replace")).hexdigest()

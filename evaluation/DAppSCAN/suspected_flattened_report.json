@@ -1,0 +1,804 @@
+{
+ "files": [
+  {
+   "path": "BlockSec-blocksec_multichain_vemult_v1.0_signed/veMULTI-bac804399d1ea280e5bd8cdc9488b6fa6a0a7fcc/contracts/VEReward.sol",
+   "funcs": 27,
+   "decls": 5,
+   "canonical": 3,
+   "spdx": 1,
+   "oz_mentions": 0
+  },
+  {
+   "path": "BlockSec-blocksec_multichain_vemult_v1.0_signed/veMULTI-bac804399d1ea280e5bd8cdc9488b6fa6a0a7fcc/contracts/ve.sol",
+   "funcs": 57,
+   "decls": 7,
+   "canonical": 1,
+   "spdx": 1,
+   "oz_mentions": 0
+  },
+  {
+   "path": "BlockSec-blocksec_stnd_v1.7_signed/standard-evm-d7c016ca098a4e5a554583c499fc0cead4db7088/contracts/tokens/multichain/anyswap/AnyswapV5ERC20.sol",
+   "funcs": 46,
+   "decls": 8,
+   "canonical": 3,
+   "spdx": 1,
+   "oz_mentions": 0
+  },
+  {
+   "path": "Chainsecurity-Compound  cToken unredacted/compound-protocol-4a54ec5c55b66ea67d44b76f3056f0ed7229db8c/contracts/Governance/GovernorAlpha.sol",
+   "funcs": 23,
+   "decls": 3,
+   "canonical": 0,
+   "spdx": 1,
+   "oz_mentions": 0
+  },
+  {
+   "path": "Chainsulting-GSPI Club-project3/code/Staking.sol",
+   "funcs": 32,
+   "decls": 9,
+   "canonical": 6,
+   "spdx": 1,
+   "oz_mentions": 2
+  },
+  {
+   "path": "Hacken-Amoss/code/Amoss.sol",
+   "funcs": 34,
+   "decls": 5,
+   "canonical": 4,
+   "spdx": 1,
+   "oz_mentions": 0
+  },
+  {
+   "path": "Hacken-Bitcoin SB-V2/code/BSB_StakingSmartStakers.sol",
+   "funcs": 37,
+   "decls": 5,
+   "canonical": 3,
+   "spdx": 1,
+   "oz_mentions": 0
+  },
+  {
+   "path": "Hacken-Bitcoin SB-V2/code/BSB_StakingSoftStakers.sol",
+   "funcs": 37,
+   "decls": 5,
+   "canonical": 3,
+   "spdx": 1,
+   "oz_mentions": 0
+  },
+  {
+   "path": "Hacken-Bitcoin SB-V2/code/BSB_StakingStrongStakers.sol",
+   "funcs": 37,
+   "decls": 5,
+   "canonical": 3,
+   "spdx": 1,
+   "oz_mentions": 0
+  },
+  {
+   "path": "Hacken-DeHealth HLT Network/code/DProxy.sol",
+   "funcs": 37,
+   "decls": 8,
+   "canonical": 1,
+   "spdx": 1,
+   "oz_mentions": 1
+  },
+  {
+   "path": "Hacken-DeHealth HLT Network/code/DeHealthToken.sol",
+   "funcs": 59,
+   "decls": 14,
+   "canonical": 0,
+   "spdx": 1,
+   "oz_mentions": 1
+  },
+  {
+   "path": "Hacken-Fidometa-V1/Smart_Contract-66f43e8644a20ed2ebbc4db94d6b2dcc797ac1c7/FidoMeta.sol",
+   "funcs": 46,
+   "decls": 5,
+   "canonical": 4,
+   "spdx": 1,
+   "oz_mentions": 2
+  },
+  {
+   "path": "Hacken-Fidometa-V1/Smart_Contract-7bb7d6d237f8a6ff97470a8969f42a9bb78a6db5/FidoMeta.sol",
+   "funcs": 36,
+   "decls": 4,
+   "canonical": 3,
+   "spdx": 1,
+   "oz_mentions": 0
+  },
+  {
+   "path": "Hacken-Fidometa-V1/Smart_Contract-ad56b0ce678f77d162752dbb5d987d2f4a29fddf/FidoMeta.sol",
+   "funcs": 106,
+   "decls": 6,
+   "canonical": 5,
+   "spdx": 1,
+   "oz_mentions": 2
+  },
+  {
+   "path": "Hacken-Fidometa-V2/Smart_Contract-66f43e8644a20ed2ebbc4db94d6b2dcc797ac1c7/FidoMeta.sol",
+   "funcs": 46,
+   "decls": 5,
+   "canonical": 4,
+   "spdx": 1,
+   "oz_mentions": 2
+  },
+  {
+   "path": "Hacken-Fidometa-V2/Smart_Contract-7bb7d6d237f8a6ff97470a8969f42a9bb78a6db5/FidoMeta.sol",
+   "funcs": 36,
+   "decls": 4,
+   "canonical": 3,
+   "spdx": 1,
+   "oz_mentions": 0
+  },
+  {
+   "path": "Hacken-Fidometa-V2/Smart_Contract-ad56b0ce678f77d162752dbb5d987d2f4a29fddf/FidoMeta.sol",
+   "funcs": 106,
+   "decls": 6,
+   "canonical": 5,
+   "spdx": 1,
+   "oz_mentions": 2
+  },
+  {
+   "path": "Hacken-Fidometa-V2/Smart_Contract-cfa7cbe26661482efaf0b71e2c86e690ac52244c/FidoMeta.sol",
+   "funcs": 36,
+   "decls": 4,
+   "canonical": 3,
+   "spdx": 1,
+   "oz_mentions": 0
+  },
+  {
+   "path": "Hacken-Forbitspace/forbitspaceX-bep20-19fc2b037b743e9f795709c72f004efe1109aaaf/contracts-merged/forbitspaceX.sol",
+   "funcs": 44,
+   "decls": 12,
+   "canonical": 5,
+   "spdx": 0,
+   "oz_mentions": 3
+  },
+  {
+   "path": "Hacken-Galeon/code/code.sol",
+   "funcs": 30,
+   "decls": 7,
+   "canonical": 5,
+   "spdx": 1,
+   "oz_mentions": 1
+  },
+  {
+   "path": "Hacken-MetagamZ/MetagamZ-bbcc0341d584ddbfe46d0e9e5ae957a100158b6b/Vesting/Vesting.sol",
+   "funcs": 13,
+   "decls": 5,
+   "canonical": 4,
+   "spdx": 1,
+   "oz_mentions": 0
+  },
+  {
+   "path": "Hacken-Oracula/Oracula0x85f3ec4EC49aB6a5901278176235957ef521970d/Oracula0x85f3ec4EC49aB6a5901278176235957ef521970d.sol",
+   "funcs": 43,
+   "decls": 9,
+   "canonical": 3,
+   "spdx": 1,
+   "oz_mentions": 0
+  },
+  {
+   "path": "Hacken-QANplatform/qanx-token-ebf0352af6ccb8d991827a0fba3ac5cfe9ca6b70/QANX.sol",
+   "funcs": 28,
+   "decls": 4,
+   "canonical": 3,
+   "spdx": 1,
+   "oz_mentions": 3
+  },
+  {
+   "path": "ImmuneBytes-Pluteus-Audit Report/code/Pluteus (1).sol",
+   "funcs": 84,
+   "decls": 12,
+   "canonical": 5,
+   "spdx": 1,
+   "oz_mentions": 2
+  },
+  {
+   "path": "ImmuneBytes-Pluteus-Final Audit Report/code/Pluteus (1).sol",
+   "funcs": 84,
+   "decls": 12,
+   "canonical": 5,
+   "spdx": 1,
+   "oz_mentions": 2
+  },
+  {
+   "path": "ImmuneBytes-WadzPay-Audit Report/code/WadzPayToken.sol",
+   "funcs": 46,
+   "decls": 6,
+   "canonical": 5,
+   "spdx": 1,
+   "oz_mentions": 3
+  },
+  {
+   "path": "Inspex-AutoCompound/auto-compound-v2-92626a1dcfc55a28afdf4f996d600fe8bbfd6efd/AllocKafra.sol",
+   "funcs": 8,
+   "decls": 4,
+   "canonical": 2,
+   "spdx": 0,
+   "oz_mentions": 2
+  },
+  {
+   "path": "Inspex-AutoCompound/auto-compound-v2-92626a1dcfc55a28afdf4f996d600fe8bbfd6efd/Emperium.sol",
+   "funcs": 37,
+   "decls": 9,
+   "canonical": 6,
+   "spdx": 0,
+   "oz_mentions": 7
+  },
+  {
+   "path": "Inspex-AutoCompound/auto-compound-v2-92626a1dcfc55a28afdf4f996d600fe8bbfd6efd/FeeKafra.sol",
+   "funcs": 30,
+   "decls": 7,
+   "canonical": 5,
+   "spdx": 0,
+   "oz_mentions": 5
+  },
+  {
+   "path": "Inspex-AutoCompound/auto-compound-v2-92626a1dcfc55a28afdf4f996d600fe8bbfd6efd/GasPrice.sol",
+   "funcs": 7,
+   "decls": 3,
+   "canonical": 2,
+   "spdx": 0,
+   "oz_mentions": 2
+  },
+  {
+   "path": "Inspex-AutoCompound/auto-compound-v2-92626a1dcfc55a28afdf4f996d600fe8bbfd6efd/IzludeV2.sol",
+   "funcs": 40,
+   "decls": 13,
+   "canonical": 5,
+   "spdx": 0,
+   "oz_mentions": 5
+  },
+  {
+   "path": "Inspex-AutoCompound/auto-compound-v2-92626a1dcfc55a28afdf4f996d600fe8bbfd6efd/PancakeByalanLP.sol",
+   "funcs": 55,
+   "decls": 18,
+   "canonical": 9,
+   "spdx": 0,
+   "oz_mentions": 8
+  },
+  {
+   "path": "Inspex-AutoCompound/auto-compound-v2-92626a1dcfc55a28afdf4f996d600fe8bbfd6efd/PronteraReserve.sol",
+   "funcs": 32,
+   "decls": 8,
+   "canonical": 5,
+   "spdx": 0,
+   "oz_mentions": 5
+  },
+  {
+   "path": "Inspex-AutoCompound/auto-compound-v2-92626a1dcfc55a28afdf4f996d600fe8bbfd6efd/PronteraV2.sol",
+   "funcs": 58,
+   "decls": 16,
+   "canonical": 6,
+   "spdx": 0,
+   "oz_mentions": 7
+  },
+  {
+   "path": "Inspex-AutoStake, ThorusMaster & Token/contracts-ea34f1b89a39b89ae12ea6a0a5be0cad81cf464e/StatikMaster.sol",
+   "funcs": 46,
+   "decls": 11,
+   "canonical": 7,
+   "spdx": 1,
+   "oz_mentions": 1
+  },
+  {
+   "path": "Inspex-AutoStake, ThorusMaster & Token/contracts-ea34f1b89a39b89ae12ea6a0a5be0cad81cf464e/StatikToken.sol",
+   "funcs": 27,
+   "decls": 7,
+   "canonical": 5,
+   "spdx": 1,
+   "oz_mentions": 1
+  },
+  {
+   "path": "Inspex-AutoStake, ThorusMaster & Token/contracts-ea34f1b89a39b89ae12ea6a0a5be0cad81cf464e/StatikWithdrawer.sol",
+   "funcs": 27,
+   "decls": 7,
+   "canonical": 5,
+   "spdx": 1,
+   "oz_mentions": 0
+  },
+  {
+   "path": "Inspex-AutoStake, ThorusMaster & Token/contracts-ea34f1b89a39b89ae12ea6a0a5be0cad81cf464e/ThorusAutoStake.sol",
+   "funcs": 62,
+   "decls": 11,
+   "canonical": 9,
+   "spdx": 1,
+   "oz_mentions": 2
+  },
+  {
+   "path": "Inspex-AutoStake, ThorusMaster & Token/contracts-ea34f1b89a39b89ae12ea6a0a5be0cad81cf464e/ThorusBond.sol",
+   "funcs": 27,
+   "decls": 7,
+   "canonical": 5,
+   "spdx": 1,
+   "oz_mentions": 0
+  },
+  {
+   "path": "Inspex-AutoStake, ThorusMaster & Token/contracts-ea34f1b89a39b89ae12ea6a0a5be0cad81cf464e/ThorusMaster.sol",
+   "funcs": 35,
+   "decls": 8,
+   "canonical": 6,
+   "spdx": 1,
+   "oz_mentions": 1
+  },
+  {
+   "path": "Inspex-AutoStake, ThorusMaster & Token/contracts-ea34f1b89a39b89ae12ea6a0a5be0cad81cf464e/ThorusToken.sol",
+   "funcs": 26,
+   "decls": 7,
+   "canonical": 5,
+   "spdx": 1,
+   "oz_mentions": 1
+  },
+  {
+   "path": "Inspex-ThorusDummy/contracts-main/StatikMaster.sol",
+   "funcs": 46,
+   "decls": 11,
+   "canonical": 7,
+   "spdx": 1,
+   "oz_mentions": 1
+  },
+  {
+   "path": "Inspex-ThorusDummy/contracts-main/StatikToken.sol",
+   "funcs": 27,
+   "decls": 7,
+   "canonical": 5,
+   "spdx": 1,
+   "oz_mentions": 1
+  },
+  {
+   "path": "Inspex-ThorusDummy/contracts-main/StatikWithdrawer.sol",
+   "funcs": 27,
+   "decls": 7,
+   "canonical": 5,
+   "spdx": 1,
+   "oz_mentions": 0
+  },
+  {
+   "path": "Inspex-ThorusDummy/contracts-main/ThorusAutoStake.sol",
+   "funcs": 62,
+   "decls": 11,
+   "canonical": 9,
+   "spdx": 1,
+   "oz_mentions": 2
+  },
+  {
+   "path": "Inspex-ThorusDummy/contracts-main/ThorusBond.sol",
+   "funcs": 27,
+   "decls": 7,
+   "canonical": 5,
+   "spdx": 1,
+   "oz_mentions": 0
+  },
+  {
+   "path": "Inspex-ThorusDummy/contracts-main/ThorusDummy.sol",
+   "funcs": 46,
+   "decls": 9,
+   "canonical": 7,
+   "spdx": 1,
+   "oz_mentions": 1
+  },
+  {
+   "path": "Inspex-ThorusDummy/contracts-main/ThorusLaunchpad.sol",
+   "funcs": 33,
+   "decls": 8,
+   "canonical": 7,
+   "spdx": 1,
+   "oz_mentions": 1
+  },
+  {
+   "path": "Inspex-ThorusDummy/contracts-main/ThorusLottery.sol",
+   "funcs": 43,
+   "decls": 8,
+   "canonical": 7,
+   "spdx": 1,
+   "oz_mentions": 1
+  },
+  {
+   "path": "Inspex-ThorusDummy/contracts-main/ThorusMaster.sol",
+   "funcs": 35,
+   "decls": 8,
+   "canonical": 6,
+   "spdx": 1,
+   "oz_mentions": 1
+  },
+  {
+   "path": "Inspex-ThorusDummy/contracts-main/ThorusToken.sol",
+   "funcs": 26,
+   "decls": 7,
+   "canonical": 5,
+   "spdx": 1,
+   "oz_mentions": 1
+  },
+  {
+   "path": "Inspex-WUSDMaster/WUSD-5f50a2c7ffff7828c70299e8a9217cfbb926b8c1/WUSD.sol",
+   "funcs": 27,
+   "decls": 7,
+   "canonical": 5,
+   "spdx": 1,
+   "oz_mentions": 1
+  },
+  {
+   "path": "Inspex-WUSDMaster/WUSD-5f50a2c7ffff7828c70299e8a9217cfbb926b8c1/WUSDMaster.sol",
+   "funcs": 47,
+   "decls": 11,
+   "canonical": 7,
+   "spdx": 1,
+   "oz_mentions": 1
+  },
+  {
+   "path": "Inspex-WUSDMaster/WUSD-5f50a2c7ffff7828c70299e8a9217cfbb926b8c1/WexWithdrawer.sol",
+   "funcs": 28,
+   "decls": 8,
+   "canonical": 5,
+   "spdx": 1,
+   "oz_mentions": 0
+  },
+  {
+   "path": "Inspex-WUSDMaster/WUSD-91c541c2f1c0ac781ddcfb2be6a62555a5e1e8d1/WUSD.sol",
+   "funcs": 27,
+   "decls": 7,
+   "canonical": 5,
+   "spdx": 1,
+   "oz_mentions": 1
+  },
+  {
+   "path": "Inspex-WUSDMaster/WUSD-91c541c2f1c0ac781ddcfb2be6a62555a5e1e8d1/WUSDMaster.sol",
+   "funcs": 38,
+   "decls": 10,
+   "canonical": 6,
+   "spdx": 1,
+   "oz_mentions": 1
+  },
+  {
+   "path": "Inspex-WUSDMaster/WUSD-91c541c2f1c0ac781ddcfb2be6a62555a5e1e8d1/WexWithdrawer.sol",
+   "funcs": 28,
+   "decls": 8,
+   "canonical": 5,
+   "spdx": 1,
+   "oz_mentions": 0
+  },
+  {
+   "path": "Inspex-WusdAaveStrategy/WUSD-main/WUSD.sol",
+   "funcs": 27,
+   "decls": 7,
+   "canonical": 5,
+   "spdx": 1,
+   "oz_mentions": 1
+  },
+  {
+   "path": "Inspex-WusdAaveStrategy/WUSD-main/WUSDMaster.sol",
+   "funcs": 47,
+   "decls": 11,
+   "canonical": 7,
+   "spdx": 1,
+   "oz_mentions": 1
+  },
+  {
+   "path": "Inspex-WusdAaveStrategy/WUSD-main/WexWithdrawer.sol",
+   "funcs": 28,
+   "decls": 8,
+   "canonical": 5,
+   "spdx": 1,
+   "oz_mentions": 0
+  },
+  {
+   "path": "Inspex-WusdAaveStrategy/WUSD-main/WusdAaveStrategy.sol",
+   "funcs": 35,
+   "decls": 9,
+   "canonical": 5,
+   "spdx": 1,
+   "oz_mentions": 0
+  },
+  {
+   "path": "Inspex-WusdAaveStrategy/WUSD-main/WusdAlpacaStrategy.sol",
+   "funcs": 37,
+   "decls": 9,
+   "canonical": 5,
+   "spdx": 1,
+   "oz_mentions": 0
+  },
+  {
+   "path": "QuillAudits-AQEX Token Smart Contract/erc-20-token-3628abfa6ea2636866f7d5ad1f8cc570b0d5bb1b/Token.sol",
+   "funcs": 12,
+   "decls": 3,
+   "canonical": 2,
+   "spdx": 1,
+   "oz_mentions": 1
+  },
+  {
+   "path": "QuillAudits-AVX Smart Contract/code/code.sol",
+   "funcs": 15,
+   "decls": 3,
+   "canonical": 1,
+   "spdx": 1,
+   "oz_mentions": 0
+  },
+  {
+   "path": "QuillAudits-Amplify Smart Contract/contracts-d8af5f11f3b6ab59d09a56ebc229012900dc1cc8/protocol/contracts/utils/ErrorReporter.sol",
+   "funcs": 6,
+   "decls": 3,
+   "canonical": 0,
+   "spdx": 1,
+   "oz_mentions": 0
+  },
+  {
+   "path": "QuillAudits-Big League Smart Contract/code/StandardToken.sol",
+   "funcs": 22,
+   "decls": 6,
+   "canonical": 2,
+   "spdx": 1,
+   "oz_mentions": 0
+  },
+  {
+   "path": "QuillAudits-BigDog Smart Contract/code/StandardToken.sol",
+   "funcs": 22,
+   "decls": 6,
+   "canonical": 2,
+   "spdx": 1,
+   "oz_mentions": 0
+  },
+  {
+   "path": "QuillAudits-BitDiamond Smart Contract/code/bitdiamond.sol",
+   "funcs": 54,
+   "decls": 6,
+   "canonical": 4,
+   "spdx": 1,
+   "oz_mentions": 2
+  },
+  {
+   "path": "QuillAudits-Bitbook Smart Contract V2/code/BitBookStake.sol",
+   "funcs": 24,
+   "decls": 5,
+   "canonical": 3,
+   "spdx": 1,
+   "oz_mentions": 0
+  },
+  {
+   "path": "QuillAudits-Bridge Network Smart Contract/bridgeToken-9636c155e8fcfff5cda8b609a77c7d4527b5b402/bridgeToken.sol",
+   "funcs": 27,
+   "decls": 5,
+   "canonical": 4,
+   "spdx": 1,
+   "oz_mentions": 2
+  },
+  {
+   "path": "QuillAudits-BscDragon Smart Contract/bridgeToken-9636c155e8fcfff5cda8b609a77c7d4527b5b402/bridgeToken.sol",
+   "funcs": 27,
+   "decls": 5,
+   "canonical": 4,
+   "spdx": 1,
+   "oz_mentions": 2
+  },
+  {
+   "path": "QuillAudits-Citrus Smart Contract/CitrusTechContract-e50a2a983928c10b76e6bc374ae6267f51af99b6/CitrusToken.sol",
+   "funcs": 14,
+   "decls": 5,
+   "canonical": 0,
+   "spdx": 1,
+   "oz_mentions": 0
+  },
+  {
+   "path": "QuillAudits-CoinDogg Smart Contract/code/CoinDogg.sol",
+   "funcs": 22,
+   "decls": 5,
+   "canonical": 4,
+   "spdx": 1,
+   "oz_mentions": 1
+  },
+  {
+   "path": "QuillAudits-CronosPad Smart Contract/cronospad-1605d38fab314cab399093f756b41093fdbc859f/contracts/cronospad.sol",
+   "funcs": 26,
+   "decls": 7,
+   "canonical": 6,
+   "spdx": 1,
+   "oz_mentions": 1
+  },
+  {
+   "path": "QuillAudits-CryptoGamez Smart Contract/CryptoGamez/CryptoGamez.sol",
+   "funcs": 16,
+   "decls": 3,
+   "canonical": 0,
+   "spdx": 1,
+   "oz_mentions": 0
+  },
+  {
+   "path": "QuillAudits-DOXY - v1.3/code/DoxyFinance_V3.sol",
+   "funcs": 83,
+   "decls": 10,
+   "canonical": 7,
+   "spdx": 1,
+   "oz_mentions": 2
+  },
+  {
+   "path": "QuillAudits-DictatorDOGE Smart Contract/code/DictatorDOGE.sol",
+   "funcs": 101,
+   "decls": 10,
+   "canonical": 8,
+   "spdx": 1,
+   "oz_mentions": 0
+  },
+  {
+   "path": "QuillAudits-GameZilla Token Smart Contract/code/GameZilla.sol",
+   "funcs": 15,
+   "decls": 3,
+   "canonical": 0,
+   "spdx": 1,
+   "oz_mentions": 0
+  },
+  {
+   "path": "QuillAudits-HE - v1.2/heroes-empires-contract-08cc390408d36de4d10ab5f822adf2d842145073/src/contracts/Stake.sol",
+   "funcs": 47,
+   "decls": 11,
+   "canonical": 4,
+   "spdx": 0,
+   "oz_mentions": 0
+  },
+  {
+   "path": "QuillAudits-HE - v1.2/heroes-empires-contract-f24ba85db4bf40e39caaa5fc322a02cd8e82c2c7/src/contracts/Stake.sol",
+   "funcs": 50,
+   "decls": 13,
+   "canonical": 4,
+   "spdx": 0,
+   "oz_mentions": 0
+  },
+  {
+   "path": "QuillAudits-Keep3r.Network-Keep3r.Network/StakingRewardsV3-13ecc6966ae1a413f62224382bfd4d64b1a22351/contracts/StakingRewardsV3-1.sol",
+   "funcs": 24,
+   "decls": 6,
+   "canonical": 0,
+   "spdx": 1,
+   "oz_mentions": 0
+  },
+  {
+   "path": "QuillAudits-Keep3r.Network-Keep3r.Network/StakingRewardsV3-13ecc6966ae1a413f62224382bfd4d64b1a22351/contracts/StakingRewardsV3.sol",
+   "funcs": 27,
+   "decls": 6,
+   "canonical": 0,
+   "spdx": 1,
+   "oz_mentions": 0
+  },
+  {
+   "path": "QuillAudits-MetaGameStarter Smart Contract/Tokenomics-Contracts-f3899d0a31dbb7386eacb7efefbff2ac32ce7cbb/contracts/IFO/ClaimAggregator.sol",
+   "funcs": 2,
+   "decls": 3,
+   "canonical": 0,
+   "spdx": 0,
+   "oz_mentions": 0
+  },
+  {
+   "path": "QuillAudits-MetaWaferse Smart Contract/code/MetaWaferse.sol",
+   "funcs": 14,
+   "decls": 3,
+   "canonical": 0,
+   "spdx": 1,
+   "oz_mentions": 0
+  },
+  {
+   "path": "QuillAudits-MiniDOGE Smart Contract/code/MiniDOGE.sol",
+   "funcs": 100,
+   "decls": 10,
+   "canonical": 8,
+   "spdx": 1,
+   "oz_mentions": 0
+  },
+  {
+   "path": "QuillAudits-Yearn Finance-ySwaps/hardhat-monorepo-ecc0b5147992b34c315e08af170ceb4a5fe071ee/packages/strategies-keep3r/contracts-no-compile/keep3r/Keep3rV2OracleFactory.sol",
+   "funcs": 30,
+   "decls": 5,
+   "canonical": 1,
+   "spdx": 1,
+   "oz_mentions": 0
+  },
+  {
+   "path": "QuillAudits-Yearn Finance-ySwaps/hardhat-monorepo-ecc0b5147992b34c315e08af170ceb4a5fe071ee/packages/strategies-keep3r/contracts/interfaces/yearn/IVaultAPI_0_3_2.sol",
+   "funcs": 75,
+   "decls": 12,
+   "canonical": 4,
+   "spdx": 1,
+   "oz_mentions": 12
+  },
+  {
+   "path": "QuillAudits-Yearn Finance-ySwaps/hardhat-monorepo-ecc0b5147992b34c315e08af170ceb4a5fe071ee/packages/strategies-keep3r/contracts/interfaces/yearn/IVaultAPI_0_3_2_s.sol",
+   "funcs": 75,
+   "decls": 12,
+   "canonical": 4,
+   "spdx": 1,
+   "oz_mentions": 12
+  },
+  {
+   "path": "Runtime_Vеrification-stakefish_ethereum_staking_audit_report/eth2-validation-services-contract-d91928f3a270f6115831fe3a21a69eb98bf57b26/contracts/interfaces/deposit_contract.sol",
+   "funcs": 5,
+   "decls": 3,
+   "canonical": 0,
+   "spdx": 1,
+   "oz_mentions": 0
+  },
+  {
+   "path": "SlowMist-wault.finance(WUSD) Smart Contract Security Audit Report/WUSD-91c541c2f1c0ac781ddcfb2be6a62555a5e1e8d1/WUSD.sol",
+   "funcs": 27,
+   "decls": 7,
+   "canonical": 5,
+   "spdx": 1,
+   "oz_mentions": 1
+  },
+  {
+   "path": "SlowMist-wault.finance(WUSD) Smart Contract Security Audit Report/WUSD-91c541c2f1c0ac781ddcfb2be6a62555a5e1e8d1/WUSDMaster.sol",
+   "funcs": 38,
+   "decls": 10,
+   "canonical": 6,
+   "spdx": 1,
+   "oz_mentions": 1
+  },
+  {
+   "path": "SlowMist-wault.finance(WUSD) Smart Contract Security Audit Report/WUSD-91c541c2f1c0ac781ddcfb2be6a62555a5e1e8d1/WexWithdrawer.sol",
+   "funcs": 28,
+   "decls": 8,
+   "canonical": 5,
+   "spdx": 1,
+   "oz_mentions": 0
+  },
+  {
+   "path": "Solidity_Finance-RevomonVR Smart Contract/Contracts-9d0da49342a1a87b6cafebd4945612c2cfb8669d/RevoFarming.sol",
+   "funcs": 37,
+   "decls": 9,
+   "canonical": 6,
+   "spdx": 0,
+   "oz_mentions": 0
+  },
+  {
+   "path": "Solidity_Finance-RevomonVR Smart Contract/Contracts-9d0da49342a1a87b6cafebd4945612c2cfb8669d/RevoNFT.sol",
+   "funcs": 98,
+   "decls": 15,
+   "canonical": 5,
+   "spdx": 0,
+   "oz_mentions": 0
+  },
+  {
+   "path": "Solidity_Finance-RevomonVR Smart Contract/Contracts-9d0da49342a1a87b6cafebd4945612c2cfb8669d/RevoNFTMinter.sol",
+   "funcs": 11,
+   "decls": 6,
+   "canonical": 2,
+   "spdx": 0,
+   "oz_mentions": 0
+  },
+  {
+   "path": "Solidity_Finance-RevomonVR Smart Contract/Contracts-9d0da49342a1a87b6cafebd4945612c2cfb8669d/RevoNFTUtils.sol",
+   "funcs": 24,
+   "decls": 7,
+   "canonical": 3,
+   "spdx": 0,
+   "oz_mentions": 0
+  },
+  {
+   "path": "Solidity_Finance-RevomonVR Smart Contract/Contracts-9d0da49342a1a87b6cafebd4945612c2cfb8669d/RevoStaking.sol",
+   "funcs": 31,
+   "decls": 7,
+   "canonical": 3,
+   "spdx": 0,
+   "oz_mentions": 0
+  },
+  {
+   "path": "Solidity_Finance-RevomonVR Smart Contract/Contracts-9d0da49342a1a87b6cafebd4945612c2cfb8669d/RevoTier.sol",
+   "funcs": 27,
+   "decls": 8,
+   "canonical": 3,
+   "spdx": 0,
+   "oz_mentions": 0
+  },
+  {
+   "path": "Trail_of_Bits-FraxFinance/frax-solidity-3f0993a70e3496fd27887db7754d68709c84015e/contracts/__BSC/AnyswapV4ERC20/AnyswapV4ERC20.sol",
+   "funcs": 46,
+   "decls": 8,
+   "canonical": 3,
+   "spdx": 1,
+   "oz_mentions": 0
+  },
+  {
+   "path": "consensys-Fei_Protocol_v2_Phase_1/fei-protocol-core-5e3e2ab889f06831f4fe2e8460066ded40ccf0a8/contracts/dao/GovernorAlpha.sol",
+   "funcs": 24,
+   "decls": 3,
+   "canonical": 0,
+   "spdx": 1,
+   "oz_mentions": 0
+  }
+ ]
+}
