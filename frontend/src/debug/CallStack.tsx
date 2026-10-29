@@ -21,8 +21,11 @@ export default function CallStack({ nav }: { nav: NavState }) {
             key={`${f.cfgKey ?? 'root'}-${i}`}
             className={'cs-frame' + (isTop ? ' active' : '')}
             style={{ paddingLeft: 6 + i * 10 }}
-            onClick={() => !isTop && nav.popToFrame(i)}
-            title={isTop ? '현재 프레임' : '클릭하면 이 프레임으로 돌아갑니다'}
+            // (2026-10-29) 클릭으로 스택을 절단하지 않는다. 예전엔 `popToFrame(i)` 를 불러
+            //   위쪽 프레임이 사라졌는데, 일반 디버거에서 Call Stack 클릭은 그 프레임을
+            //   **관찰**하는 것(스택 보존)이라 관례를 어기고 있었다. 절단은 `StepOut` 반복과
+            //   같은 연산이라 별도 operation 으로 두지 않았고, 관찰용 Select Frame 은 미구현이다.
+            title={isTop ? '현재 프레임' : '호출 지점 (Step Out 으로 돌아갑니다)'}
           >
             <span className="cs-depth">{i === 0 ? '▣' : '↳'}</span>
             <span className="cs-label">{f.label}</span>

@@ -16,6 +16,7 @@ class CFGNode:
                  fixpoint_evaluation_node: bool = False,  # φ / back-edge 합류 노드
                  loop_exit_node: bool = False,            # while/for False-branch 종착
                  is_for_increment: bool = False,          # for(i;cond;i++) 의 incr 블록
+                 is_for_init: bool = False,               # for(init;…) 의 init 블록 (K1)
                  is_loop_body: bool = False,              # 루프 본문 블록 여부(선택)
                  # ───── misc ─────────────────────────────────────────────────
                  unchecked_block: bool = False,
@@ -39,6 +40,7 @@ class CFGNode:
         self.fixpoint_evaluation_node = fixpoint_evaluation_node
         self.loop_exit_node = loop_exit_node
         self.is_for_increment = is_for_increment
+        self.is_for_init = is_for_init
         self.is_loop_body = is_loop_body
 
         # φ/조인 관련 보조 env
@@ -207,6 +209,7 @@ class CFGNode:
             'join_point_node': self.join_point_node,
             'fixpoint_evaluation_node': self.fixpoint_evaluation_node,
             'is_for_increment': self.is_for_increment,
+            'is_for_init': self.is_for_init,
             'loop_exit_node': self.loop_exit_node,
             'is_loop_body': self.is_loop_body,
             'unchecked_block': self.unchecked_block,

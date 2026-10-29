@@ -9,11 +9,29 @@ export type NodeFlag =
   | 'fixpoint_evaluation' // loop fixpoint 노드
   | 'loop_exit'
   | 'loop_body'
+  | 'loop_init'  // (K1) for 헤더의 init 블록 — 효과는 for_cond 의 IN 에 포함
+  | 'loop_incr'  // (K1) for 헤더의 incr 블록 — back edge 쪽
   | 'exit'
   | 'call'    // N4: 이 노드에 함수 호출이 있다
   | 'opaque'  // N4: 그 호출로는 들어갈 수 없다 (외부 호출)
 
 export type EdgeKind = 'normal' | 'true' | 'false' | 'back_edge'
+
+/** (K3) 루프 탈출 경로의 종류. */
+export type LoopExitKind = 'normal' | 'break' | 'return' | 'revert' | 'other'
+
+/** (K3) 루프 헤더에서 이 루프가 끝날 수 있는 한 가지 경로. */
+export interface LoopExit {
+  kind: LoopExitKind
+  /** 이 경로를 만든 노드 uid (루프 조건 / break 문 / return 문) */
+  from_: string
+  /** 도착 노드 uid — loop exit 노드, 또는 RETURN/ERROR sink */
+  to: string
+  /** false = 이 경로는 ⊥ 다(엔진이 join 에서 제외). 후보로 제시하면 안 된다. */
+  feasible: boolean
+  /** 그 경로**만**의 상태 (join 되기 전) */
+  state: Record<string, string>
+}
 
 export interface CFGNode {
   /** 노드 uid — 생성 시 한 번 정해지고 증분 편집(줄 이동)에도 바뀌지 않는다 (2026-10-22). */
@@ -24,7 +42,7 @@ export interface CFGNode {
   /** 화면 표시·breakpoint 줄. if/else-if join 은 체인을 닫는 `}` 줄, 그 외는 src_line (U3). */
   display_line: number
   flags: NodeFlag[]
-  cond_type?: string // if | else_if | require | while | for | do_while
+  cond_type?: string // if | else_if | require | while | for | do_while | try | catch
   /** 실행 **후**(OUT) 상태: 변수명 → 직렬화된 추상값 ("[lo,hi]" | "address(⊤)" | "top" | ...) */
   state: Record<string, string>
   /**
@@ -41,6 +59,13 @@ export interface CFGNode {
    * 접고(N2) 그 효과를 이 delta 하나로 보여준다.
    */
   loop_delta?: Record<string, string>
+  /**
+   * (K3) 루프 헤더 노드면 이 루프가 **끝날 수 있는 경로들**.
+   * 루프 본문은 탐색에서 블랙박스이므로(양방향 진입 금지) 헤더가 탈출 경로의 유일한 요약 지점이다.
+   * `state` 는 그 경로만의 환경 — loop-exit 노드의 `in_state` 는 모든 경로의 join 이라
+   * "조건 실패로 탈출" 과 "break 로 탈출" 을 구별할 수 없다.
+   */
+  loop_exits?: LoopExit[]
   /** N4: 이 노드의 호출들. enterable 한 것은 `AnalysisResult.callees[key]` 에 CFG 가 있다. */
   callees?: CalleeRef[]
 }

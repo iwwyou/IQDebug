@@ -79,6 +79,34 @@ def _brace_opens_block(text: str) -> bool:
 
 _BODYLESS_CTRL = re.compile(r"^(?:if|for|while|else)\b")
 
+# 문자열 리터럴 / 라인 주석을 지운 "코드 부분" — 구문 검사에서 오탐을 막는다
+_STR_LIT = re.compile(r'"(?:\\.|[^"\\])*"|\'(?:\\.|[^\'\\])*\'')
+
+
+def _code_only(text: str) -> str:
+    t = _STR_LIT.sub('""', text)
+    i = t.find("//")
+    return t if i < 0 else t[:i]
+
+
+#  지원하지 않는 구문 → 사유. 입력 전제 위반(`_one_statement_violation`)과 **다른 범주**다:
+#  전제 위반은 "같은 뜻을 줄만 나눠 쓰면 분석된다" 지만, 이쪽은 분석기가 그 구문 자체를 다루지
+#  않는다. 조용한 오분석을 막기 위해 명시적으로 거부한다(프로젝트 원칙).
+_UNSUPPORTED = (
+    # (2026-10-29) `try new C(...)` = 컨트랙트 생성 try. CFG 빌더의 try 체인은 "try 표현식 =
+    #   외부 함수 호출" 만 다룬다. 데이터셋 전체 0건이라(선정 551 파일 0, DAppSCAN-source 전체 0,
+    #   줄바꿈 포함 검색 확인) 지원 범위 밖으로 확정했다 — evaluation/reviews/round9_operations.md §9.
+    (re.compile(r"\btry\s+new\b"), "`try new C(...)`(컨트랙트 생성 try) 는 지원하지 않는다"),
+)
+
+
+def _unsupported_construct(txt: str) -> str | None:
+    code = _code_only(txt)
+    for rx, why in _UNSUPPORTED:
+        if rx.search(code):
+            return why
+    return None
+
 
 def _one_statement_violation(txt: str, close_before: bool) -> str | None:
     """입력 전제(**입력 1개 = statement 1개**) 위반이면 사유, 아니면 None. (Phase 4b, 2026-10-22 결정)
@@ -271,6 +299,13 @@ def slice_solidity(source: str) -> List[Dict]:
                 from Utils.Errors import SourceError
                 raise SourceError(f"line {cur_line}: 입력 전제 위반 — {why}: `{txt[:80]}` "
                                   f"(블록 헤더와 각 문장을 별도 줄로)", line=cur_line)
+
+            # 2.4b) 지원하지 않는 구문 — 전제 위반과 달리 줄을 나눠도 분석되지 않는다.
+            why = _unsupported_construct(txt)
+            if why:
+                from Utils.Errors import SourceError
+                raise SourceError(f"line {cur_line}: 지원하지 않는 구문 — {why}: `{txt[:80]}`",
+                                  line=cur_line)
 
         # 2.5) 주석 라인
         if _comment.match(raw):

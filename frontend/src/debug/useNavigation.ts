@@ -75,8 +75,11 @@ export interface NavState {
   nextIntent: () => void
   prevIntent: () => void
   restart: () => void
-  /** Call Stack 패널에서 프레임을 눌러 그 깊이까지 되돌아가기 (0 = 타겟). */
-  popToFrame: (index: number) => void
+  //  (2026-10-29 제거) `popToFrame` — `StepOut` 을 k 번 반복한 것과 **완전히 동일**했다
+  //  (`slice(0,-1)` 반복 = `slice(0,i+1)`, `clearMarks()` 도 같다). primitive 가 아니라
+  //  파생 연산이므로 operation 목록에서 뺀다. 프레임의 상태를 **보는** 연산(Select Frame)은
+  //  스택을 보존해야 하는 별개의 관찰 연산이고, 아직 넣지 않았다 — 그래서 Call Stack 클릭은
+  //  현재 아무 일도 하지 않는다("클릭 = 관찰" 관례를 절단으로 어기지 않는다).
   jumpToLine: (line: number) => void
   toggleBreakpoint: (line: number) => void
 }
@@ -249,16 +252,20 @@ export function useNavigation(result: AnalysisResult | undefined): NavState {
       : '')
   }
 
-  // ★ Apply(evaluate) 마다 커서를 "run" 결과 위치로 재배치 (decision #32):
-  //   breakpoint 있으면 entry 에서 Continue 한 곳, 없으면 EXIT(최종상태). 호출 스택은 타겟 하나로 리셋.
+  // ★ Apply(evaluate) 마다 커서를 **타겟 함수의 첫 착지 노드**로 리셋한다 (2026-10-29 사용자 결정).
+  //   디버깅 입력이 바뀌면 모든 값이 바뀌므로 처음부터 다시 읽는 것이 자연스럽고, 전함수이며,
+  //   구조가 바뀐 경우까지 한 규칙으로 덮는다. 특정 지점을 다시 보려면 그 줄에 breakpoint 를
+  //   걸고 Continue 한다(그래야 callee 안이어도 프레임이 올바르게 복원된다).
+  //
+  //   예전엔 `continueRun` 을 재사용해 "breakpoint 있으면 거기, 없으면 **EXIT**" 로 갔다.
+  //   EXIT 는 세 선택지 중 가장 나쁘다 — 입력을 바꿔 보는 목적이 보통 특정 지점의 비교인데
+  //   함수 끝으로 날아가고, 왜 그 자리인지도 설명되지 않는다.
   const applyTick = useStore((s) => s.applyTick)
   const runRef = useRef<() => void>(() => {})
   runRef.current = () => {
     if (!result) return
-    const base = [rootFrame(result.cfg.entry)]
-    const hit = findNext(base)
-    if (hit) landOn(hit.frames, hit.branch)
-    else { setStack([rootFrame(result.cfg.exit)]); clearMarks() }
+    setStack([rootFrame(firstLanding(result.cfg))])
+    clearMarks()
   }
   // 결과가 바뀔 때: Apply 신호면 run, 아니면(코드 편집으로 구조만 바뀜) 프레임들이 아직 유효한지 확인.
   //   uid 라 편집 후에도 남은 노드는 그대로다 — 사라진 노드/callee 를 가리키는 프레임이 있으면 타겟 첫 착지로.
@@ -281,8 +288,12 @@ export function useNavigation(result: AnalysisResult | undefined): NavState {
 
   const fc = forwardCands(activeCfg, cursor)
   const bc = backwardCands(activeCfg, cursor)
-  const succCandidates = highlightedSuccs.length > 1 ? highlightedSuccs : fc.length > 1 ? fc : []
-  const predCandidates = highlightedPreds.length > 1 ? highlightedPreds : bc.length > 1 ? bc : []
+  // ★ (2026-10-29) 후보는 **언제나 커서의 실제 NG 차수**에서 나온다. 예전엔 직전 step 이 남긴
+  //   `highlightedSuccs`(다른 노드의 frontier)를 먼저 썼고, 그게 §2.1 결함의 출처였다.
+  //   이렇게 하면 "조건 노드인데 후속이 1개" 인 경우(한쪽 분기가 ⊥, 또는 체인의 마지막 catch)에
+  //   선택 UI 가 뜨지 않는다 — 가용성을 `condition` 플래그가 아니라 out-degree 로 판정한다.
+  const succCandidates = fc.length > 1 ? fc : []
+  const predCandidates = bc.length > 1 ? bc : []
 
   // 검증 결과 줄 목록 (Next/Prev Intent) — 타겟 프레임 기준
   const intentLines = (): number[] =>
@@ -303,26 +314,44 @@ export function useNavigation(result: AnalysisResult | undefined): NavState {
     activeCfg,
     breakpoints,
 
+    // ★ (2026-10-29) 분기에서는 **멈춰서 고르게 한다**.
+    //   예전엔 임의로 `cands[0]` 에 착지하고 형제를 하이라이트했다. 그래서 `selectSuccessor` 가
+    //   "커서에서 나가는 간선이 아닌" 이동을 허용해야 했고(B 에 서서 C 로 점프),
+    //   **"모든 이동은 커서의 NG 간선을 따른다"** 가 거짓이었다. 멈추면 그 성질이 참이 되고,
+    //   분기마다 feasible 경로가 몇 개인지가 매번 드러난다 — 추상 디버거에서는 비용이 아니라
+    //   정보다(구체 실행은 한쪽만 일어나니 애초에 질문이 성립하지 않는다).
     stepForward: () => {
       const cands = forwardCands(activeCfg, cursor)
       if (cands.length === 0) {
         setMessage(cursor === activeCfg.exit ? '함수 끝입니다.' : '이후 모든 경로가 도달 불가(⊥)입니다.')
         return
       }
-      go(cands[0], { succs: cands.length > 1 ? cands : [], folded: loopFoldFrom(cursor, cands[0]) })
+      if (cands.length > 1) {
+        setHighlightedSuccs(cands); setHighlightedPreds([]); setFoldedLoopHead(undefined)
+        setMessage(`분기입니다 — 갈 수 있는 경로 ${cands.length}개 중 하나를 고르세요.`)
+        return
+      }
+      go(cands[0], { folded: loopFoldFrom(cursor, cands[0]) })
     },
     stepBackward: () => {
       const cands = backwardCands(activeCfg, cursor)
-      if (cands.length === 0) return
-      go(cands[0], { preds: cands.length > 1 ? cands : [] })
+      if (cands.length === 0) {
+        setMessage('이전 지점이 없습니다.')
+        return
+      }
+      if (cands.length > 1) {
+        setHighlightedPreds(cands); setHighlightedSuccs([]); setFoldedLoopHead(undefined)
+        setMessage(`합류점입니다 — 들어온 경로 ${cands.length}개 중 하나를 고르세요.`)
+        return
+      }
+      go(cands[0])
     },
+    //  커서에서 나가는/들어오는 NG 간선만 허용한다(형제 허용 절 제거).
     selectSuccessor: (id) => {
-      const cands = forwardCands(activeCfg, cursor)
-      // 하이라이트된 후보에서 고른 경우: 커서는 이미 첫 후보로 갔을 수 있다 → 형제 후보로 이동 허용
-      if (cands.includes(id) || highlightedSuccs.includes(id)) go(id, { folded: loopFoldFrom(cursor, id) })
+      if (forwardCands(activeCfg, cursor).includes(id)) go(id, { folded: loopFoldFrom(cursor, id) })
     },
     selectPredecessor: (id) => {
-      if (backwardCands(activeCfg, cursor).includes(id) || highlightedPreds.includes(id)) go(id)
+      if (backwardCands(activeCfg, cursor).includes(id)) go(id)
     },
 
     // ★ N4. callee CFG 로 하강(push). 같은 노드에서 반복하면 **엔진 평가 순서대로** 다음 callee 로.
@@ -407,14 +436,16 @@ export function useNavigation(result: AnalysisResult | undefined): NavState {
       clearMarks()
     },
 
-    popToFrame: (index) => {
-      if (index < 0 || index >= stack.length - 1) return
-      setStack((prev) => prev.slice(0, index + 1))
-      clearMarks()
-    },
-
-    // 타겟 파일 줄로 이동(Verdict 패널 등) — 호출 스택은 타겟 하나로.
+    // ★ (2026-10-29) Jump 를 두 단계로 나눈다.
+    //   ① JumpLocal — 그 줄이 **현재 프레임의 CFG** 에 있으면 프레임 안에서만 움직인다.
+    //      스택·깊이가 보존되므로 callee 안에서도 쓸 수 있고, 줄 번호만 비교해 **다른 파일의
+    //      같은 번호 줄로 조용히 날아가는 사고**가 사라진다(예전엔 늘 `result.cfg` 만 봤다).
+    //   ② JumpRoot — 그 줄이 타겟 CFG 에 있으면 루트 프레임으로 리셋한다. 현재 스택에 없는
+    //      함수의 줄은 호출 경로가 유일하지 않아 원리적으로 결정 불가이므로, 리셋이 유일한
+    //      전함수다(근거: `depth=1` + 출발 문맥 독립성).
     jumpToLine: (line) => {
+      const local = landingAtLine(activeCfg, line)
+      if (local) { go(local); return }
       const id = result ? landingAtLine(result.cfg, line) : undefined
       if (id) { setStack([rootFrame(id)]); clearMarks() } else setMessage(`L${line} 에 착지할 노드가 없습니다.`)
     },

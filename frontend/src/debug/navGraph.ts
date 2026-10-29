@@ -60,6 +60,10 @@ export function isLandable(cfg: CFG, n: CFGNode | undefined): boolean {
   if (n.id === cfg.entry) return false
   if (has(n, 'exit')) return n.id === cfg.exit // RETURN/ERROR sink 는 착지 안 함, 함수 EXIT 는 "최종 상태"
   if (has(n, 'fixpoint_evaluation') || has(n, 'loop_body')) return false
+  // (K1) for 헤더의 init/incr 는 착지하지 않는다 — `for (uint i=0; …)` 한 줄에 착지 노드가
+  //   둘(init·cond) 생겨 `landingAtLine` 이 배열 순서로 하나를 집었다. init 의 효과는
+  //   for_cond 의 IN 에 이미 들어 있으므로 land closure 로 통과시켜도 정보 손실이 없다.
+  if (has(n, 'loop_init') || has(n, 'loop_incr')) return false
   if ((has(n, 'branch_then') || has(n, 'branch_else')) && !has(n, 'loop_exit')) return false // 분기 더미
   if (isCollapsedJoin(cfg, n)) return false
   return true
@@ -83,38 +87,93 @@ function landFwd(cfg: CFG, first: string, seen = new Set<string>()): string | un
   return undefined
 }
 
-/** 커서에서 Step Forward 후보들 (feasible, 착지 노드, 엔진 edge 순서 = true 먼저). */
-export function forwardCands(cfg: CFG, from: string): string[] {
-  const out: string[] = []
-  for (const e of fwdEdges(cfg, from)) {
-    const l = landFwd(cfg, e.to)
-    if (l && !out.includes(l)) out.push(l)
+// ───────────────────── 탐색 그래프 NG (단일 관계) ─────────────────────
+// Step Forward 와 Step Backward 는 **같은 간선 집합**에서 나온다. 예전에는 두 함수가
+// 서로 다른 규칙을 썼다 — forward 는 루프 헤더에서 true 간선을 잘라 본문에 들어가지 않는데,
+// backward 는 `pred` 를 그대로 쓰고 `loop_body` 노드를 통과해 본문을 거쳐 나왔다. 그래서
+// `Pred ≠ Succ⁻¹` 이었고(루프 본문 안 `return` 에서 반례), EXIT 에서 한 칸 뒤로 갔다가
+// 한 칸 앞으로 오면 제자리가 아니었다. 이제 대칭은 **구성상 자명**하다.
+
+export type NavEdgeKind =
+  | 'normal' | 'true' | 'false'
+  | 'loop_exit_normal'   // 루프 조건 실패로 탈출
+  | 'loop_exit_break'    // 본문의 break 로 탈출
+  | 'loop_exit_return'   // 본문의 return 으로 함수 종료
+
+export interface NavEdge {
+  /** 출발 착지 노드 (또는 cfg.entry — `firstLanding` 용) */
+  from: string
+  /** 도착 착지 노드 */
+  to: string
+  kind: NavEdgeKind
+  /** 루프 탈출: 그 경로를 만든 노드 (break / return 문) */
+  via?: string
+  /** 루프 탈출: 그 경로**만**의 상태 (loop exit 노드의 join 이 아니다) */
+  state?: Record<string, string>
+}
+
+const edgeCache = new WeakMap<CFG, NavEdge[]>()
+
+/** 루프 탈출 요약(K3)에서 NG 간선을 만든다. 요약이 없으면(구조 단계) undefined. */
+function loopExitEdges(cfg: CFG, h: CFGNode): NavEdge[] | undefined {
+  const les = h.loop_exits
+  if (!les || les.length === 0) return undefined
+  const out: NavEdge[] = []
+  for (const le of les) {
+    if (!le.feasible) continue            // ⊥ 경로 — 엔진이 join 에서 제외한 것
+    if (le.kind === 'revert') continue    // ERROR sink 는 착지 대상이 아니다(요약으로만 보여준다)
+    const target = le.to === cfg.return_exit ? cfg.exit : landFwd(cfg, le.to)
+    if (!target) continue
+    const kind: NavEdgeKind =
+      le.kind === 'break' ? 'loop_exit_break'
+        : le.kind === 'return' ? 'loop_exit_return'
+          : 'loop_exit_normal'
+    out.push({ from: h.id, to: target, kind, via: le.from_, state: le.state })
   }
   return out
 }
 
-/** 커서에서 Step Backward 후보들 (feasible 선행의 착지 노드). */
-export function backwardCands(cfg: CFG, from: string): string[] {
+/** NG 의 간선 전체 — 착지 노드(+entry) 사이의 간선만. CFG 당 1회 계산해 캐시한다. */
+export function navEdges(cfg: CFG): NavEdge[] {
+  let es = edgeCache.get(cfg)
+  if (es) return es
+  es = []
   const ix = navIndex(cfg)
-  const out: string[] = []
-  const walk = (id: string, seen: Set<string>) => {
-    if (seen.has(id)) return
-    seen.add(id)
-    for (const e of ix.pred.get(id) ?? []) {
-      const p = e.from
-      if (isDead(cfg, p) && p !== cfg.entry) continue
-      const pn = ix.byId.get(p)
-      if (isLandable(cfg, pn)) {
-        if (!out.includes(p)) out.push(p)
-      } else if (p !== cfg.entry) walk(p, seen)
+  for (const n of cfg.nodes) {
+    if (n.id !== cfg.entry && !isLandable(cfg, n)) continue
+    if (n.id !== cfg.entry && isDead(cfg, n.id)) continue
+    if (isLoopHead(n)) {
+      const le = loopExitEdges(cfg, n)
+      if (le) { es.push(...le); continue }   // 요약이 있으면 그것이 유일한 출구 정의
+    }
+    for (const e of fwdEdges(cfg, n.id)) {
+      const l = landFwd(cfg, e.to)
+      if (!l) continue
+      const kind: NavEdgeKind = e.kind === 'true' ? 'true' : e.kind === 'false' ? 'false' : 'normal'
+      es.push({ from: n.id, to: l, kind })
     }
   }
-  const seen = new Set<string>()
-  walk(from, seen)
-  // EXIT 의 선행에는 return 문이 없다(return → RETURN sink) — RETURN 의 선행도 EXIT 의 선행으로 본다
-  if (from === cfg.exit && cfg.return_exit) walk(cfg.return_exit, seen)
+  edgeCache.set(cfg, es)
+  return es
+}
+
+/** 이 노드에서 나가는 NG 간선 (kind·state 까지 — UI 가 "왜 이 경로인가" 를 설명할 때 쓴다). */
+export const navEdgesFrom = (cfg: CFG, from: string): NavEdge[] =>
+  navEdges(cfg).filter((e) => e.from === from)
+
+const uniq = (xs: string[]): string[] => {
+  const out: string[] = []
+  for (const x of xs) if (!out.includes(x)) out.push(x)
   return out
 }
+
+/** 커서에서 Step Forward 후보들 = Succ(from). */
+export const forwardCands = (cfg: CFG, from: string): string[] =>
+  uniq(navEdges(cfg).filter((e) => e.from === from).map((e) => e.to))
+
+/** 커서에서 Step Backward 후보들 = Pred(from). Succ 과 **같은 간선 집합**에서 나온다. */
+export const backwardCands = (cfg: CFG, from: string): string[] =>
+  uniq(navEdges(cfg).filter((e) => e.to === from).map((e) => e.from)).filter((id) => id !== cfg.entry)
 
 /** 함수 첫 착지 노드 (entry 다음). */
 export function firstLanding(cfg: CFG): string {

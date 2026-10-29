@@ -825,6 +825,55 @@ class Engine:
             exit_env = VariableEnv.join_variables_simple(exit_env, flow)
         exit_node.variables = VariableEnv.copy_variables(exit_env or {})
 
+        # ── (K3, 라운드10 §3) 루프 탈출 경로 요약 ─────────────────────────────
+        #   루프 본문은 navigation 에서 블랙박스다(양방향 모두 진입 금지, 사용자 결정).
+        #   그러면 **루프 헤더가 "이 루프가 어떻게 끝날 수 있는가" 의 유일한 요약 지점**이
+        #   되어야 한다. 위 join 루프는 선행별 flow 를 계산해 쓰고 버리는데, 그걸 남긴다
+        #   — 새로 계산하는 것은 없다.
+        #
+        #   왜 필요한가: `while_exit` 는 **착지 가능한 유일한 분기 더미**다(`isLandable`).
+        #   그래서 혼자서 두 역할을 겸한다 — 헤더 false 간선의 refine 을 담는 분기 더미이면서
+        #   break 들이 모이는 merge. 프론트의 생사 판정이 노드 단위라, `while(true)` 처럼
+        #   false 간선이 ⊥ 인데도 노드가 break 덕에 살아 있으면 **불가능한 전이를
+        #   "조건 실패로 탈출" 로 보여줬다**(엔진은 그 간선을 이미 ⊥ 로 알고 제외한다).
+        #
+        #   kind: normal = 헤더 false 간선 / break = 본문의 break / return·revert = 본문에서
+        #         함수 종료(loop exit 를 거치지 않는다) / other = 그 밖(중첩 루프 등)
+        def _has_stmt(node, kind: str) -> bool:
+            return any(getattr(st, "statement_type", None) == kind
+                       for st in (getattr(node, "statements", None) or []))
+
+        summaries: list[dict] = []
+        for p in G.predecessors(exit_node):
+            src = _pred_src(p)
+            if src is None:
+                continue
+            flow = _edge_flow_from_node_out(p, exit_node, src)
+            kind = "normal" if p is head else ("break" if _has_stmt(p, "break") else "other")
+            summaries.append({
+                "kind": kind, "from": p.uid, "to": exit_node.uid,
+                "feasible": flow is not None,
+                "env": VariableEnv.copy_variables(flow) if flow is not None else None,
+            })
+        # 본문에서 함수를 빠져나가는 경로 — RETURN/ERROR sink 로 가므로 loop exit 의 선행이 아니다.
+        for p in loop_nodes:
+            if p is exit_node:
+                continue
+            for s in G.successors(p):
+                if not (getattr(s, "return_exit_node", False) or getattr(s, "error_exit_node", False)):
+                    continue
+                src = _pred_src(p)
+                if src is None:
+                    continue
+                flow = _edge_flow_from_node_out(p, s, src)
+                kind = "revert" if getattr(s, "error_exit_node", False) else "return"
+                summaries.append({
+                    "kind": kind, "from": p.uid, "to": s.uid,
+                    "feasible": flow is not None,
+                    "env": VariableEnv.copy_variables(flow) if flow is not None else None,
+                })
+        head.loop_exits = summaries
+
         # loopDelta: 헤더(조건) 라인에 기록
         # ★ fixpoint evaluation node(join)의 고정점 상태를 사용 (false edge 정제 전)
         join_node = None
@@ -1679,6 +1728,14 @@ class Engine:
                 if getattr(pp, "name", "").startswith("for_init_"):
                     keys -= {st.var_name for st in pp.statements if st.statement_type == "variableDeclaration"}
             return keys
+        # (2026-10-29) try 의 `returns (…)` 는 try_cond 의 **선언 statement** 로 만들어진다.
+        #   그 이름은 try 성공 블록 소속이라 join 에서 사라져야 하는데, anchor(= try_cond)의
+        #   `variables` 는 statement 실행 **후** 환경이라 이미 그 이름을 담고 있다.
+        #   for-init 과 같은 처리로 자기 선언문 이름을 뺀다.
+        if getattr(anchor, "condition_node_type", None) == "try":
+            return (set(anchor.variables or {})
+                    - {st.var_name for st in anchor.statements
+                       if st.statement_type == "variableDeclaration"})
         return set(anchor.variables or {})
 
     def _restrict_scope(self, env: dict, keep: set) -> dict:
@@ -1869,7 +1926,20 @@ class Engine:
                         work.append(nxt)
                     continue
 
-                elif node.condition_node_type == "try":
+                elif node.condition_node_type in ("try", "catch"):
+                    # (2026-10-29) try/catch 의 분기는 호출의 **반환값**이 아니라 **revert 여부**로
+                    #   갈리고, 외부 호출의 revert 는 모델링하지 않는다 → 두 분기가 **항상**
+                    #   feasible 하다. 그래서 refine·feasibility 판정을 하지 않고 후속을 그대로
+                    #   전파한다(`condition_expr` 도 None 이라 간선 flow 계산도 조건 처리를 건너뛴다).
+                    #
+                    # ★ 조건 노드는 이 분기에서 `continue` 하므로 아래 평문 노드 경로의 statement
+                    #   실행을 타지 않는다. try 노드는 **호출을 statement 로** 들고 있으므로
+                    #   여기서 직접 돌려야 한다 — 평문 경로와 **같은 함수**를 쓴다(Engine 머리말:
+                    #   두 statement 실행 경로가 어긋나면 안 된다).
+                    for stmt in node.statements:
+                        cur_vars = self.update_statement_with_variables(stmt, cur_vars, return_values, node=node)
+                    # false 간선은 마지막 절에는 없다(맞는 catch 가 없으면 예외가 전파된다) —
+                    #   있는 후속만 전파한다.
                     t_succs = [s for s in G.successors(node) if G.edges[node, s].get('condition') is True]
                     f_succs = [s for s in G.successors(node) if G.edges[node, s].get('condition') is False]
                     for s in (t_succs + f_succs):

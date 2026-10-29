@@ -63,10 +63,14 @@ class Record(_RecordBase, total=False):
 NodeFlag = Literal[
     "condition", "branch_then", "branch_else", "merge",
     "fixpoint_evaluation", "loop_exit", "loop_body", "exit",
+    # (K1) for 헤더의 init/incr 블록 — 착지 대상이 아니다(효과는 for_cond 의 IN 에 포함)
+    "loop_init", "loop_incr",
     # N4: 이 노드에 함수 호출이 있다 / 그 호출로는 들어갈 수 없다
     "call", "opaque",
 ]
 EdgeKind = Literal["normal", "true", "false", "back_edge"]
+# (K3) 루프 탈출 경로의 종류 — 루프 헤더 노드의 `loop_exits` 에 쓰인다.
+LoopExitKind = Literal["normal", "break", "return", "revert", "other"]
 VerdictStatus = Literal["Satisfied", "Warning", "Violated", "Unreachable"]
 DebugKind = Literal["StateVar", "Param", "GlobalVar", "IReturn"]
 ValueKind = Literal["interval", "bool", "address", "array", "bytes", "enum"]
@@ -134,11 +138,29 @@ class CFGNode:
     #   decision #4 가 iteration 별 stepping 을 금지하므로, 루프는 통째로 접고
     #   그 효과를 이 delta 하나로 보여준다. 루프 내부에서 새로 선언된 변수는 제외.
     loop_delta: Optional[dict[str, str]] = None
+    # (K3) 루프 헤더 노드면 이 루프의 탈출 경로들 (normal / break / return / revert).
+    loop_exits: Optional[list[LoopExit]] = None
     # N4: 이 노드에서 일어나는 호출들. enterable 한 것은 `CfgWithStates.callees[key]` 에
     #     callee CFG(상태 포함)가 들어 있다.
     callees: Optional[list[CalleeRef]] = None
     # 엔진 노드 이름(`Assign_4`, `while_join_5` …) — 사람이 읽는 라벨일 뿐 식별자가 아니다(줄 이동 시 중복 가능).
     name: str = ""
+
+
+@dataclass
+class LoopExit:
+    """(K3) 루프 헤더에서 이 루프가 끝날 수 있는 한 가지 경로.
+
+    루프 본문은 navigation 에서 블랙박스이므로(양방향 진입 금지) 루프 헤더가 탈출 경로의
+    유일한 요약 지점이다. `state` 는 **그 경로만의** 환경 — loop-exit 노드의 `in_state` 는
+    모든 경로의 join 이라 normal 탈출과 break 탈출을 구별할 수 없었다.
+    `feasible=False` 면 그 경로는 ⊥ 다(엔진이 join 에서 제외한 것) — 후보로 제시하면 안 된다.
+    """
+    kind: LoopExitKind
+    from_: str                      # 이 경로를 만든 노드 uid (헤더 / break 문 / return 문)
+    to: str                         # 도착 노드 uid (loop exit, 또는 RETURN/ERROR sink)
+    feasible: bool
+    state: dict[str, str] = field(default_factory=dict)
 
 
 @dataclass
@@ -321,6 +343,10 @@ def _node_flags(n) -> list[NodeFlag]:
         flags.append("loop_exit")
     if getattr(n, "is_loop_body", False):
         flags.append("loop_body")
+    if getattr(n, "is_for_init", False):          # (K1)
+        flags.append("loop_init")
+    if getattr(n, "is_for_increment", False):     # (K1)
+        flags.append("loop_incr")
     if (getattr(n, "function_exit_node", False)
             or getattr(n, "return_exit_node", False)
             or getattr(n, "error_exit_node", False)):
@@ -451,6 +477,26 @@ def _loop_delta(n, recorder, nested_heads: set) -> Optional[dict[str, str]]:
         if rec.get("kind") == "loopDelta":
             return dict(rec.get("vars") or {})
     return None
+
+
+def _loop_exits(n, recorder) -> Optional[list["LoopExit"]]:
+    """(K3) 루프 헤더면 `Engine._fixpoint_impl` 이 남긴 탈출 경로 요약을 직렬화한다.
+
+    엔진은 loop-exit 노드의 env 를 **선행별로 계산해 join** 한다. 그 중간 flow 를
+    버리지 않고 `head.loop_exits` 에 (깊은 복사로) 남겨 두므로, 여기서는 직렬화만 한다
+    — 추가 계산도, restore 로 값이 사라질 위험도 없다.
+    """
+    raw = getattr(n, "loop_exits", None)
+    if not raw:
+        return None
+    out: list[LoopExit] = []
+    for d in raw:
+        env = d.get("env")
+        out.append(LoopExit(
+            kind=d["kind"], from_=d["from"], to=d["to"], feasible=bool(d["feasible"]),
+            state=(_serialize_node_state(n, recorder, env) if env is not None else {}),
+        ))
+    return out
 
 
 def _back_edges(fcfg) -> set:
@@ -633,6 +679,8 @@ def _serialize_cfg(fcfg, recorder, with_states: bool, states_override=None,
             # evaluate 의 loopDelta 가 남아 있어도 "값 없는 결과" 계약을 지킨다.
             loop_delta=(_loop_delta(n, recorder, nested_heads)
                         if (with_states and with_loop_delta) else None),
+            # (K3) 구조 단계엔 값이 없다 → 탈출 요약도 내보내지 않는다(loop_delta 와 같은 계약).
+            loop_exits=(_loop_exits(n, recorder) if with_states else None),
         ))
     back = _back_edges(fcfg)
     edges: list[CFGEdge] = []

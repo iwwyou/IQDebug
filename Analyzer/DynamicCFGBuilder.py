@@ -1016,8 +1016,35 @@ class DynamicCFGBuilder:
     ):
         """
         cur_block → try_cond ──True──▶ try_true ─▶ join
-                           └─False──▶ false_stub ─▶ join
-        catch 가 오면 false_stub 를 끊고 catch_entry/end 를 붙인다.
+                            └─False──▶ (아직 없다. 첫 catch 가 여기 붙는다)
+
+        (2026-10-29 재설계) catch 절들을 `if`/`else if` 와 **동형인 순서 있는 조건 체인**으로
+        만든다(`build_catch_clause`). Solidity 의 catch 절은 에러 타입으로 **위에서부터 매칭되어
+        처음 맞는 하나만** 실행되므로, 예전의 "try_cond 의 병렬 False 간선 여러 개" 모델은
+        순서와 배타성을 잃고 있었다.
+
+        세 가지가 예전과 다르다.
+
+        ① `condition_expr` 를 **두지 않는다.**
+           try/catch 의 분기는 호출의 *반환값*이 아니라 *revert 여부*로 갈리고, 외부 호출의
+           revert 는 모델링하지 않는다 → 두 분기가 **항상** feasible 해야 한다. 예전엔 호출식을
+           `condition_expr` 에 넣어 둬서 간선 flow 계산(`Engine._edge_env_from_pred` /
+           `_edge_flow_from_node_out`)이 그걸 **술어로 refine** 하고 `_branch_feasible` 로 분기를
+           ⊥ 로 만들었다. 호출 결과가 정확히 0/1 이거나 BoolInterval 이면 한쪽이 죽었고,
+           루프 **안**에서는 그게 그대로 반영돼 **catch 가 도달 불가로 판정됐다**(불건전).
+           `condition_expr is None` 이면 두 함수 모두 조건 처리를 통째로 건너뛴다.
+           기록용 호출식은 `try_call_expr` 로 따로 둔다.
+
+        ② 호출은 `try_cond` 의 **statement** 다(`process_try_statement` 가 붙인다).
+           그래서 `returns (…)` 가 **평범한 대입 경로**로 바인딩되고(예전엔 ⊤ 로 남았다),
+           callee 가 **착지 가능한** 노드에 등록되어 Step Into 가 되고, 호출 평가가 1회로 끝난다
+           (예전엔 간선마다 평가해 catch 3개면 4회였다).
+
+        ③ **false 간선을 만들지 않는다** — try 에도, 마지막 catch 에도.
+           `if` 는 else 가 없어도 조건이 거짓이면 *if 다음으로 계속 진행*하므로 join 으로 가는
+           false 간선이 필요하다. 반면 맞는 catch 절이 없으면 *예외가 함수 밖으로 전파*되어
+           이어지는 경로가 없다. 체인 유비가 깨지는 유일한 지점이고, 말단 간선을 join 으로
+           보내면 **호출 이전 환경이 join 에 섞여** 모든 try/catch 의 정밀도가 떨어진다.
         """
         G = fcfg.graph
 
@@ -1026,29 +1053,33 @@ class DynamicCFGBuilder:
         for s in old_succs:
             G.remove_edge(cur_block, s)
 
-        # 2) 노드
+        # 2) 노드 — if/else-if 와 같게 `is_loop_body` 를 전파한다. 예전엔 누락돼서 루프 본문 안의
+        #    try/catch 하위 노드가 전부 플래그를 잃고, 탐색에서 "착지 가능한데 NG 에서 고립된"
+        #    노드가 됐다(= 걸 수는 있지만 Continue 가 영원히 도달하지 못하는 breakpoint).
         cond = CFGNode(f"try_cond_{line_no}",
                        condition_node=True, condition_node_type="try",
-                       src_line=line_no)
-        cond.condition_expr = function_expr  # 기록용
+                       src_line=line_no, is_loop_body=cur_block.is_loop_body)
+        cond.condition_expr = None          # ★ ① 술어가 아니다
+        cond.try_call_expr = function_expr  # 기록용(UI·진단). refine 경로는 보지 않는다
 
-        t_blk = CFGNode(f"try_true_{line_no}", branch_node=True, is_true_branch=True, src_line=line_no)
-        f_stub = CFGNode(f"try_false_stub_{line_no}", branch_node=True, is_true_branch=False, src_line=line_no)
+        t_blk = CFGNode(f"try_true_{line_no}", branch_node=True, is_true_branch=True, src_line=line_no,
+                        is_loop_body=cur_block.is_loop_body)
         # (2026-10-23) if 와 같게: join 은 닫는 줄(end_line)에 둔다 — 본문 문장이 "다음 줄 노드 = join" 을 보고
         #   try_true 안에 들어간다. 예전엔 등록이 없어 본문과 catch 본문이 모두 join **뒤에** 차례로 붙었다.
         join = CFGNode(f"try_join_{line_no}", join_point_node=True,
-                       src_line=end_line if end_line is not None else line_no)
+                       src_line=end_line if end_line is not None else line_no,
+                       is_loop_body=cur_block.is_loop_body)
+        # (Phase 3b, D8) 분기 블록이 끝나는 곳. `returns (…)` 로 선언된 이름은 try 성공 블록
+        #   소속이므로 여기서 사라진다 — `Engine._scope_keys` 가 anchor 가 try cond 일 때
+        #   자기 선언문 이름을 빼 준다(for-init 과 같은 처리).
+        join.scope_anchor = cond
 
-        # env
-
-        # 3) 배선
-        for n in (cond, t_blk, f_stub, join):
+        # 3) 배선 — ③ false 간선 없음
+        for n in (cond, t_blk, join):
             G.add_node(n)
         G.add_edge(cur_block, cond)
         G.add_edge(cond, t_blk, condition=True)
-        G.add_edge(cond, f_stub, condition=False)
         G.add_edge(t_blk, join)
-        G.add_edge(f_stub, join)
         # join → 원래 succ 복원
         for s in old_succs:
             G.add_edge(join, s)
@@ -1063,69 +1094,63 @@ class DynamicCFGBuilder:
         if end_line is not None:
             line_info.setdefault(end_line, {"open": 0, "close": 0, "cfg_nodes": []})["cfg_nodes"].append(join)
 
-        return cond, t_blk, f_stub, join
+        return cond, t_blk, join
 
-    def find_open_try_for_catch(self, *, line_no: int, fcfg: FunctionCFG):
-        G = fcfg.graph
-        candidates = [
-            n for n in G.nodes
-            if getattr(n, "condition_node", False)
-               and getattr(n, "condition_node_type", "") == "try"
-               and (getattr(n, "src_line", -1) < line_no)
-        ]
-        if not candidates:
-            return None
-
-        # 가장 가까운(라인 큰) try 선택
-        cond = max(candidates, key=lambda n: getattr(n, "src_line", -1))
-
-        # false_stub, join 찾기
-        f_stub = None
-        for s in G.successors(cond):
-            if G[cond][s].get("condition") is False:
-                f_stub = s
-                break
-        if f_stub is None:
-            return None
-
-        succs = list(G.successors(f_stub))
-        if len(succs) != 1 or not getattr(succs[0], "join_point_node", False):
-            return None
-        join = succs[0]
-        return (cond, f_stub, join)
-
-    def attach_catch_clause(
-            self, *, cond: CFGNode, false_stub: CFGNode | None, join: CFGNode,
+    def build_catch_clause(
+            self, *, prev_cond: CFGNode, outer_join: CFGNode | None,
             line_no: int, fcfg: FunctionCFG, line_info: dict, end_line: int | None = None
     ):
-        """catch 절 하나 = try_cond 의 실패(False) 분기 하나. (2026-10-23) catch 가 여럿이면(`catch Error(..)`,
-        `catch Panic(..)`, `catch (bytes ..)`) 각각 False 분기로 붙는다 — 엔진은 try 의 False 분기를 모두 진행한다
-        (어느 catch 가 잡는지는 revert 데이터에 달렸고, 외부 호출 결과는 모델링하지 않는다).
-        false_stub = catch 가 아직 없을 때의 빈 실패 경로(첫 catch 가 대신한다), 두 번째부터는 None."""
+        """catch 절 하나 = 체인의 다음 링크. `build_else_if_statement` 와 **동형**이다.
+
+            prev_cond ──False──▶ catch_cond ──True──▶ catch_true ─▶ [본문] ─▶ catch_join ─▶ outer_join
+                                            (False 간선은 만들지 않는다)
+
+        `prev_cond` 는 체인의 바로 앞 조건 — 첫 catch 면 `try_cond`, 둘째부터는 앞 `catch_cond` 다
+        (`get_current_block(context="catch")` 가 join 에서 predecessor BFS 로 찾아 준다).
+
+        `build_else_if_statement` 와 다른 점이 둘뿐이다.
+          · **false 분기 더미를 만들지 않는다.** 맞는 절이 없으면 예외가 함수 밖으로 전파되므로
+            이어지는 경로가 없다(`build_try_skeleton` 의 주석 ③ 참조).
+          · 그래서 **앞 조건의 false 간선을 떼어낼 일도 없다** — 애초에 없다.
+            (else-if 는 `if_false` 더미를 만들어 뒀다가 떼고 교체한다.)
+
+        `condition_expr` 는 두지 않는다 — "revert 데이터가 `Error(string)` 과 맞는가" 는 interval
+        도메인으로 표현할 수 없다. None 이면 간선 flow 계산이 조건 처리를 건너뛰므로 두 분기가
+        항상 feasible 하다(`build_try_skeleton` 의 주석 ① 참조).
+        """
         G = fcfg.graph
 
-        # 1) 첫 catch: false_stub 제거
-        if false_stub is not None:
-            G.remove_node(false_stub)
+        cond = CFGNode(f"catch_cond_{line_no}", condition_node=True,
+                       condition_node_type="catch", src_line=line_no,
+                       is_loop_body=prev_cond.is_loop_body)
+        cond.condition_expr = None
 
-        # 2) catch 블록 생성
-        c_entry = CFGNode(f"catch_entry_{line_no}", src_line=line_no)
-        c_end = CFGNode(f"catch_end_{line_no}", src_line=line_no)
+        t_blk = CFGNode(f"catch_true_{line_no}", branch_node=True, is_true_branch=True,
+                        src_line=line_no, is_loop_body=prev_cond.is_loop_body)
 
+        local_join = CFGNode(f"catch_join_{line_no}", join_point_node=True, src_line=line_no,
+                             is_loop_body=prev_cond.is_loop_body)
+        local_join.scope_anchor = cond   # (Phase 3b, D8) catch 파라미터는 이 블록 소속
 
-        G.add_node(c_entry)
-        G.add_node(c_end)
-        G.add_edge(cond, c_entry, condition=False)
-        G.add_edge(c_entry, c_end)
-        G.add_edge(c_end, join)
+        for n in (cond, t_blk, local_join):
+            G.add_node(n)
 
-        # line_info: catch 시작 줄에는 c_entry, 닫는 줄에는 join (build_else_statement 와 같다)
+        G.add_edge(prev_cond, cond, condition=False)
+        G.add_edge(cond, t_blk, condition=True)
+        G.add_edge(t_blk, local_join)
+
+        if outer_join is None:
+            raise ValueError("catch: outer join not found (passed from get_current_block)")
+        G.add_edge(local_join, outer_join)
+
+        # line_info: start line 에는 cond, end line 에는 local_join (build_else_if_statement 와 같다)
         bc = line_info.setdefault(line_no, {"open": 0, "close": 0, "cfg_nodes": []})
-        bc["cfg_nodes"].append(c_entry)
+        bc["cfg_nodes"].append(cond)
         if end_line is not None:
-            line_info.setdefault(end_line, {"open": 0, "close": 0, "cfg_nodes": []})["cfg_nodes"].append(join)
+            line_info.setdefault(end_line, {"open": 0, "close": 0, "cfg_nodes": []})["cfg_nodes"].append(local_join)
 
-        return c_entry, c_end
+        return cond, t_blk, local_join
+
 
     # Analyzer/DynamicCFGBuilder.py  (클래스 내부에 교체/추가)
 
@@ -1292,6 +1317,23 @@ class DynamicCFGBuilder:
                         found_outer_join = n
                         break
 
+            # (2026-10-29) catch 전용 선행 경로 — if/else 경로는 건드리지 않는다.
+            #   `catch` 는 아래 predecessor BFS 에 기댈 수 없는 경우가 있다: **try 본문이
+            #   `return`/`revert` 로 끝나면** 본문이 RETURN/ERROR sink 로 가고 try 는 false 간선을
+            #   만들지 않으므로 **join 에 들어오는 간선이 하나도 없다**(그래프상 고아) → BFS 가
+            #   아무것도 못 찾는다. 예전 구조에서는 `try_false_stub → join` 간선이 우연히 그 경로를
+            #   받쳐 주고 있었다. `scope_anchor` 는 `build_try_skeleton`/`build_catch_clause` 가
+            #   그 join 을 만든 조건 노드로 설정하므로 정확히 "앞 조건" 이다.
+            if context == "catch":
+                for n in L_nodes:
+                    if not _is_join(n):
+                        continue
+                    anchor = getattr(n, "scope_anchor", None)
+                    if (anchor is not None and _is_cond(anchor)
+                            and _get_cond_type(anchor) in ("try", "catch") and anchor in G):
+                        return (anchor, n)
+                    break
+
             # BFS through predecessors to find target node
             from collections import deque
             visited = set()
@@ -1318,9 +1360,10 @@ class DynamicCFGBuilder:
                                 found_outer_join = self._outer_join_from_graph(found_cond, fcfg)
                             return (found_cond, found_outer_join)
                     elif context == "catch":
-                        # Looking for try condition
-                        if node_type == "try":
-                            # catch는 outer join 필요시 여기서도 찾아서 반환
+                        # (2026-10-29) catch 절은 **순서 있는 조건 체인**의 다음 링크다 — "앞 조건" 은
+                        #   첫 catch 면 `try`, 둘째부터는 앞 `catch` 다. 예전엔 늘 try cond 를 찾아
+                        #   모든 catch 가 try 의 병렬 False 분기가 됐다.
+                        if node_type in ("try", "catch"):
                             catch_outer_join = None
                             for n in L_nodes:
                                 if _is_join(n):
@@ -1328,8 +1371,7 @@ class DynamicCFGBuilder:
                                     break
                             if catch_outer_join is not None:
                                 return (node, catch_outer_join)
-                            else:
-                                return node
+                            return node
 
                 # Continue searching predecessors
                 for pred in G.predecessors(node):

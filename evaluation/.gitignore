@@ -1,0 +1,12 @@
+# ── 기존 도구 베이스라인 (evaluation/baselines) ───────────────────────────────
+# 바이너리·패키지·빌드 산출물은 커밋하지 않는다. 재현은 버전을 고정한 설치
+# 스크립트로 한다 (baselines/forge/install.ps1, playground/hardhat/package.json).
+baselines/forge/bin/
+baselines/playground/forge/lib/
+baselines/playground/forge/out/
+baselines/playground/forge/cache/
+baselines/playground/hardhat/node_modules/
+baselines/playground/hardhat/artifacts/
+baselines/playground/hardhat/cache/
+baselines/playground/hardhat/types/
+baselines/playground/hardhat/package-lock.json

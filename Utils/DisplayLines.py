@@ -22,17 +22,26 @@ def _code_part(text: str) -> str:
     return t if i < 0 else t[:i]
 
 
-def chain_end_line(code_lines: dict, cond_line: int) -> int:
-    """if / else-if 조건 줄에서 시작하는 체인을 닫는 `}` 의 줄 번호."""
+def chain_end_line(code_lines: dict, cond_line: int,
+                   head_kw: str = "if", cont_kw: str = "else") -> int:
+    """조건 체인을 닫는 `}` 의 줄 번호.
+
+    (2026-10-29) `(head_kw, cont_kw)` 로 일반화했다 — if 체인은 `("if", "else")`,
+    try/catch 체인은 `("try", "catch")`. 중괄호를 세는 로직은 같고 "체인이 이어지는가" 판정만
+    다르다(`} else …` / `} catch …`). 예전엔 if 전용이라 try join 이 이 재계산을 **건너뛰고**
+    `src_line`(= `} catch {` 줄)을 그대로 썼다 → 그 줄에 착지 노드가 2~3개가 되고(줄 단사성
+    위반) 체인을 닫는 `}` 줄에는 하나도 없었다.
+    """
     first = _code_part(code_lines.get(cond_line, ""))
-    m = re.search(r"\bif\b", first)
+    m = re.search(r"\b%s\b" % re.escape(head_kw), first)
     if m is None:
-        raise ValueError(f"line {cond_line}: not an if/else-if header: {first.strip()!r}")
+        raise ValueError(f"line {cond_line}: not a {head_kw} header: {first.strip()!r}")
     depth = 0
     opened = False
     ln = cond_line
     text = first[m.start():]          # `} else if (...) {` 의 앞쪽 `}` 는 이전 블록을 닫는 것 — 제외
     last = max(code_lines) if code_lines else cond_line
+    cont_re = re.compile(r"\s*%s\b" % re.escape(cont_kw))
     while ln <= last:
         for i, ch in enumerate(text):
             if ch == "{":
@@ -41,17 +50,28 @@ def chain_end_line(code_lines: dict, cond_line: int) -> int:
             elif ch == "}":
                 depth -= 1
                 if opened and depth == 0:
-                    if re.match(r"\s*else\b", text[i + 1:]):
-                        continue      # `} else …` — 체인이 이어진다
+                    if cont_re.match(text[i + 1:]):
+                        continue      # `} else …` / `} catch …` — 체인이 이어진다
                     return ln
         ln += 1
         text = _code_part(code_lines.get(ln, ""))
-    raise ValueError(f"line {cond_line}: if-chain is not closed")
+    raise ValueError(f"line {cond_line}: {head_kw}-chain is not closed")
 
 
-def _is_if_anchor(n) -> bool:
-    return (getattr(n, "condition_node", False)
-            and getattr(n, "condition_node_type", None) in ("if", "else if", "else_if"))
+#  표시 줄을 재계산할 join 의 anchor 종류 → (그 anchor **자기 줄**에서 찾을 키워드, 체인 연속 키워드)
+#  머리 키워드는 anchor 가 놓인 줄에서 찾는다 — `} else if (…) {` 줄에는 `if` 가, `} catch … {`
+#  줄에는 `catch` 가 있다. 그래서 중간 링크와 체인 머리의 키워드가 다르다.
+_CHAIN_KW = {
+    "if": ("if", "else"), "else if": ("if", "else"), "else_if": ("if", "else"),
+    "try": ("try", "catch"), "catch": ("catch", "catch"),
+}
+
+
+def _chain_kw(n):
+    """이 anchor 가 조건 체인의 조건 노드면 `(머리, 연속)` 키워드, 아니면 None."""
+    if not getattr(n, "condition_node", False):
+        return None
+    return _CHAIN_KW.get(getattr(n, "condition_node_type", None))
 
 
 def join_display_lines(fcfg, code_lines: dict | None) -> dict:
@@ -64,7 +84,8 @@ def join_display_lines(fcfg, code_lines: dict | None) -> dict:
         if not getattr(n, "join_point_node", False):
             continue
         anchor = getattr(n, "scope_anchor", None)
-        if anchor is None or not _is_if_anchor(anchor):
+        kw = _chain_kw(anchor)
+        if kw is None:
             continue
         pre = getattr(n, "display_line", None)
         if pre is not None:
@@ -72,5 +93,5 @@ def join_display_lines(fcfg, code_lines: dict | None) -> dict:
             continue
         if code_lines is None:
             raise ValueError(f"join '{n.name}': no source lines and no build-time display_line")
-        out[n.uid] = chain_end_line(code_lines, anchor.src_line)
+        out[n.uid] = chain_end_line(code_lines, anchor.src_line, *kw)
     return out

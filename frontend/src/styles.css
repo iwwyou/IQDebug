@@ -121,6 +121,10 @@ body {
 .kv .v { color: #b5cea8; font-family: 'Consolas', monospace; }
 .kv .v.top { color: #f0c040; }
 .kv .v.neg { color: #f06060; }
+/* (D3) 변화 집합 Δ(n) — 이 지점이 바꾸는 변수는 `이전 -> 이후` 로 인라인 표시한다. */
+.kv.changed { background: #1d2a33; }
+.kv .kv-was { color: #6a6a6a; font-family: 'Consolas', monospace; }
+.kv .kv-arrow { color: #9cdcfe; }
 
 .state-note { font-size: 11px; color: #6ac46a; margin-bottom: 5px; font-style: italic; }
 

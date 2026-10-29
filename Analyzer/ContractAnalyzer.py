@@ -1284,7 +1284,10 @@ class ContractAnalyzer:
 
         # 3) CFG 저장
         self.sa.line_info[self.current_start_line]['cfg_nodes'] = [mod_cfg.get_entry_node()]
-        self.sa.line_info[self.current_end_line]['cfg_nodes'] = [mod_cfg.get_exit_node()]
+        _mod_exit = mod_cfg.get_exit_node()
+        if getattr(_mod_exit, "src_line", None) in (None, -1):   # (K2)
+            _mod_exit.src_line = self.current_end_line
+        self.sa.line_info[self.current_end_line]['cfg_nodes'] = [_mod_exit]
 
     # ContractAnalyzer.py  ----------------------------------------------
 
@@ -1346,6 +1349,8 @@ class ContractAnalyzer:
         if self.current_end_line not in self.sa.line_info:
             self.sa.line_info[self.current_end_line] = {"open": 0, "close": 0, "cfg_nodes": []}
         exit_node = ctor_cfg.get_exit_node()
+        if getattr(exit_node, "src_line", None) in (None, -1):   # (K2)
+            exit_node.src_line = self.current_end_line
         if exit_node not in self.sa.line_info[self.current_end_line]["cfg_nodes"]:
             self.sa.line_info[self.current_end_line]["cfg_nodes"].append(exit_node)
 
@@ -1393,6 +1398,12 @@ class ContractAnalyzer:
         if self.current_end_line not in self.sa.line_info:
             self.sa.line_info[self.current_end_line] = {"open": 0, "close": 0, "cfg_nodes": []}
         exit_node = fcfg.get_exit_node()
+        # (K2) EXIT 에 **함수를 닫는 `}` 줄**을 준다. 예전엔 src_line 이 -1 이라 프론트의
+        #   display_line 도 -1 이 되어 **함수 끝에 breakpoint 를 걸 수 없었다**
+        #   (`isBp`/`canBreakpointOnLine` 이 `display_line >= 0` 을 요구한다).
+        #   줄 이동은 `_shift_cfg_meta` ①/③ 이 line_info 등록을 근거로 따라온다.
+        if getattr(exit_node, "src_line", None) in (None, -1):
+            exit_node.src_line = self.current_end_line
         if exit_node not in self.sa.line_info[self.current_end_line]["cfg_nodes"]:
             self.sa.line_info[self.current_end_line]["cfg_nodes"].append(exit_node)
 
@@ -2273,7 +2284,8 @@ class ContractAnalyzer:
             #   ⚠ `line_info[line_no]["cfg_nodes"]` 에는 넣지 않는다 — 그쪽은 intent 부착·
             #     삭제 수술이 쓰는 "라인 → 대표 노드" 매핑이라 cond 하나만 유지해야 한다.
             init_node = CFGNode(f"for_init_{self.current_start_line}",
-                                src_line=self.current_start_line)
+                                src_line=self.current_start_line,
+                                is_for_init=True)
 
             # (Phase 3a, D1) init 노드는 문장 IR 만 — 값은 디버깅 해석이 만든다.
             if ctx == "VariableDeclaration":
@@ -2620,36 +2632,52 @@ class ContractAnalyzer:
 
         pred = self.builder.get_current_block()  # 이전 블록 기준
 
-        # returns 로컬 생성(⊥) 후 true 블록 env 에 심기
-        cond, true_blk, false_stub, join = self.builder.build_try_skeleton(
+        cond, true_blk, join = self.builder.build_try_skeleton(
             cur_block=pred, function_expr=function_expr,
             line_no=self.current_start_line, fcfg=fcfg, line_info=self.sa.line_info,
             end_line=self.current_end_line
         )
 
-        for i, (ty, nm) in enumerate(returns or []):
-            vname = nm or f"_ret{i}"
-            vobj = Variables(identifier=vname, scope="local")
-            vobj.typeInfo = ty
-            # elementary bottom 초기화
-            if getattr(ty, "typeCategory", None) == "elementary":
-                et = getattr(ty, "elementaryTypeName", "")
-                bits = getattr(ty, "intTypeLength", 256) or 256
-                if et.startswith("uint"):
-                    vobj.value = UnsignedIntegerInterval.top(bits)
-                elif et.startswith("int"):
-                    vobj.value = IntegerInterval.top(bits)
-                elif et == "bool":
-                    vobj.value = BoolInterval.top()
-                else:
-                    vobj.value = None
-            else:
-                vobj.value = None
+        # (2026-10-29 재설계) 호출을 **try_cond 의 statement** 로 둔다.
+        #   예전엔 호출식을 `cond.condition_expr` 에 넣고 `returns (…)` 지역을 ⊤ 로 심어
+        #   `fcfg.add_related_variable` 까지 했다. 그래서 세 가지가 동시에 틀렸다.
+        #     · 호출이 계산한 반환값을 **버렸다** — `r` 이 함수 전체에서 ⊤ 로 남았다
+        #       (평범한 `uint256 r = h(n);` 은 제대로 바인딩된다 — 경로가 달랐을 뿐이다)
+        #     · `related_variables` 에 들어가 **try 앞·try/catch 뒤에도** `r` 이 보였다
+        #       (Solidity 에서 `r` 은 try 성공 블록 스코프다)
+        #     · 호출식이 `condition_expr` 에 있어서 간선 flow 계산이 그걸 **술어로 refine** 하고
+        #       `_branch_feasible` 로 분기를 ⊥ 로 만들었다(루프 안에서 catch 가 죽었다)
+        #   statement 로 옮기면 선언·대입 경로가 전부 처리하고(다중 반환 튜플 해체 포함),
+        #   callee 는 착지 가능한 노드에 등록되며(Step Into), 평가가 1회로 끝난다.
+        ln = self.current_start_line
+        names = [(ty, nm or f"_ret{i}") for i, (ty, nm) in enumerate(returns or [])]
 
-            true_blk.variables[vname] = vobj
-            fcfg.add_related_variable(vobj)
+        if not names:
+            cond.add_function_call_statement(function_expr, ln)
+        elif len(names) == 1:
+            ty, nm = names[0]
+            cond.add_variable_declaration_statement(ty, nm, function_expr, ln)
+            self._mark_shadowing(fcfg, cond.statements[-1])          # (Phase 3b, D8)
+        else:
+            # 다중 반환 — `build_variable_declaration_tuple` 과 같은 모양:
+            #   선언문들(초기화 없음) + 튜플 대입문 하나. 해석기가 호출을 한 번 평가하고
+            #   슬롯별로 나눠 넣는다(`Update.update_left_var` 의 TupleExpressionContext 경로).
+            for ty, nm in names:
+                cond.add_variable_declaration_statement(ty, nm, None, ln)
+                self._mark_shadowing(fcfg, cond.statements[-1])      # (Phase 3b, D8)
+            lhs = Expression(
+                context="TupleExpressionContext",
+                elements=[Expression(context="IdentifierExpContext", identifier=nm)
+                          for _ty, nm in names],
+            )
+            cond.add_assign_statement(lhs, '=', function_expr, ln)
 
-        # ★ returns 로컬이 true-경로에 추가되었으므로 합류점부터 후속을 최신화
+        # interface 타입 지역은 @IReturn 조회용으로 등록 (build_variable_declaration_tuple 과 같게)
+        for ty, nm in names:
+            if getattr(ty, "typeCategory", None) == "interface":
+                ifc_name = getattr(ty, "interfaceName", None)
+                if ifc_name:
+                    fcfg.interface_var_types[nm] = ifc_name
 
     def process_catch_clause(self, catch_ident, params):
         ccf = self.contract_cfgs[self.current_target_contract]
@@ -2658,35 +2686,30 @@ class ContractAnalyzer:
         if not fcfg:
             raise ValueError("No current target function for catch.")
 
-        # ★ get_current_block을 사용해서 try condition과 join 찾기
+        # (2026-10-29 재설계) catch 는 **순서 있는 조건 체인의 다음 링크**다 — else-if 와 같은 경로로
+        #   앞 조건을 찾는다. 첫 catch 면 `try_cond`, 둘째부터는 **앞 `catch_cond`** 다.
+        #   예전엔 늘 try cond 를 찾아 모든 catch 가 try 의 **병렬 False 분기**가 됐고, 그래서
+        #   Solidity 의 "위에서부터 처음 맞는 하나" 순서·배타성이 모델에 없었다.
         result = self.builder.get_current_block(context="catch")
         if result is None:
             raise ValueError("`catch` without preceding `try`.")
+        prev_cond, outer_join = result if isinstance(result, tuple) else (result, None)
 
-        # catch 는 가장 가까운 try 의 실패 분기다 — 합류점은 try 를 만들 때 기록해 둔다(`build_try_skeleton`)
-        cond = result[0] if isinstance(result, tuple) else result
-        join = getattr(cond, "try_join", None)
-        if join is None or join not in fcfg.graph:
-            raise ValueError("`catch`: try join not found.")
-        # 첫 catch 면 빈 실패 경로(false_stub)를 대신한다. 두 번째부터는 새 False 분기를 더한다.
-        false_stub = next((s for s in fcfg.graph.successors(cond)
-                           if fcfg.graph[cond][s].get("condition") is False
-                           and s.name.startswith("try_false_stub_")), None)
-
-        c_entry, c_end = self.builder.attach_catch_clause(
-            cond=cond, false_stub=false_stub, join=join,
+        cond, t_blk, local_join = self.builder.build_catch_clause(
+            prev_cond=prev_cond, outer_join=outer_join,
             line_no=self.current_start_line, fcfg=fcfg, line_info=self.sa.line_info,
             end_line=self.current_end_line
         )
 
-        # catch 파라미터 로컬
+        # catch 파라미터 로컬 — 이 절의 true 블록 소속. `local_join.scope_anchor = cond` 라
+        #   절이 끝나는 join 에서 사라진다.
         for ty, nm in (params or []):
             if not nm:
                 continue
             v = Variables(identifier=nm, scope="local")
             v.typeInfo = ty
             v.value = None
-            c_entry.variables[nm] = v
+            t_blk.variables[nm] = v
             fcfg.add_related_variable(v)
 
         # ★ 합류점에서 재해석 시작
