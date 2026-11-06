@@ -71,6 +71,16 @@ class SolidityAnalyzer:
 
         elif event == "modify":
             raw_lines = new_code.split("\n")
+            # (2026-11-06) 조건 헤더 레코드(`헤더` ⏎ `}`)는 **헤더 줄만** 바꾼다. 가짜 `}` 의 자리(스팬 끝)에는
+            #   이미 본문이 들어와 있다. 예전엔 `}` 를 그대로 써서 본문 첫 줄을 덮었고, 여러 줄 헤더는 줄 수가
+            #   달라 아래 delete+add 로 빠져 본문이 지워졌다.
+            if len(raw_lines) == 2 and raw_lines[1].strip() == "}" and end_line > start_line:
+                self.full_code_lines[start_line] = self._stored_text(raw_lines[0], True)
+                self.update_brace_count(start_line, self.full_code_lines[start_line])
+                self.full_code = "\n".join(
+                    self.full_code_lines[ln] for ln in sorted(self.full_code_lines))
+                self.analyze_context(start_line, new_code)
+                return
             norm_lines = self.normalize_compound_control_lines(raw_lines)
             if (end_line - start_line + 1) != len(norm_lines):
                 self.update_code(start_line, end_line, "", event="delete")
@@ -150,21 +160,24 @@ class SolidityAnalyzer:
             self._shift_source_meta(old_ln, old_ln + actual_offset)
             ca._shift_cfg_meta(old_ln, old_ln + actual_offset)
 
-        # 삽입 - 실제 코드 줄은 스팬 끝에, 빈 슬롯은 앞에 채운다
+        # 삽입 (2026-11-06) — 첫 줄은 스팬 **시작**에, 나머지 줄은 스팬 **끝**에, 사이는 빈 줄.
+        #   블록 레코드의 가짜 `}` 는 스팬 끝에 있어야 다음 본문 문장이 그 앞에 들어간다. 그러나 헤더까지 끝으로
+        #   보내면 CFG 노드의 src_line(= 시작 줄)과 저장소 줄이 어긋나고(`if (` ⏎ `c` ⏎ `) {` 에서 시작 줄이 빈 줄),
+        #   closeBefore 는 앞 블록의 `}` 가 남아 `}` 가 두 번 세어졌다(연속된 여러 줄 else-if 실패).
         write_count = min(len(new_lines), offset)
-        write_start = start + offset - write_count
+        placed = [start] + [start + offset - write_count + i for i in range(1, write_count)]
 
-        # 앞쪽 빈 슬롯 채우기
-        for i in range(write_start - start):
-            ln = start + i
-            if ln not in self.full_code_lines:
-                self.full_code_lines[ln] = ""
+        # 사이 빈 슬롯 채우기
+        for ln in range(start, start + offset):
+            if ln in placed:
+                continue
+            self.full_code_lines[ln] = ""
             if ln not in self.line_info:
                 self.line_info[ln] = {"open": 0, "close": 0, "cfg_nodes": []}
 
         # 실제 코드 줄 쓰기
         for i in range(write_count):
-            ln = write_start + i
+            ln = placed[i]
             line = new_lines[i]
             self.full_code_lines[ln] = self._stored_text(line, i == 0)
             self.update_brace_count(ln, self.full_code_lines[ln])

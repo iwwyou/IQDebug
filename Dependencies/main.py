@@ -97,6 +97,9 @@ _UNSUPPORTED = (
     #   외부 함수 호출" 만 다룬다. 데이터셋 전체 0건이라(선정 551 파일 0, DAppSCAN-source 전체 0,
     #   줄바꿈 포함 검색 확인) 지원 범위 밖으로 확정했다 — evaluation/reviews/round9_operations.md §9.
     (re.compile(r"\btry\s+new\b"), "`try new C(...)`(컨트랙트 생성 try) 는 지원하지 않는다"),
+    # (2026-11-06) import 는 이름을 묶기만 하고 엔진은 폐포 전체를 한 이름 공간에 올린다. 별칭은 그 이름을 바꾸므로
+    #   묵살하면 미해석 이름이 된다. 선정 타깃 551 의 폐포 925 파일에 별칭·`* as` 0건이라 지원 범위 밖으로 둔다.
+    (re.compile(r"^import\b.*\bas\b"), "import 별칭(`as`) 은 지원하지 않는다"),
 )
 
 
@@ -170,6 +173,34 @@ def _one_statement_violation(txt: str, close_before: bool) -> str | None:
     if _BODYLESS_CTRL.match(txt) and not (close_before and txt.startswith("while")):   # `} while (c);` = do-while 꼬리
         return "중괄호 없는 제어문 본문"
     return None
+
+
+def _merged_violation(merged: str, close_before: bool, line: int) -> None:
+    """여러 줄을 합친 문장도 입력 전제를 검사한다 (2026-11-06).
+
+    2.4 의 게이트는 물리적인 한 줄만 본다. `if (x)` ⏎ `y = 1;` 은 각 줄이 멀쩡해 통과하고 5) 에서
+    `if (x) y = 1;` 로 합쳐졌는데, 합친 문장은 검사하지 않았다. 그러면 본문이 조건 밖 문장이 되어
+    **조용한 오분석**이 났다(`for` 본문이 루프 뒤에서 한 번 실행, `if` 본문이 무조건 실행)."""
+    if merged.startswith("import"):                  # `{A, B}` 는 블록이 아니다 — 문장 수만 본다
+        code = _code_only(merged).strip()
+        why = None if code.count(";") == 1 and code.endswith(";") else "한 줄에 문장이 둘 이상(한 줄 블록 또는 다중 문장)"
+    else:
+        why = _one_statement_violation(merged, close_before)
+    if why is None:
+        code = _code_only(merged)
+        m = re.match(r"(?:else\s+)?(?:if|for|while)\s*\(", code)
+        if m:                                       # `if (a)` ⏎ `if (b) {` — 헤더 뒤가 `{` 가 아니다
+            depth, i = 1, m.end()
+            while i < len(code) and depth:
+                depth += {"(": 1, ")": -1}.get(code[i], 0)
+                i += 1
+            rest = code[i:].strip()
+            if depth == 0 and rest and rest != "{":
+                why = "중괄호 없는 제어문 본문"
+    if why:
+        from Utils.Errors import SourceError
+        raise SourceError(f"line {line}: 입력 전제 위반 — {why}: `{merged[:80]}` "
+                          f"(블록 헤더와 각 문장을 별도 줄로)", line=line)
 
 
 def slice_solidity(source: str) -> List[Dict]:
@@ -291,6 +322,27 @@ def slice_solidity(source: str) -> List[Dict]:
             txt = txt[1:].strip()
             close_before = True
 
+        # 2.35) import (2026-11-06) — `{A, B}` 와 여러 줄을 포함해 문장 하나로 낸다. `{` 를 블록으로 보면 안 된다.
+        #   엔진은 이 레코드를 해석하지 않는다(ContractAnalyzer). 의존 폐포는 레지스트리가 맡는다.
+        if re.match(r"import\b", txt) and not _comment.match(raw):
+            import_start = cur_line
+            acc = [txt]
+            cur_line += 1; i += 1
+            while ";" not in _code_only(" ".join(acc)) and i < len(lines):
+                nxt = lines[i].strip()
+                cur_line += 1; i += 1
+                if nxt:
+                    acc.append(nxt)
+            merged = re.sub(r"^import\s*", "import ", " ".join(acc))
+            why = _unsupported_construct(merged)
+            if why:
+                from Utils.Errors import SourceError
+                raise SourceError(f"line {import_start}: 지원하지 않는 구문 — {why}: `{merged[:80]}`",
+                                  line=import_start)
+            _merged_violation(merged, False, import_start)
+            inputs.append({"code": merged, "startLine": import_start, "endLine": cur_line - 1, "event": "add"})
+            continue
+
         # 2.4) 입력 전제: 입력 1개 = statement 1개 (주석 줄은 제외)
         if not _comment.match(raw):
             why = _one_statement_violation(txt, close_before)
@@ -368,6 +420,8 @@ def slice_solidity(source: str) -> List[Dict]:
                 break
             if _one_liner.search(next_txt) and _paren_depth(" ".join(accumulated)) == 0:
                 break
+
+        _merged_violation(" ".join(accumulated), close_before, start_line)
 
         if found_block_header:
             merged_code = " ".join(accumulated)

@@ -57,7 +57,7 @@ npx tsc --noEmit             # 타입체크
 
 - 통과: `test_session_flow`, `test_update`, `test_delete_cfg`, `test_try_catch`, `test_sparse_array`,
   `test_set_intents`, `test_ireturn_cast`, `test_blank_during`, `smoke_engine_api`(의존성 로드 단계 제외),
-  `test_overload_target`(2026-10-28 추가 — overload 타깃 지정)
+  `test_overload_target`(2026-10-28 추가 — overload 타깃 지정), `test_try_catch`, `test_nav_symmetry`, `test_registry`, `test_normalize_source`·`test_multiline`(2026-11-06 추가)
 - ⚠ 여러 스크립트가 `⊤`·`—` 를 출력해 **cp949 콘솔에서 UnicodeEncodeError 로 죽는다**(단언 자체는 통과).
   `PYTHONIOENCODING=utf-8` 로 실행할 것.
 - 부분 실패(데이터셋 의존): `test_transaction` T8 — 옛 데이터셋 파일(`evaluation/Dataset/target_contraction_auto/*.sol`)이
@@ -119,9 +119,9 @@ DebugInitializer=입력→추상값, YulEval).
 - `sess.structure()` 를 스코프 없이 호출하면 폴백이 **컨트랙트의 마지막 함수**를 집는다. 항상
   `contract`, `func` 를 명시할 것.
 - 분석 실패가 예외가 아니라 **조용한 오분석**으로 나타나는 경우가 많다 → 결과가 이상하면 diagnostics 부터.
-- 의존성 로드는 `Dependencies.main.load_project_deps(sa, ca, deps_root, exclude)` 하나다. 새 데이터셋용
-  deps 는 아직 빌드하지 않았다(`evaluation/Dataset/build_project_deps.py` 의 `SOURCE_EDITS`·경로 상수를
-  새 구조에 맞게 채워야 한다).
+- 의존성 로드는 `Dependencies.main.load_project_deps(sa, ca, deps_root, exclude)` 하나다. 데이터셋 deps 는
+  `evaluation/Dataset/build_deps.py` 가 타깃 import 폐포마다 `deps/<타깃 id>/` 로 만든다(생성물, git 제외).
+  재현된 미해결 오류는 `evaluation/KNOWN_ISSUES.md`.
 
 ## 참고 문서
 

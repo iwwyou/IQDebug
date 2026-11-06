@@ -52,6 +52,8 @@
 | ~~B7~~ | ~~`Δ(n) = {x | IN(n)(x) ≠ OUT(n)(x)}` 조회~~ → **완료 (Phase 0, A-D3 와 묶임)**. 전체 상태 목록에 `이전 → 이후` 인라인. 호출 지점의 Δ 는 반환값·부수효과를 모두 담고, 루프 헤더의 Δ 는 `loop_delta` 를 포함(중복 제거) |
 | B8 | 슬롯 도메인 eligible/active/visible 분리 (원칙 승인) |
 | B9 | A-D3 결정에 따른 `phase` 구현 |
+| **B10** | **do-while 구현** (2026-11-06 결정: 이번 실험에 포함하되 메인 항목 뒤로). 문법만 있고 visitor·분석기 미연결, 빌더는 호출된 적 없고 back edge 구조가 fixpoint 헤드와 안 맞아 재설계 필요. `break`/`continue` 미지원. 타깃 2건. |
+| **B11** | `KNOWN_ISSUES.md` I1~I6 처리. if/else 체인 찾기는 건드리지 않는다(2026-11-06 사용자 지시). |
 
 ---
 
@@ -86,14 +88,14 @@
 
 | | 항목 | 상태 |
 |---|---|---|
-| **E1a** | import 해소 가능성 측정 | ✅ **완료**. relative 해소 3,249 / suffix 17 / 미해소 62(스냅샷에 그 파일이 실제로 없음). 폐포 완전 해소 **489/522 (93.7%)**. 폐포 크기 중앙값 2 · 평균 4.8 · 최대 39. import 0개 파일 198/522 |
-| **E1b** | `evaluation/Dataset/normalize_source.py` (입력 전제 정규화) | ✅ **완료**. 타깃 자체 게이트 통과 **71.5% → 100.0%**, 폐포까지 전부 **60.0% → 93.7%**(= import 상한), 개별 파일 **78.8% → 99.9%**. self-test 14 케이스 |
-| **E1c** | 폐포를 `deps/<p>/sources/` 로 쓰고 `Dependencies/registry.py` 로 pkl 빌드 | **다음.** `load_project_deps` 가 `deps/<p>/builds/<CURRENT>` 레지스트리를 요구한다 |
+| **E1a** | import 해소 | ✅ **완료 (2026-11-06)**. 타깃 486 전부 미해소 0. 비상대 경로는 같은 감사 폴더 안에서 찾는다. |
+| **E1b** | `evaluation/Dataset/normalize_source.py` | ✅ 주석 공백화·무중괄호 삽입·줄 대응·긴 경로. 검증 `verify_normalize.py`: 3,787 파일 2,160 삽입 토큰 동치·멱등, 타깃 96 의 컨트랙트 786 바이트코드 동일. **남음: 한 줄 블록 분할**(승인 대기, 35 단위). |
+| **E1c** | `evaluation/Dataset/build_deps.py` — **타깃 import 폐포 = 프로젝트** | ✅ 486 타깃 / 2,548 단위 / 188초(6 프로세스). 폐포 전부 Complete 310. 나머지는 `KNOWN_ISSUES.md` I2·I5. |
 | ~~E1-old~~ | ~~`build_project_deps.py` 완성~~ | ❌ **폐기.** 입력 파이프라인 전체가 부재 — forge `out/build-info/*.json` 과 `tools/{contraction_target,preprocess_contraction}.py`(998줄)가 IQDebug 에 없고, DAppSCAN-source 는 build-info 를 제공하지 않는다. 새 데이터셋에는 forge 가 **필요하지 않다**(import 만으로 93.7% 해소) |
-| E2 | 타깃 선정 동결 (`targets_v5` 551 파일 / 1,941 실질 타깃) |
+| E2 | 타깃 동결 | ✅ `targets_v5` 551 → 같은 내용 파일 65 제거 → **486** (`evaluation/Dataset/targets_final.json`). 폐포가 달랐던 그룹 4 는 첫 경로의 폐포만 남는다. |
 | E3 | `test_slot_roundtrip.py` 를 새 데이터셋 기준으로 재작성 (옛 48 케이스에 묶여 있음) |
 | E4 | `test_transaction` T8 정리 (옛 데이터셋 파일 부재 — 기존 실패) |
-| **E5** | (우선순위: **E1c 뒤**. 지배적 blocker 는 의존성 부재이고 주석은 2차 요인이다 — F0-6 참조) **게이트가 블록 주석을 추적하지 않는다** — `Dependencies.main._comment` 는 `^\s*//` 만 본다. GPL 라이선스 `/* */` 산문이 코드로 읽혀 거부된다(실측: WETH9.sol L284). 지금은 `normalize_source.blank_block_comments` 로 **데이터셋 쪽에서 우회** 중. 사용자가 라이선스 헤더 붙은 파일을 그대로 붙여 넣으면 같은 문제를 겪으므로 게이트 자체를 고치는 것이 옳다 — **공유 입력 경로 변경이라 승인 필요** |
+| ~~E5~~ | ~~게이트의 블록 주석 추적~~ | ✅ **불필요** — `normalize_source` 가 주석을 비운다. |
 
 ---
 
@@ -109,6 +111,18 @@
 | F0-4 | 빈 `in_state` 노드 수 (루프 본문 외에 있는가) | B4 의 전제 |
 | F0-5 | 엔진 `line_info` ↔ 프론트 착지 색인 불일치 | 실측 불일치 1건 확인됨(지금은 identity 라 무해) |
 | F0-6 | `analyze` 성공률 + 실패 사유 분포 | **1차 완료 (의존성 없는 하한)**. 아래 참조. `evaluate` 단계는 E1c 후 |
+
+### F0 재측정 (2026-11-06, 타깃 486, 의존 폐포 로드)
+
+파일럿 스크립트는 저장소 밖에서 돌렸다(`pilot.py` 저장소 반입은 D 단계에서 결정). 아래 F0-6 1차 결과를 대체한다.
+
+```
+함수를 추출한 타깃: 312 / 486 (64.2%), 추출 함수 1,889
+함수 0개: 17 / analyze 예외: 157 (그중 의존 폐포 미완 119)
+S1 대칭성 위반 0 / S3 frontier 위반 0 / S2 줄 단사성 위반 119 (constructor 102, revert 17)
+```
+
+지배적 원인은 이제 의존성 부재가 아니라 `from` 파싱(`KNOWN_ISSUES.md` I2, 107 타깃)이다. S2 위반 119 는 I3·I4.
 
 ### F0-6 1차 결과 (2026-10-29, 선정 522 타깃, **의존 폐포 미로드 = 하한**)
 
