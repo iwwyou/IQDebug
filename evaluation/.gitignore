@@ -10,3 +10,4 @@ baselines/playground/hardhat/artifacts/
 baselines/playground/hardhat/cache/
 baselines/playground/hardhat/types/
 baselines/playground/hardhat/package-lock.json
+baselines/forge/z3/

@@ -10,11 +10,11 @@ ISSTA 2027 투고본의 **비교 대상 도구**를 손으로 돌려 보고, 평
 
 | 구성 | 고정 버전 | 설치 방법 |
 |---|---|---|
-| Foundry (forge/cast/anvil/chisel) | **v1.8.6** (2026-10-21 릴리스) | `forge/install.ps1` |
+| Foundry (forge/cast/anvil/chisel) | **v1.9.0** (2026-11-02 릴리스) | `forge/install.ps1` |
 | forge-std (forge 플레이그라운드) | **v1.16.2** | 아래 `git clone` 한 줄 |
 | Hardhat | **3.21.1** (`npm` latest, 2026-10-29) | `npm install` |
 | forge-std (Hardhat Solidity 테스트) | **v1.16.2** | `package.json` 의 npm 의존성 |
-| solc | forge = 0.8.37 자동 / Hardhat = 0.8.28 (config 지정) | 각 도구가 자동 다운로드 |
+| solc | forge = 0.8.37 자동 / Hardhat = 0.8.37 (config 지정, 2026-11-06 통일) | 각 도구가 자동 다운로드 |
 
 ---
 

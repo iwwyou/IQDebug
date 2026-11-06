@@ -7,8 +7,8 @@ import { defineConfig } from "hardhat/config";
 
 export default defineConfig({
   plugins: [hardhatEthers],
-  // 0.8.28 — forge-std v1.16.2 가 요구하는 하한을 넘기기 위해. Vault 의 pragma 는 ^0.8.20.
-  solidity: { version: "0.8.28" },
+  // 0.8.37 — forge 1.9.0 측정과 같은 solc 로 고정(2026-11-06). 이전 값은 0.8.28.
+  solidity: { version: "0.8.37" },
   networks: {
     sim: { type: "edr-simulated", chainType: "l1" },
   },

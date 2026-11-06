@@ -1,13 +1,13 @@
 # 기존 스마트 컨트랙트 디버거 — 작동 방식·기능·차별점 조사 기록
 
-작성 2026-10-29. 용도: 논문의 *Background / Related Work / Evaluation(baseline 선정·threats)* 작성 근거.
-짝 문서: `README.md`(설치·실행·실측 출력), `../DAppSCAN/DATASET_RECORD.md`(모집단).
+작성 2026-10-29, **갱신 2026-11-06 (Foundry 1.9.0 + SolDB 0.4.5 기준. 1.8.x 수치는 전부 폐기)**. 용도: 논문의 *Background / Related Work / Evaluation(baseline 선정·threats)* 작성 근거.
+짝 문서: `FOUNDRY_RELEASE_NOTES.md`(1.9.0 사실관계·실측 원자료), `README.md`(설치·실행·실측 출력), `../DAppSCAN/DATASET_RECORD.md`(모집단).
 
 **근거 등급을 반드시 구분해서 쓴다.**
 
 | 등급 | 뜻 |
 |---|---|
-| **[실측]** | 이 저장소에서 직접 돌려 확인(2026-10-29). 버전 명시. 논문에 수치로 쓸 수 있다 |
+| **[실측]** | 이 저장소에서 직접 돌려 확인. 버전 명시. 논문에 수치로 쓸 수 있다 |
 | **[문서]** | 공식 문서·저장소 README·PR 설명. 조회일 명시. 논문에 "according to" 로 쓴다 |
 | **[미확인]** | 아직 돌려 보지 않았다. 논문에 단정해서 쓰면 안 된다 |
 
@@ -15,28 +15,34 @@
 
 ## 1. 다섯 도구의 작동 방식
 
-### 1.1 Foundry — `forge test --debug` **[실측: forge 1.8.6]**
+### 1.1 Foundry — `forge test --debug` **[실측: forge 1.9.0, commit 6056c58]**
 
-- 테스트 함수 하나를 **구체 실행**하고 전 과정을 기록한 뒤, TUI 에서 그 기록 위를 전후로 움직인다.
-- 소스 연결은 **solc source map**(`pc → 소스 바이트 범위`). 스텝 레코드 자체에는 소스 줄이 없다.
-- `--debug --dump <path>` 로 **비대화형 덤프**가 가능하다 → 평가 하네스에서 쓸 수 있다.
-- 구조: `{contracts: {identified_contracts, sources}, debug_arena: [frame]}`,
-  `frame = {address, kind, calldata, returndata, gas_limit, step_offset, decoded, contract_name, steps}`,
-  `step = {pc, op, stack, push_stack, memory, returndata, gas_*, storage_change, status, immediate_bytes, decoded}`.
-- 전제: 컴파일되는 Foundry 프로젝트 + 테스트 함수 + (internal 타깃이면) 상속 harness +
-  (setter 없는 상태변수면) 슬롯 계산 + `vm.store`.
+- 내장 디버거는 1.9.0 에서 **SolDB 0.4.5 로 교체**됐다 (PR #17429). 상세는 `FOUNDRY_RELEASE_NOTES.md` §1–§3.
+- 테스트 함수 하나를 **구체 실행**하고 녹화한 뒤 그 기록 위를 전후로 이동한다. 줄 단위(`next`/`step`/`finish`),
+  opcode 단위(`nexti`), 역방향(`reverse-*`), 조건부 breakpoint, `vars`/`print`, internal 프레임 복원 backtrace 를 제공한다.
+- 소스 연결은 solc legacy source map(**instruction index → 소스 범위**). ETHDebug 불필요.
+- 지역변수는 **source map + 스택 배치로 추론**하며 도구가 경고를 낸다. 컴파일러가 알려 준 위치가 아니다.
+  Vault 실측: legacy·legacy+optimize 는 보임, via-IR 두 설정은 안 보임.
+- `--debug --dump <dir>` = 비대화형 번들 디렉터리 (`trace.json`, `contracts.json`, 주소별 `combined.json`, 소스 사본).
+  명령 파일을 stdin 으로 넣으면 대화형 디버거도 비대화형으로 구동된다.
+- 전제: 컴파일되는 Foundry 프로젝트 + 테스트 함수. internal **직접 호출**이면 상속 harness 추가
+  (public 입구로 도달하면 harness 불필요). setter 없는 상태변수면 슬롯 지식 + `vm.store`.
 - 상태 주입: cheatcode(`vm.store`/`vm.deal`/`vm.warp`/`vm.prank`).
-- 입력 영역: `fuzz` = 무작위 **점** N개(기본 256). `--debug` 는 fuzz 실패 시 **첫 반례**, 실패 없으면 마지막 케이스를 연다.
+- 입력 영역: `fuzz` = 무작위 **점** N개. `--debug` 는 실패 시 실패 사례, 없으면 마지막 사례 **1건만** 녹화.
+  runs 8 과 1024 의 스텝 수가 같았다.
 
-**측정값** (`Vault.withdraw` — 6줄 함수, `test_withdraw()` 1회):
+**측정값** (`Vault.withdraw`, `test_withdraw()` 1회, solc 0.8.37, 기본 설정):
 
 | | 값 |
 |---|---|
-| 총 디버거 스텝 | **4,601** |
-| 콜 프레임 | **18** |
-| 타깃 호출 프레임(`VaultHarness.withdraw(100)`) | **1,014 스텝** |
+| 테스트 세션 전체 | **4,776 스텝** |
+| 타깃 호출 `withdraw(100)` | **1,014 스텝** (세션의 21.2%) |
+| 루프 1회전 | 210 스텝 |
+| 설정별 세션 스텝 | optimize 2,509 / via-IR 7,934 / via-IR+optimize 2,282 |
 
-### 1.2 Hardhat 3 **[실측: 3.21.1]**
+세션 전체를 사용자 조작 수로 해석하면 안 된다. breakpoint 로 바로 이동할 수 있다.
+
+### 1.2 Hardhat 3 **[실측: 3.21.1, solc 0.8.37 로 재측정 2026-11-06]**
 
 - **인터랙티브 스텝 디버거가 없다.** `npx hardhat --help` 의 task 전체 =
   `build clean compile console flatten node run telemetry test` (+ `test solidity`). `debug` 없음.
@@ -48,6 +54,11 @@
   논문에서 Hardhat 을 "cheatcode 가 없어서 불리한 도구" 로 묘사하면 사실과 다르다.
 - 전제: 컴파일되는 프로젝트 + 스크립트/테스트. internal 타깃은 forge 와 같이 상속 harness.
 - 상태 주입: Solidity 테스트의 cheatcode, 또는 JSON-RPC `hardhat_setStorageAt`/`evm_setNextBlockTimestamp` **[실측]**.
+- **타깃 측정값**: `withdraw(100)` 트랜잭션 `debug_traceTransaction` = **1,014 스텝**, gas 36,812. forge 호출 구간·gas 와 일치.
+- `-vvvv` 는 **호출 단위**까지만 보여 준다. `_afterFee`, 지역변수, storage 변경이 나오지 않았다. `--decode-internal` 대응 옵션은 `--help` 에 없다.
+- 지역변수를 보는 방법은 `console.log` 삽입본(`VaultLogged.sol`)이다.
+- 스크립트 경로는 실제 배포 후 슬롯을 쓰므로 생성자 상태(`feeBps`)를 직접 넣지 않아도 된다.
+- 설치: `forge-std` 는 별도 의존성. Hardhat 2 는 2027-06-01 또는 Hegota 활성화 중 이른 날짜에 지원 종료 **[문서]** → 비교에서 제외.
 
 ### 1.3 Remix **[문서, 조회 2026-10-29]** — 정성 비교만
 
@@ -100,6 +111,22 @@
   **소스 스냅샷**이다. 배포 주소도 트랜잭션도 없다. → **정량 비교가 구조적으로 불가능**하고,
   그 사실 자체가 scope 분리의 근거다(배포된 코드의 사후 분석 vs 작성 중인 코드의 편집 시점).
 
+### 1.6 SolDB (standalone) **[실측: 0.4.5]**
+
+- 라이브러리 묶음이다. 탐색 계층(`soldb-debugger`·`soldb-repl`·`soldb-tui`)은 forge 와 공유하고, 실행 계층은 별개다
+  (`soldb run` = 일회용 로컬 체인, cheatcode 없음). forge 의 내장 범위는 PR 설명 기준이며 forge 소스까지는 확인하지 않았다.
+- 테스트 파일 없이 바이트코드에 직접 호출한다. `--batch --json` 으로 operation 단위 계측이 가능하다.
+
+| `soldb run` 경로 | 지역변수 | 비고 |
+|---|---|---|
+| `soldb compile` (via-IR + ETHDebug) | **없음** | 현재 solc 는 변수 위치 정보를 내지 않는다 |
+| legacy `combined.json` | **추론값** | 원본 `Vault`, 1,014 스텝 → **비교에는 이 경로를 쓴다** |
+
+- internal 함수 직접 호출은 디스패처에서 REVERT (42 스텝). public 입구로만 도달한다.
+- `--storage slot=value` 는 배포 **전에** 설정된다. 생성 코드로 실행하면 값이 호출에 반영되지 않아서,
+  Vault 는 `--runtime` + 생성자 상태(`feeBps`) 수동 입력이 필요했다.
+- 접근 전 상태변수는 `<unknown>` 으로 표시된다. `--tui` 는 도움말만 확인했다.
+
 ---
 
 ## 2. 전제 조건·커서 대조표 (논문 §2 표 초안)
@@ -119,18 +146,20 @@
 | 도달 불가 판정 | 불가 | 불가 | 불가 | (심볼릭이면 부분) | 불가 | **모든 입력에 대해 + 사유(O15)** |
 | 루프 3회전 | 3개 위치 | 3개 위치 | — | 3개 위치 | 3개 위치 | **접은 노드 1개 + loop delta** |
 
+표의 forge 열은 standalone SolDB 에도 대체로 적용된다. 차이는 선행 조건이다: 테스트 대신 **바이트코드 + slot=value**. Remix·Simbolik·EDB 열은 문서 기준이다.
+
 ---
 
 ## 3. 차별점을 세우는 축
 
-1. **커서의 정체 — 논문 기여의 정당화.** 다섯 도구 전부 커서가 **기록된 선형 트레이스의 인덱스**다.
-   그래서 operation 의미론을 정의할 것이 없다(스텝 = `i±1`). `Back ∘ Fwd ≠ id` 같은 성질은 질문 자체가 성립하지
-   않는다. **상태가 집합이 되고 위치가 그래프 노드가 되는 순간** operation 이 비자명해진다 → 그 정의가 기여.
-   실측 수치로 받친다: `withdraw` 1회 = forge 1,014 스텝 vs IQDebug 착지 노드 소수.
+1. **커서의 정체.** 구체 도구의 커서는 **기록된 선형 트레이스의 인덱스**다. 다만 줄 단위 이동은 `i±1` 이 아니고
+   (`next`, `finish` 는 호출 균형을 따진다), 그 의미론도 이미 정식화되어 있다 (Holter et al., §6).
+   🔴 **"추상 상태 위 operation 의미론의 정의" 자체를 신규 기여로 쓰면 안 된다.** 차별화 후보는 §6 참조.
+   수치 비교 시 단위를 맞출 것: 1,014 는 opcode 스텝이고 IQDebug 착지 노드는 줄 수준이다.
 2. **경로 기반 vs 요약 기반.** Simbolik 의 심볼릭 모드가 가장 가까운 이웃이지만, 심볼릭 실행은
    **경로마다 경로 조건**을 들고 루프를 전개/한계지음다. 추상해석은 **프로그램 지점마다 fixpoint 요약**이고
    루프를 접는다. 결과적으로 심볼릭 모드의 커서도 여전히 **경로 위**에 있다 — join 에서 Step Backward 가
-   선행 **두 개**를 주는 일은 요약에서만 일어난다. 그리고 navigation 에 solver 호출이 0이다.
+   선행 **두 개**를 주는 일은 요약에서만 일어난다(심볼릭 도구 대비. Holter et al. 의 추상 back 도 비결정적이다). 그리고 navigation 에 solver 호출이 0이다.
 3. **source map 을 넘지 않는다.** EDB 가 Remix·`forge debug`·Hardhat 을 비판하는 근거가 "최적화가 켜지면
    source map 이 틀린 줄을 가리킨다" 이고, 그래서 EDB 는 계측·재컴파일을 택했다. IQDebug 는 **바이트코드
    경계를 아예 넘지 않으므로** 이 문제가 구조적으로 없다 — 대신 EVM 수준 관찰(gas·스택·메모리)을 포기한다.
@@ -144,17 +173,21 @@
 
 ## 4. 베이스라인 선정 권고 (평가 설계)
 
-| Tier | 도구 | 방식 | 근거 |
+| 구분 | 도구 | 쓰는 축 | 근거 |
 |---|---|---|---|
-| **A — 정량** | **forge 1.8.6** | `--debug --dump` 로 스텝 전수 추출 + 준비 비용 측정 | 유일하게 스텝 디버거 + **비대화형 덤프** + 버전 고정 가능 |
-| **B — 정량(준비·관측 비용)** | **Hardhat 3.21.1** | Solidity 테스트 / `console.log` / `debug_traceTransaction` | 스텝 디버거가 없으므로 **"디버거"가 아니라 관측 관행**으로 프레이밍 |
-| **C — 정성** | Remix, Simbolik, EDB | 기능·전제 조건 대조표(§2) | 아래 사유 |
+| **디버거 baseline** | **forge 1.9.0** `test --debug` | 준비, 첫 관찰, 재획득, **탐색** | 실무 주력(주 프레임워크 57%), 비대화형 구동 가능 |
+| **디버거 baseline** | **Foundry 직접 호출** (`anvil` + `cast call --trace --debug --with-local-artifacts --override-state-diff`) | 준비, 첫 관찰, 재획득, 범위 | 테스트·하네스 불필요, 생성자 상태 유지. 탐색 계층이 forge 와 같으므로 **탐색 비교는 중복 제외**. 보조로 standalone SolDB 한 행. 상세 `EXPERIMENT_PLAN.md` |
+| **관측 관행 baseline** | **Hardhat 3** 스크립트 + `hardhat_setStorageAt` + `console.log` | 준비, 첫 관찰, 재획득 | 스텝 디버거가 없다. **디버거가 아니라 관행**으로 프레이밍 |
+| 정성 | Remix | capability 표 | 대화형 디버거지만 수동·브라우저라 정량 재현이 어렵다 **[미실행]** |
+| 관련연구 | Simbolik, EDB, 추상 디버깅 연구 (§6) | 서술 | 아래 사유 |
 
-- **EDB**: 모집단에 적용 불가(§1.5). 정량 비교를 시도하지 않고, **불가능 사유를 scope 로 쓴다**.
-- **Simbolik**: 심볼릭 모드 접근 제한 → "측정하지 않았다" 를 **조회일과 함께 threats 에 명시**.
-  구체 모드만 비교하면 전제 조건이 forge 와 같아 Tier A 에 흡수된다.
-- **Remix**: 브라우저·수동이라 재현성이 낮다.
-- 세 도구 모두 **active development** → 논문에 버전·조회일을 박는다.
+- **EDB**: 모집단에 적용 불가(§1.5). 불가능 사유를 scope 로 쓴다.
+- **Simbolik**: 심볼릭 모드 접근 제한. 구체 모드는 전제가 forge 와 같다 **[문서]**.
+- **`forge test --symbolic`**: 디버거가 아니므로 비교에서 제외 (사용자 결정 2026-11-06). Threats 에 한 줄 언급 권장.
+- **Hardhat 워크플로**: Solidity 테스트 경로는 forge 와 준비가 거의 같아 대표에서 제외한다.
+- **공통 고정**: solc 0.8.37, optimizer off, via-IR off, 타깃 구간 지표. 지원하지 않는 operation 은 수치화하지 않는다.
+- 설문 분모: 57/18/15% = n=828 주 프레임워크 문항, Remix 41% = n=871 보조 프레임워크 문항. 합산 금지.
+- 모든 도구는 active development → 논문에 버전·조회일을 박는다.
 
 ### 측정 지표 제안
 
@@ -164,7 +197,7 @@
 1. **준비 비용**: harness LOC, `vm.store` 호출 수(+슬롯 유도 횟수), **사용자가 발명해야 하는 구체값 개수**,
    첫 관측까지 wall-clock. IQDebug 는 슬롯 수(빈칸 허용).
 2. **탐색 입도**: 소스 줄 A→B 로 가기 위해 지나야 하는 스텝 수. forge 는 `--dump` 로 전수 추출 가능,
-   IQDebug 는 NG 상의 operation 수. (`withdraw` 예: 1,014 vs 착지 노드 수)
+   IQDebug 는 NG 상의 operation 수. 비교 단위는 **operation 대 operation** 으로 맞춘다 (forge 도 breakpoint·`next` 를 쓴 조작 수).
 3. **접근 가능 모집단**: harness 없이 직접 디버깅 가능한 함수 — T2 2,126(internal/private 1,077 +
    library 1,049) 과 `requires_storage_binding` 348 이 그대로 지표가 된다.
 4. **편집 후 재측정**: 재컴파일·재배포·재실행 vs 증분 수술, 그리고 커서·프레임 보존 여부.
@@ -184,6 +217,8 @@
 | 루프 본문 안 관찰 | 전부 그쪽 (IQDebug 는 본문 착지 불가, D8) |
 | modifier 프레임 모델 | **Simbolik**(modifier 당 프레임 + 헤더 정지점). 데이터셋에 placeholder 전후 문장이 있는 modifier 사용 **623건** → IQDebug 의 처리를 의미론에서 정의해야 한다 |
 | 관계적 성질(`x < y`) | 심볼릭(Simbolik) — interval 도메인은 비관계적 |
+| 조건부 breakpoint·상태변수 쓰기 감시·역방향 실행 | **forge/SolDB** |
+| 구체 실행 세션의 시뮬레이션 보장 | **Holter et al.** Thm 4.1. IQDebug 는 루프 본문 착지가 없어 그대로는 성립하지 않는다 |
 
 ---
 
@@ -194,8 +229,24 @@
   시스템 이름 **Syntox**(Pascal 부분집합). **"추상 상태를 보고 디버깅한다" 는 1993년에 이미 있다.**
   PL 리뷰어는 반드시 안다 — 인용 누락은 치명적이다.
   **구분선**: 그쪽은 assertion/invariant 로부터 필요조건을 역추론하는 **분석**이고,
-  step/frame/breakpoint/continue 라는 **디버거 operation 의 의미론은 아니다.** 이 구분을 Background 에
-  명시하면 오히려 C3 이 선명해진다.
+  step/frame/breakpoint/continue 라는 **디버거 operation 의 의미론은 아니다.** 단 이 구분선은 Holter et al. 앞에서는 성립하지 않는다.
+  인용 여부는 사용자가 추후 결정 (비교군 아님).
+- 🔴 **Karoliine Holter, Juhan Oskar Hennoste, Patrick Lam, Simmo Saan, Vesal Vojdani, "Abstract Debuggers: Exploring
+  Program Behaviors using Static Analysis Results", Onward! '24, 130–146** (DOI 10.1145/3689492.3690053). **가장 가까운 선행 연구.**
+  - 내용: 구체 live reverse 디버거와 추상 디버거의 **operational semantics** 를 함께 정식화 (into/over/out/back).
+    커서 그래프는 iARG, 추상 back 은 비결정적, 분기는 비결정적 전이로 두고 구현에서 사용자에게 묻는다. Thm 4.1: 모든 구체 세션에 대응하는 추상 세션이 존재.
+    C + Goblint + DAP(VS Code). 평가는 사례 연구이고 "additional evaluation is needed" 라고 스스로 적는다.
+  - **입력을 받지 않는다**: "the user does not need to (indeed, cannot) supply inputs" (p.133).
+  - IQDebug 와의 차이 후보: 사용자 입력(구간/빈칸)으로 범위를 좁힘 / 편집 시점 증분 갱신과 커서 보존 / Solidity 대상(storage, modifier, 슬롯 도출) /
+    breakpoint·continue 의 추상 의미론 (Fig.3 의 S 에 없음. 구현부 pp.139–141 은 미독) / 왕복 법칙(P6) / 구체 디버거와의 정량 비교.
+  - IQDebug 가 못 미치는 점: 세션 시뮬레이션 정리, 경로·문맥 민감 iARG, 루프 본문 탐색.
+- **Tom Lauwaerts, Maarten Steevens, Christophe Scholliers, "MIO: Multiverse Debugging in the Face of Input/Output", PACMPL 9(OOPSLA2), 358, 2025**
+  (DOI 10.1145/3763136). 모든 실행 경로를 오가는 디버거. 다만 **구체 실행 트리** 기반이고 WebAssembly·마이크로컨트롤러 대상이다.
+  디버거가 정상 실행에서 도달 불가능한 상태를 보여 주는 문제(inaccessible states)를 정식 정합성으로 다룬다 → IQDebug 의 과잉근사 서술과 대비점.
+  multiverse debugging 원전은 이 논문의 [92] 를 확인해 별도 인용할 것.
+- **Maitri Kushwaha, Raju Halder, Agostino Cortesi, "A Sound Semantics Approximation of Solidity for Enhanced Vulnerability Detection", Distrib. Ledger Technol., 2026**
+  (DOI 10.1145/3849490, Just Accepted). Solidity 추상해석(APRON; Interval·Octagon·Polyhedra)이지만 **취약점 탐지기**이고 디버거가 아니다.
+  도메인·전이함수 쪽 관련연구. 도구 공개 여부는 미확인.
 - 같은 논리로 처리할 것: Frama-C value analysis GUI 류(문장별 추상값 조회는 하지만 operation 이 없다),
   Astrée 등 산업용 추상해석기.
 - 자기 선행 연구: **SolQDebug** (Automated Software Engineering, DOI 10.1007/s10515-026-00618-9) — 게재.
@@ -210,8 +261,10 @@
 
 | 대상 | 출처 |
 |---|---|
-| Foundry | https://book.getfoundry.sh/ , release v1.8.6 (2026-10-21), commit 6bad0a6 |
-| Hardhat 3 | https://hardhat.org/ , npm `hardhat@3.21.1` (dist-tag `latest`; `hh2` = 2.29.1) |
+| Foundry | https://github.com/foundry-rs/foundry/releases/tag/v1.9.0 , commit 6056c58, PR #17429 |
+| SolDB | https://github.com/walnuthq/soldb , crate 0.4.5 |
+| Solidity Developer Survey 2025 | https://www.soliditylang.org/survey-2025/ (조회 2026-11-06) |
+| Hardhat 3 | https://hardhat.org/ , npm `hardhat@3.21.1` 사용 (2026-11-06 기준 `latest` = 3.21.2, 고정 버전 결정 필요) |
 | Remix | https://remix-ide.readthedocs.io/ (디버거 장) |
 | Simbolik 문서 | https://docs.runtimeverification.com/simbolik |
 | Simbolik 확장 | https://github.com/runtimeverification/simbolik-vscode (BSD-3-Clause) |
@@ -220,6 +273,9 @@
 | EDB 프로젝트 페이지 | https://daplab.cs.columbia.edu/projects/?view=software |
 | Bourdoncle PLDI'93 | DOI 10.1145/155090.155095 |
 | Bourdoncle ESEC'93 | LNCS 717, 501–516 (DOI 10.1007/3-540-58792-6_27) |
+| Holter et al. Onward! '24 | DOI 10.1145/3689492.3690053 |
+| Lauwaerts et al. OOPSLA '25 | DOI 10.1145/3763136 |
+| Kushwaha et al. DLT 2026 | DOI 10.1145/3849490 |
 | SolQDebug | DOI 10.1007/s10515-026-00618-9 |
 
 ---
@@ -228,7 +284,9 @@
 
 | 우선 | 작업 | 왜 |
 |---|---|---|
-| P0 | `--dump` JSON 에서 **스텝 → 소스 줄** 복원 (source map 파싱) | 탐색 입도 비교(§4.2)의 전제. 덤프에 소스 줄이 없다 |
+| P0 | Holter et al. 대비 C3 기여 범위 재정의 + 구현부(pp.139–141) 정독 | §6. `paper/ISSTA_PLAN.md` 의 C3 는 논문 세션 소관 |
+| P0 | M9 Cold/Warm/1줄 편집 측정 | 재획득 비용 축 |
+| P1 | nested struct·멀티컨트랙트의 준비 비용 (forge, soldb, Hardhat) | 범위 축 |
 | P1 | Simbolik 설치·구체 모드 실행 | §1.4 를 [문서]에서 [실측]으로. 심볼릭 모드는 접근 요청이 필요 |
 | P1 | EDB 설치 + 공개 tx 하나로 실행 | §1.5 의 계측·재컴파일 비용을 실측(정성 서술의 신뢰도) |
 | P1 | Remix 디버거 한 번 통과 | 정성 서술의 근거 |

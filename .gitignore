@@ -1,0 +1,12 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+
+# Frontend (재현: frontend/package-lock.json + npm install)
+node_modules/
+frontend/dist/
+*.tsbuildinfo
+
+# 데이터셋 원본 — 별도 git 저장소(sparse checkout)
+evaluation/DAppSCAN/repo/
