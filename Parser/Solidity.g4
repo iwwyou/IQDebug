@@ -77,7 +77,7 @@ libraryDefinition
   : 'library' identifier '{' contractBodyElement* '}' ;
 
 inheritanceSpecifier
-  : identifierPath ( '(' callArgumentList ')' )? ;
+  : identifierPath callArgumentList? ;   // 2026-11-13: 공식 문법대로 — callArgumentList 가 이미 괄호를 포함한다
 
 callArgumentList
   : '(' (
@@ -521,7 +521,8 @@ emitStatement
   : 'emit' expression callArgumentList ';' ;
 
 revertStatement // must be modified in solidity language grammar
-  : 'revert' ( identifier ( callArgumentList )? | '(' expression? ')')? ';' ;
+  : 'revert' expression callArgumentList ';'   // 2026-11-13: 공식 문법 그대로 (custom error, 경로 포함)
+  | 'revert' '(' expression? ')' ';' ;         // 도구 확장: 공식 문법에서 내장 revert(...) 는 식 문장이다
 
 requireStatement
   : 'require' '(' expression (',' expression)? ')' ';' ;
@@ -641,7 +642,9 @@ numberLiteral
 // for example, "revert" is a keyword but it can also be a function name
 
 identifier
-  : Identifier ;
+  : Identifier
+  | 'from'     // 2026-11-09: Solidity 에서 from 은 import 에만 쓰이는 문맥 키워드다 (address from 합법)
+  | 'error' ;  // 2026-11-13: error 도 errorDefinition 에만 쓰이는 문맥 키워드다 (uint256 error 합법)
 
 // Temporal keywords for intent verification
 // These are reserved to prevent ambiguity in temporal predicates
@@ -760,8 +763,8 @@ DoubleQuotedPrintable
   : [\u0020-\u0021\u0023-\u005B\u005D-\u007E] ;
 
 fragment
-SingleQuotedPrintable
-  : [\u0020-\u0021\u0023-\u005B\u005D-\u007E];
+SingleQuotedPrintable   // 2026-11-13: 공식 문법대로 작은따옴표(0x27)를 뺀다. 예전엔 큰따옴표 범위를 복사해 'a', 'b' 가 한 토큰이 됐다
+  : [\u0020-\u0026\u0028-\u005B\u005D-\u007E];
 
 fragment
 EscapeSequence

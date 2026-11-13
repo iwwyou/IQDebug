@@ -1909,8 +1909,11 @@ class EnhancedSolidityVisitor(SolidityVisitor):
         revert_identifier = None
         expression_arg = None
 
-        if ctx.identifier():
-            revert_identifier = self.visitIdentifier(ctx.identifier())
+        # (2026-11-13) 문법이 공식 규칙 `revert expression callArgumentList` 를 따른다 — `revert Errors.E()` 처럼 경로가
+        #   붙은 custom error 도 받는다. 오류 이름은 저장만 되므로(해석 안 함) 식의 원문을 그대로 넘긴다.
+        #   `revert(...)`(내장 함수 호출 형태) 는 둘째 대안이고 callArgumentList 가 없다.
+        if ctx.callArgumentList():
+            revert_identifier = ctx.expression().getText()
         elif ctx.expression():
             expression_arg = self.visitExpression(ctx.expression())
 
