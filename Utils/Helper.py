@@ -56,6 +56,16 @@ class ParserHelpers:
     def map_context_type(ctx_type: str) -> str|None:
         return ParserHelpers._CTX_MAP.get(ctx_type)
 
+    # --------------------------- 렉서 생성 (2026-11-13)
+    @staticmethod
+    def new_lexer(src: str, *, intent: bool) -> SolidityLexer:
+        """SolidityLexer 를 만드는 유일한 곳. `intent=True` 일 때만 intent 전용 단어(`array`, `Entry`, `not` …)가
+        키워드 토큰이 되고, 코드에서는 일반 `Identifier` 다(문법의 lexer action). 렉서를 직접 만들면 기본값
+        `intentMode=False` 라 코드로 렉싱된다 — 어노테이션을 파싱하는 곳은 반드시 이 함수를 쓴다."""
+        lexer = SolidityLexer(InputStream(src))
+        lexer.intentMode = intent
+        return lexer
+
     # --------------------------- 파싱
     @staticmethod
     def annotation_syntax_errors(src: str) -> list:
@@ -66,7 +76,7 @@ class ParserHelpers:
             def syntaxError(self, recognizer, offendingSymbol, line, column, msg, e):
                 errors.append(f"{column}: {msg}")
 
-        lexer = SolidityLexer(InputStream(src))
+        lexer = ParserHelpers.new_lexer(src, intent=True)
         lexer.removeErrorListeners()
         lexer.addErrorListener(_Collect())
         parser = SolidityParser(CommonTokenStream(lexer))
@@ -82,8 +92,8 @@ class ParserHelpers:
             errs = ParserHelpers.annotation_syntax_errors(src)
             if errs:
                 raise AnnotationSyntaxError(src, errs)
-        input_stream  = InputStream(src)
-        lexer         = SolidityLexer(input_stream)
+        lexer         = ParserHelpers.new_lexer(
+            src, intent=ParserHelpers.map_context_type(ctx_type) == 'intentUnit')
         token_stream  = CommonTokenStream(lexer)
         parser        = SolidityParser(token_stream)
 

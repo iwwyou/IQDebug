@@ -60,6 +60,36 @@ for name, a, b in PAIRS:
     got, want = run(normalize(wrap(a)).text), run(wrap(b))
     check(name, got == want and not str(got).startswith(("진단", "예외")), (got, want))
 
+print("[1b] 한 줄 블록 → 펼친 버전과 동치 (2026-11-13)")
+ONE_LINE = [
+    ("한 줄 if 블록", "if (n > 5) { total = 1; total = total + 1; }", "if (n > 5) {\ntotal = 1;\ntotal = total + 1;\n}"),
+    ("한 줄 if/else 블록", "if (n > 5) { total = 1; } else { total = 2; }", "if (n > 5) {\ntotal = 1;\n} else {\ntotal = 2;\n}"),
+    ("한 줄 unchecked", "unchecked { total = n + 1; }", "unchecked {\ntotal = n + 1;\n}"),
+    ("한 줄 다중 문장", "total = 1; total = total + n;", "total = 1;\ntotal = total + n;"),
+    ("한 줄 for 블록", "for (uint256 i = 0; i < 3; i++) { total = total + 1; }", "for (uint256 i = 0; i < 3; i++) {\ntotal = total + 1;\n}"),
+    ("닫는 괄호 앞 문장", "if (n > 5) {\ntotal = 1; }", "if (n > 5) {\ntotal = 1;\n}"),
+    ("중첩 한 줄", "if (n > 5) { if (n > 7) { total = 1; } }", "if (n > 5) {\nif (n > 7) {\ntotal = 1;\n}\n}"),
+    ("무중괄호 + 한 줄 블록", "if (n > 5) for (uint256 i = 0; i < 2; i++) { total = total + 1; }",
+     "if (n > 5) {\nfor (uint256 i = 0; i < 2; i++) {\ntotal = total + 1;\n}\n}"),
+]
+for name, a, b in ONE_LINE:
+    got, want = run(normalize(wrap(a)).text), run(wrap(b))
+    check(name, got == want and not str(got).startswith(("진단", "예외")), (got, want))
+for name, src in (("한 줄 함수", "contract C {\n    uint256 public total;\n    function f(uint256 n) public { total = n; }\n}\n"),
+                  ("한 줄 enum/struct", "contract C {\n    enum E {A, B}\n    struct S { uint256 a; uint256 b; }\n"
+                   "    uint256 public total;\n    function f(uint256 n) public {\n        total = n;\n    }\n}\n"),
+                  ("한 줄 modifier·try·assembly", "contract C {\n    uint256 public total;\n    modifier m() { _; }\n"
+                   "    function g() external {}\n    function f(uint256 n) public m {\n        try this.g() {} catch {}\n"
+                   "        assembly { n := add(n, 1) }\n        total = n;\n    }\n}\n")):
+    out = normalize(src).text
+    try:
+        slice_solidity(out); check(name + " 슬라이스 통과", True)
+    except SourceError as e:
+        check(name + " 슬라이스 통과", False, e)
+    check(name + " 멱등", normalize(out).text == out)
+check("호출 옵션·명명 인자 유지", normalize(wrap('(bool ok, ) = msg.sender.call{value: 0}("");\nemit E({a: 1});')).lines_split == 0)
+check("Yul 문장 둘은 펼치지 않음", normalize(wrap("assembly { let y := add(n, 1) n := y }")).lines_split == 0)
+
 print("[2] 주석·문자열·체인")
 def body(s):
     return normalize(wrap(s)).text

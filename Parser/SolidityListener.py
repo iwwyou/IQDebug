@@ -1745,6 +1745,24 @@ class SolidityListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by SolidityParser#intentIdentifier.
+    def enterIntentIdentifier(self, ctx:SolidityParser.IntentIdentifierContext):
+        pass
+
+    # Exit a parse tree produced by SolidityParser#intentIdentifier.
+    def exitIntentIdentifier(self, ctx:SolidityParser.IntentIdentifierContext):
+        pass
+
+
+    # Enter a parse tree produced by SolidityParser#intentMemberName.
+    def enterIntentMemberName(self, ctx:SolidityParser.IntentMemberNameContext):
+        pass
+
+    # Exit a parse tree produced by SolidityParser#intentMemberName.
+    def exitIntentMemberName(self, ctx:SolidityParser.IntentMemberNameContext):
+        pass
+
+
     # Enter a parse tree produced by SolidityParser#identifier.
     def enterIdentifier(self, ctx:SolidityParser.IdentifierContext):
         pass

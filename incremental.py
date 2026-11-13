@@ -28,10 +28,9 @@ def syntax_valid(source: str) -> tuple[bool, list[dict]]:
 
     반환: (valid, diagnostics) — diagnostics = [{line, column, message, severity}].
     """
-    from antlr4 import CommonTokenStream, InputStream
+    from antlr4 import CommonTokenStream
     from antlr4.error.ErrorListener import ErrorListener
 
-    from Parser.SolidityLexer import SolidityLexer
     from Parser.SolidityParser import SolidityParser
 
     diags: list[dict] = []
@@ -42,7 +41,8 @@ def syntax_valid(source: str) -> tuple[bool, list[dict]]:
                           "message": msg, "severity": "error"})
 
     listener = _Collect()
-    lexer = SolidityLexer(InputStream(source))
+    from Utils.Helper import ParserHelpers
+    lexer = ParserHelpers.new_lexer(source, intent=False)      # (2026-11-13) 코드 렉싱 — intent 단어는 Identifier
     lexer.removeErrorListeners()
     lexer.addErrorListener(listener)
     parser = SolidityParser(CommonTokenStream(lexer))

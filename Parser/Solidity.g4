@@ -11,6 +11,10 @@ grammar Solidity;
 inDuring = False
 }
 
+@lexer::members {
+intentMode = False
+}
+
 sourceUnit
   : (
     pragmaDirective
@@ -270,8 +274,8 @@ debugInput
     ;
 
 debugGlobalVar
-    : '@GlobalVar' identifier ('.' identifier)? '=' debugValue                          # GlobalVarSimple
-    | '@GlobalVar' 'address' '(' identifier ')' '.' identifier '=' debugValue            # GlobalVarAddressBalance
+    : '@GlobalVar' intentIdentifier ('.' intentMemberName)? '=' debugValue                          # GlobalVarSimple
+    | '@GlobalVar' 'address' '(' intentIdentifier ')' '.' intentMemberName '=' debugValue            # GlobalVarAddressBalance
     ;
 
 debugStateVar
@@ -283,8 +287,8 @@ debugParam
     ;
 
 debugIReturn
-    : '@IReturn' identifier '.' identifier '(' ')' ireturnAccessChain? '=' debugValue        # IReturnPatternA
-    | '@IReturn' identifier '(' identifier ')' '.' identifier '(' ')' ireturnAccessChain? '=' debugValue   # IReturnPatternB
+    : '@IReturn' intentIdentifier '.' intentMemberName '(' ')' ireturnAccessChain? '=' debugValue        # IReturnPatternA
+    | '@IReturn' intentIdentifier '(' intentIdentifier ')' '.' intentMemberName '(' ')' ireturnAccessChain? '=' debugValue   # IReturnPatternB
     ;
 
 ireturnAccessChain
@@ -292,9 +296,9 @@ ireturnAccessChain
     ;
 
 ireturnAccess
-    : '.' identifier            # IReturnMemberAccess
+    : '.' intentMemberName      # IReturnMemberAccess
     | '[' numberLiteral ']'     # IReturnIndexAccess
-    | '.' identifier '(' ')'   # IReturnChainedCall
+    | '.' intentMemberName '(' ')'   # IReturnChainedCall
     ;
 
 duringIntent
@@ -303,7 +307,7 @@ duringIntent
 
 duringClause
     : ('require feasible' | 'assert feasible')                              # DuringFeasible
-    | identifier '.' 'arg' '[' numberLiteral ']' relOp intentValue          # DuringFunctionArg
+    | identifier '.' ARG_KW '[' numberLiteral ']' relOp intentValue          # DuringFunctionArg
     | commonClause                                                          # DuringCommon
     ;
 
@@ -316,26 +320,26 @@ postClause
     ;
 
 commonClause
-    : 'returnExpression' relOp intentValue                                  # ReturnExprCmp
+    : RETURN_EXPR_KW relOp intentValue                                  # ReturnExprCmp
     | 'return' '[' numberLiteral ']' relOp intentValue                      # ReturnIndexCmp
     | 'return' intentValue relOp intentValue                                # ReturnVarCmp
-    | intentValue relOp 'PercentOf' '(' intentValue ',' numberLiteral ')'   # PercentOf
-    | intentValue relOp 'ceil' '(' intentValue ',' numberLiteral ')'        # Ceil
-    | intentValue relOp 'floor' '(' intentValue ',' numberLiteral ')'       # Floor
+    | intentValue relOp PERCENT_OF_KW '(' intentValue ',' numberLiteral ')'   # PercentOf
+    | intentValue relOp CEIL_KW '(' intentValue ',' numberLiteral ')'        # Ceil
+    | intentValue relOp FLOOR_KW '(' intentValue ',' numberLiteral ')'       # Floor
     | intentValue relOp intentValue                                         # RelationalCmp
     | intentValue '=>' intentValue                                          # Implication
-    | 'changed' '(' intentValue ',' ('true'|'false') ')'                    # VarChangedEval
+    | CHANGED_KW '(' intentValue ',' ('true'|'false') ')'                    # VarChangedEval
     ;
 
 debugValue
     : '[' signedNumberLiteral ',' signedNumberLiteral ']'                          # DebugIntInterval
-    | 'symbolicAddress' numberLiteral                                              # DebugSymbolicAddress
-    | 'symbolicBytes'   hexStringLiteral                                           # DebugSymbolicBytes
-    | 'symbolicString'  hexStringLiteral                                           # DebugSymbolicString
-    | ('true' | 'false' | 'any')                                                   # DebugBoolToken
+    | SYM_ADDRESS_KW numberLiteral                                              # DebugSymbolicAddress
+    | SYM_BYTES_KW   hexStringLiteral                                           # DebugSymbolicBytes
+    | SYM_STRING_KW  hexStringLiteral                                           # DebugSymbolicString
+    | ('true' | 'false' | ANY_KW)                                                   # DebugBoolToken
     | identifier ('.' identifier)*                                                 # DebugEnumLiteral
-    | 'array' '[' ( signedNumberLiteral (',' signedNumberLiteral)* )? ']'         # DebugIntArray
-    | 'arrayAddress' '[' ( numberLiteral (',' numberLiteral)* )? ']'              # DebugAddressArray
+    | ARRAY_KW '[' ( signedNumberLiteral (',' signedNumberLiteral)* )? ']'         # DebugIntArray
+    | ARRAY_ADDRESS_KW '[' ( numberLiteral (',' numberLiteral)* )? ']'              # DebugAddressArray
     ;
 
 intentValue
@@ -377,11 +381,11 @@ arithFactor
 
 //────────── 변수·멤버·인덱스 참조 (arithFactor에서 사용) ──────────
 varRef
-    : identifier subAccess*                       #NormalVarRef
+    : intentIdentifier subAccess*                       #NormalVarRef
     ;
 
 subAccess
-    : '.' identifier            #IntentMemberAccess
+    : '.' intentMemberName      #IntentMemberAccess
     | '[' expression ']'        #IntentIndexAccess
     ;
 
@@ -390,7 +394,7 @@ subAccess
 //--------------------------------------------------
 signedNumberLiteral : '-'? numberLiteral ;
 logicOp : '&&' | '||' ;
-relOp   : '<' | '>' | '<=' | '>=' | '==' | '!=' | 'in' | 'not' 'in' ;
+relOp   : '<' | '>' | '<=' | '>=' | '==' | '!=' | 'in' | NOT_KW 'in' ;
 
 interactiveSimpleStatement
   : ( interactiveVariableDeclarationStatement | interactiveExpressionStatement ) ;
@@ -641,6 +645,16 @@ numberLiteral
 // some keywords need to be added here to avoid ambiguities
 // for example, "revert" is a keyword but it can also be a function name
 
+intentIdentifier          // intent·디버그 입력에서 이름이 올 자리. 코드와 겹치는 intent 키워드도 이름으로 받는다.
+  : identifier | ARRAY_KW | ARRAY_ADDRESS_KW | ANY_KW | ARG_KW | CEIL_KW | FLOOR_KW | CHANGED_KW | NOT_KW
+  | RETURN_EXPR_KW | PERCENT_OF_KW | SYM_ADDRESS_KW | SYM_BYTES_KW | SYM_STRING_KW
+  | BEFORE | AFTER | ENTRY | EXIT | ASSIGN ;
+
+intentMemberName          // `.` 뒤 멤버 이름 — arg 는 `f.arg[i]`(DuringFunctionArg) 와 겹치므로 뺀다
+  : identifier | ARRAY_KW | ARRAY_ADDRESS_KW | ANY_KW | CEIL_KW | FLOOR_KW | CHANGED_KW | NOT_KW
+  | RETURN_EXPR_KW | PERCENT_OF_KW | SYM_ADDRESS_KW | SYM_BYTES_KW | SYM_STRING_KW
+  | BEFORE | AFTER | ENTRY | EXIT | ASSIGN ;
+
 identifier
   : Identifier
   | 'from'     // 2026-11-09: Solidity 에서 from 은 import 에만 쓰이는 문맥 키워드다 (address from 합법)
@@ -648,13 +662,26 @@ identifier
 
 // Temporal keywords for intent verification
 // These are reserved to prevent ambiguity in temporal predicates
-BEFORE    : 'Before' ;
-AFTER     : 'After' ;
-ENTRY     : 'Entry' ;
-EXIT      : 'Exit' ;
-CURRENT   : 'Current' ;
-ASSIGN    : 'Assign' ;
-UNCHANGED : 'Unchanged' ;
+// intent 전용 키워드 (B'): intent 줄(intentMode=True)에서만 키워드, 코드 줄에서는 Identifier 로 바뀐다.
+// 반드시 Identifier 규칙보다 앞에 둔다 — 같은 길이면 먼저 선언된 규칙이 이긴다.
+BEFORE : 'Before' {self.type = SolidityLexer.BEFORE if self.intentMode else SolidityLexer.Identifier} ;
+AFTER : 'After' {self.type = SolidityLexer.AFTER if self.intentMode else SolidityLexer.Identifier} ;
+ENTRY : 'Entry' {self.type = SolidityLexer.ENTRY if self.intentMode else SolidityLexer.Identifier} ;
+EXIT : 'Exit' {self.type = SolidityLexer.EXIT if self.intentMode else SolidityLexer.Identifier} ;
+ASSIGN : 'Assign' {self.type = SolidityLexer.ASSIGN if self.intentMode else SolidityLexer.Identifier} ;
+ARRAY_KW : 'array' {self.type = SolidityLexer.ARRAY_KW if self.intentMode else SolidityLexer.Identifier} ;
+ARRAY_ADDRESS_KW : 'arrayAddress' {self.type = SolidityLexer.ARRAY_ADDRESS_KW if self.intentMode else SolidityLexer.Identifier} ;
+ANY_KW : 'any' {self.type = SolidityLexer.ANY_KW if self.intentMode else SolidityLexer.Identifier} ;
+ARG_KW : 'arg' {self.type = SolidityLexer.ARG_KW if self.intentMode else SolidityLexer.Identifier} ;
+CEIL_KW : 'ceil' {self.type = SolidityLexer.CEIL_KW if self.intentMode else SolidityLexer.Identifier} ;
+FLOOR_KW : 'floor' {self.type = SolidityLexer.FLOOR_KW if self.intentMode else SolidityLexer.Identifier} ;
+CHANGED_KW : 'changed' {self.type = SolidityLexer.CHANGED_KW if self.intentMode else SolidityLexer.Identifier} ;
+NOT_KW : 'not' {self.type = SolidityLexer.NOT_KW if self.intentMode else SolidityLexer.Identifier} ;
+RETURN_EXPR_KW : 'returnExpression' {self.type = SolidityLexer.RETURN_EXPR_KW if self.intentMode else SolidityLexer.Identifier} ;
+PERCENT_OF_KW : 'PercentOf' {self.type = SolidityLexer.PERCENT_OF_KW if self.intentMode else SolidityLexer.Identifier} ;
+SYM_ADDRESS_KW : 'symbolicAddress' {self.type = SolidityLexer.SYM_ADDRESS_KW if self.intentMode else SolidityLexer.Identifier} ;
+SYM_BYTES_KW : 'symbolicBytes' {self.type = SolidityLexer.SYM_BYTES_KW if self.intentMode else SolidityLexer.Identifier} ;
+SYM_STRING_KW : 'symbolicString' {self.type = SolidityLexer.SYM_STRING_KW if self.intentMode else SolidityLexer.Identifier} ;
 
 userDefinedValueTypeDefinition
   : 'type' identifier 'is' elementaryTypeName ';' ;

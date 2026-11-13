@@ -1684,9 +1684,17 @@ class DynamicCFGBuilder:
                     or getattr(n, "error_exit_node", False)
                     or getattr(n, "loop_exit_node", False))
 
+        def _is_abrupt_target(n: CFGNode) -> bool:
+            # (2026-11-13, I1) 재연결에서 뺄 것은 **지운 문장의 제어 효과**로 생긴 간선뿐이다:
+            #   require/assert 실패 → ERROR, return → RETURN, break → loop exit.
+            #   함수 EXIT 로 가는 간선은 구간이 함수 끝 `}` 앞에 있어서 생긴 **흘러 지나가는** 간선이다.
+            #   예전엔 EXIT 도 _is_shared_sink 로 함께 버려, 마지막 문장·블록을 지우면 앞 노드가 EXIT 에
+            #   다시 이어지지 않아 EXIT 가 ⊥ 였다(temp/test_delete_fallthrough.py).
+            return _is_shared_sink(n) and not getattr(n, "function_exit_node", False)
+
         entry_preds = [p for p in G.predecessors(entry) if p not in region]
         exit_succs = [s for s in G.successors(exit_)
-                      if s not in region and not _is_shared_sink(s)]
+                      if s not in region and not _is_abrupt_target(s)]
 
         # crossing 엣지 condition(True/False) 보존하며 pred→succ 재연결
         for p in entry_preds:

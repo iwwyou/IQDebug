@@ -19,7 +19,8 @@ import sys
 sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
-from normalize_source import _TOK, blank_comments, find_braceless, normalize, read_source  # noqa: E402
+from normalize_source import (_TOK, blank_comments, find_braceless, find_one_line_blocks,  # noqa: E402
+                              normalize, read_source)
 
 EVAL = os.path.dirname(HERE)
 SCAN = os.path.join(EVAL, "DAppSCAN")
@@ -58,6 +59,11 @@ def check_tokens(paths):
         r["삽입"] += n.braces_inserted
         r["체인 결합"] += n.chains_joined
         r["삽입 파일"] += bool(n.braces_inserted)
+        r["줄 펼침"] += n.lines_split                      # (2026-11-13) 한 줄 블록·한 줄 다중 문장
+        r["줄 펼침 파일"] += bool(n.lines_split)
+        if find_one_line_blocks(blank_comments(n.text)[1]):
+            r["한 줄 블록 잔존"] += 1
+            bad.append((rel, "one-line"))
         if not tokens_equal(tokens(s), tokens(n.text)):
             r["토큰 불일치"] += 1
             bad.append((rel, "tokens"))
@@ -158,7 +164,7 @@ def check_solc(targets):
             continue
         raw = {k: read_source(os.path.join(ROOT, v.replace("/", os.sep))) for k, v in cl.items()}
         norm = {k: normalize(v) for k, v in raw.items()}
-        ins = sum(n.braces_inserted for n in norm.values())
+        ins = sum(n.braces_inserted + n.lines_split for n in norm.values())
         if not ins:
             continue
         r["대상"] += 1

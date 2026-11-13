@@ -923,8 +923,8 @@ class EnhancedSolidityVisitor(SolidityVisitor):
 
     def visitGlobalVarSimple(self, ctx: SolidityParser.GlobalVarSimpleContext):
         # 1) 식별자
-        left = ctx.identifier(0).getText()
-        right = ctx.identifier(1).getText() if ctx.identifier(1) else None
+        left = ctx.intentIdentifier().getText()
+        right = ctx.intentMemberName().getText() if ctx.intentMemberName() else None
         gname = f"{left}.{right}" if right else left
 
         valid = {
@@ -953,7 +953,7 @@ class EnhancedSolidityVisitor(SolidityVisitor):
         # @GlobalVar address(X).balance = [value, value]
         # 문법상 identifier 가 이 룰에 두 번 나옴('address(X)'의 X, '.balance'의 balance) —
         # ctx.identifier() 는 리스트를 반환하므로 인덱스로 첫 번째(X)를 지정해야 함.
-        addr_identifier = ctx.identifier(0).getText()
+        addr_identifier = ctx.intentIdentifier().getText()
 
         if addr_identifier != "this":
             raise ValueError(
@@ -993,25 +993,25 @@ class EnhancedSolidityVisitor(SolidityVisitor):
         result = []
         for acc in chain_ctx.ireturnAccess():
             if isinstance(acc, SolidityParser.IReturnChainedCallContext):
-                result.append(("call", acc.identifier().getText()))
+                result.append(("call", acc.intentMemberName().getText()))
             elif isinstance(acc, SolidityParser.IReturnMemberAccessContext):
-                result.append(("member", acc.identifier().getText()))
+                result.append(("member", acc.intentMemberName().getText()))
             elif isinstance(acc, SolidityParser.IReturnIndexAccessContext):
                 result.append(("index", int(acc.numberLiteral().getText())))
         return tuple(result)
 
     def visitIReturnPatternA(self, ctx):
-        contract_var = ctx.identifier(0).getText()
-        func_name = ctx.identifier(1).getText()
+        contract_var = ctx.intentIdentifier().getText()
+        func_name = ctx.intentMemberName().getText()
         access_chain = self._parse_ireturn_access_chain(ctx.ireturnAccessChain())
         value = self._parse_debug_value(ctx.debugValue())
         self.contract_analyzer.process_ireturn(contract_var, func_name, access_chain, value)
         return None
 
     def visitIReturnPatternB(self, ctx):
-        interface_name = ctx.identifier(0).getText()
-        addr_var = ctx.identifier(1).getText()
-        func_name = ctx.identifier(2).getText()
+        interface_name = ctx.intentIdentifier(0).getText()
+        addr_var = ctx.intentIdentifier(1).getText()
+        func_name = ctx.intentMemberName().getText()
         access_chain = self._parse_ireturn_access_chain(ctx.ireturnAccessChain())
         value = self._parse_debug_value(ctx.debugValue())
         self.contract_analyzer.process_ireturn_cast(interface_name, addr_var, func_name, access_chain, value)
@@ -1284,7 +1284,7 @@ class EnhancedSolidityVisitor(SolidityVisitor):
     def visitNormalVarRef(self, ctx: SolidityParser.NormalVarRefContext):
         # 첫 식별자
         cur = Expression(
-            identifier=ctx.identifier().getText(),
+            identifier=ctx.intentIdentifier().getText(),     # (2026-11-13) intent 키워드와 같은 이름도 받는다
             context="VarRefBase",
         )
 
@@ -1293,7 +1293,7 @@ class EnhancedSolidityVisitor(SolidityVisitor):
             if isinstance(sa, SolidityParser.IntentMemberAccessContext):
                 cur = Expression(
                     base=cur,
-                    member=sa.identifier().getText(),
+                    member=sa.intentMemberName().getText(),
                     operator=".",
                     context="VarRefMemberAccess",
                 )

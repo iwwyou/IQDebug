@@ -53,7 +53,7 @@
 | B8 | 슬롯 도메인 eligible/active/visible 분리 (원칙 승인) |
 | B9 | A-D3 결정에 따른 `phase` 구현 |
 | **B10** | **do-while 구현** (2026-11-06 결정: 이번 실험에 포함하되 메인 항목 뒤로). 문법만 있고 visitor·분석기 미연결, 빌더는 호출된 적 없고 back edge 구조가 fixpoint 헤드와 안 맞아 재설계 필요. `break`/`continue` 미지원. 타깃 2건. |
-| **B11** | `KNOWN_ISSUES.md` I1~I6 처리. if/else 체인 찾기는 건드리지 않는다(2026-11-06 사용자 지시). |
+| **B11** | `KNOWN_ISSUES.md` 미해결 항목 처리(I1·I3·I5·I6·I7·I8·I9·I10). I3 은 줄 메타 근본 설계 검토 중(2026-11-13). if/else 체인 찾기는 건드리지 않는다(2026-11-06 사용자 지시). |
 
 ---
 
@@ -89,8 +89,8 @@
 | | 항목 | 상태 |
 |---|---|---|
 | **E1a** | import 해소 | ✅ **완료 (2026-11-06)**. 타깃 486 전부 미해소 0. 비상대 경로는 같은 감사 폴더 안에서 찾는다. |
-| **E1b** | `evaluation/Dataset/normalize_source.py` | ✅ 주석 공백화·무중괄호 삽입·줄 대응·긴 경로. 검증 `verify_normalize.py`: 3,787 파일 2,160 삽입 토큰 동치·멱등, 타깃 96 의 컨트랙트 786 바이트코드 동일. **남음: 한 줄 블록 분할**(승인 대기, 35 단위). |
-| **E1c** | `evaluation/Dataset/build_deps.py` — **타깃 import 폐포 = 프로젝트** | ✅ 486 타깃 / 2,548 단위 / 188초(6 프로세스). 폐포 전부 Complete 310. 나머지는 `KNOWN_ISSUES.md` I2·I5. |
+| **E1b** | `evaluation/Dataset/normalize_source.py` | ✅ 주석 공백화·무중괄호 삽입·줄 대응·긴 경로. 검증 `verify_normalize.py`: 3,787 파일 2,160 삽입 토큰 동치·멱등, 타깃 96 의 컨트랙트 786 바이트코드 동일. **한 줄 블록·한 줄 다중 문장 펼치기 추가(2026-11-13)**: 107 파일 540 곳, 토큰 동치·멱등·잔존 0, 타깃 124 의 컨트랙트 1,004 바이트코드 동일(원본 컴파일 실패 1 제외). Yul 문장이 둘 이상 붙은 한 줄 assembly 는 펼치지 않는다. |
+| **E1c** | `evaluation/Dataset/build_deps.py` — **타깃 import 폐포 = 프로젝트** | ✅ 486 타깃 / 2,548 단위. 폐포 전부 Complete 310(2026-11-06) → **397**(2026-11-13, 문법 수정·정규화 후). 나머지는 `KNOWN_ISSUES.md` I5·I7. |
 | ~~E1-old~~ | ~~`build_project_deps.py` 완성~~ | ❌ **폐기.** 입력 파이프라인 전체가 부재 — forge `out/build-info/*.json` 과 `tools/{contraction_target,preprocess_contraction}.py`(998줄)가 IQDebug 에 없고, DAppSCAN-source 는 build-info 를 제공하지 않는다. 새 데이터셋에는 forge 가 **필요하지 않다**(import 만으로 93.7% 해소) |
 | E2 | 타깃 동결 | ✅ `targets_v5` 551 → 같은 내용 파일 65 제거 → **486** (`evaluation/Dataset/targets_final.json`). 폐포가 달랐던 그룹 4 는 첫 경로의 폐포만 남는다. |
 | E3 | `test_slot_roundtrip.py` 를 새 데이터셋 기준으로 재작성 (옛 48 케이스에 묶여 있음) |
@@ -111,6 +111,21 @@
 | F0-4 | 빈 `in_state` 노드 수 (루프 본문 외에 있는가) | B4 의 전제 |
 | F0-5 | 엔진 `line_info` ↔ 프론트 착지 색인 불일치 | 실측 불일치 1건 확인됨(지금은 identity 라 무해) |
 | F0-6 | `analyze` 성공률 + 실패 사유 분포 | **1차 완료 (의존성 없는 하한)**. 아래 참조. `evaluate` 단계는 E1c 후 |
+
+### F0 재측정 2 (2026-11-13, 타깃 486, 의존 폐포 로드)
+
+2026-11-06 이후 반영: 문법(`from`·`error` 식별자, `revert expression callArgumentList`, 작은따옴표 문자열,
+상속 지정 인자, intent 키워드 B′), 정규화(한 줄 블록 펼치기). 파일럿 스크립트는 여전히 저장소 밖이다.
+
+```
+함수를 추출한 타깃: 398 / 486 (81.9%), 추출 함수 3,123
+함수 0개: 5 / analyze 예외: 83 (그중 의존 폐포 미완 62, IncrementalSurgeryError 21)
+S1 대칭성 위반 0 / S3 frontier 위반 0 / S2 줄 단사성 위반 155
+  (constructor EXIT 153 = I3, `} catch {}` 1 = I8, do-while 1 = B10)
+폐포 고유 파일 828 전체 파싱 실패 0
+```
+
+남은 실패의 주원인은 `KNOWN_ISSUES.md` I5(미분류 빌드 실패)와 I7(빈 한 줄 함수, 24 단위)이다.
 
 ### F0 재측정 (2026-11-06, 타깃 486, 의존 폐포 로드)
 

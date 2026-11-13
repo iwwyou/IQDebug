@@ -974,6 +974,16 @@ class SolidityVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by SolidityParser#intentIdentifier.
+    def visitIntentIdentifier(self, ctx:SolidityParser.IntentIdentifierContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by SolidityParser#intentMemberName.
+    def visitIntentMemberName(self, ctx:SolidityParser.IntentMemberNameContext):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by SolidityParser#identifier.
     def visitIdentifier(self, ctx:SolidityParser.IdentifierContext):
         return self.visitChildren(ctx)

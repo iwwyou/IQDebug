@@ -36,7 +36,8 @@ networkx 2.5.1 이라 CFG 백엔드가 깨진다). 의존성은 2026-10-26 `requ
 ```powershell
 .venv\Scripts\python.exe engine_server.py          # 엔진 HTTP 서버 (uvicorn 127.0.0.1:8000)
 .venv\Scripts\python.exe temp\smoke_engine_api.py  # 스모크 (analyze→evaluate→verify)
-antlr4 -Dlanguage=Python3 -visitor Solidity.g4     # Parser/ 에서 재생성 (CLI 4.13.2 = runtime 일치 필수)
+antlr4 -v 4.13.2 -Dlanguage=Python3 -visitor Solidity.g4   # Parser/ 에서 재생성. -v 를 빼면 네트워크가 안 될 때
+                                                          # 4.12.0 으로 내려가 runtime(4.13.2)과 어긋난다
 ```
 
 프론트엔드 (`npm install` 완료, `npx tsc --noEmit` 통과 확인):
@@ -57,7 +58,7 @@ npx tsc --noEmit             # 타입체크
 
 - 통과: `test_session_flow`, `test_update`, `test_delete_cfg`, `test_try_catch`, `test_sparse_array`,
   `test_set_intents`, `test_ireturn_cast`, `test_blank_during`, `smoke_engine_api`(의존성 로드 단계 제외),
-  `test_overload_target`(2026-10-28 추가 — overload 타깃 지정), `test_try_catch`, `test_nav_symmetry`, `test_registry`, `test_normalize_source`·`test_multiline`(2026-11-06 추가)
+  `test_overload_target`(2026-10-28 추가 — overload 타깃 지정), `test_try_catch`, `test_nav_symmetry`, `test_registry`, `test_normalize_source`·`test_multiline`(2026-11-06 추가), `test_intent_keywords`(2026-11-13 추가)
 - ⚠ 여러 스크립트가 `⊤`·`—` 를 출력해 **cp949 콘솔에서 UnicodeEncodeError 로 죽는다**(단언 자체는 통과).
   `PYTHONIOENCODING=utf-8` 로 실행할 것.
 - 부분 실패(데이터셋 의존): `test_transaction` T8 — 옛 데이터셋 파일(`evaluation/Dataset/target_contraction_auto/*.sol`)이
@@ -119,6 +120,9 @@ DebugInitializer=입력→추상값, YulEval).
 - `sess.structure()` 를 스코프 없이 호출하면 폴백이 **컨트랙트의 마지막 함수**를 집는다. 항상
   `contract`, `func` 를 명시할 것.
 - 분석 실패가 예외가 아니라 **조용한 오분석**으로 나타나는 경우가 많다 → 결과가 이상하면 diagnostics 부터.
+  코드 줄의 ANTLR 구문 오류는 콘솔에만 찍히고 복구된 트리가 그대로 분석된다(`KNOWN_ISSUES.md` I9).
+- 렉서는 `ParserHelpers.new_lexer(src, intent=…)` 로만 만든다. intent 전용 단어(`array`, `Entry`, `not` …)는
+  `intent=True` 일 때만 키워드이고 코드에서는 `Identifier` 다(2026-11-13).
 - 의존성 로드는 `Dependencies.main.load_project_deps(sa, ca, deps_root, exclude)` 하나다. 데이터셋 deps 는
   `evaluation/Dataset/build_deps.py` 가 타깃 import 폐포마다 `deps/<타깃 id>/` 로 만든다(생성물, git 제외).
   재현된 미해결 오류는 `evaluation/KNOWN_ISSUES.md`.
