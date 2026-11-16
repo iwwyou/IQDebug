@@ -8,30 +8,6 @@
 
 ---
 
-## I1. 증분 `update` 가 `⊥` 를 낸다 — 조용한 오분석
-
-**증상.** 앞에 문장을 추가하면서 뒤 문장을 지우는 편집을 한 번의 `update` 로 넣으면 EXIT 값이 `⊥` 다. 같은
-소스를 새로 분석하면 정상이다. 예외도 진단도 없다.
-
-```solidity
-// 이전                               // 이후
-if (n > 5) {                          total = 9;
-    total = 1;                        if (n > 5) {
-}                                         total = 1;
-total = total + 2;                    }
-```
-
-`n=[0,10], total=[0,0]` 에서 `update` 후 `⊥`, 새 분석 `[1,9]`.
-
-**확인한 것.** 한 줄·여러 줄 조건 모두 재현된다. 2026-11-06 의 `_insert_lines` 변경 전에도 재현됐다(무관).
-앞에 추가만 하거나 뒤를 지우지 않으면 정상이다. **원인은 조사하지 않았다.** `update` 가 modify → delete →
-add 순으로 적용하므로 그 순서와 CFG 수술의 연결부터 볼 것(`engine_api.update`). I3 의 줄 메타 불일치와
-관련이 있을 수 있다.
-
-**재현.** `temp/test_multiline.py` 의 `EDITS` 에 이 쌍을 넣으면 실패한다.
-
----
-
 ## I3. constructor 의 EXIT 줄이 따라오지 않는다 — S2 위반 153 함수
 
 **증상.** constructor 본문이 있으면 EXIT 의 `src_line` 이 닫는 `}` 가 아니라 **첫 문장 줄**에 남아 착지 노드 둘이
@@ -50,7 +26,12 @@ add 순으로 적용하므로 그 순서와 CFG 수술의 연결부터 볼 것(`
 22), 두 줄에 등록된 `if_join`, `line_info` 에 없는 `if_true`·`for_init`·`try_true`·`catch_true` 가 있었다.
 
 **상태.** 국소 수정(① 이 `line_info[new]` 를 보게 하기 → 파일럿 S2 138 → 1, 또는 ③ 에 constructor 추가)은
-중복이 남아 임시방편으로 판단해 보류했다(2026-11-13 사용자). 근본 설계를 외부 검토 중이다.
+중복이 남아 임시방편으로 판단해 보류했다(2026-11-13 사용자). 근본 설계(SourceMap·LineAnchor)를 외부 검토했고
+합의된 이행 순서는 ① I1 분리 수정(완료) ② 불변식·죽은 앵커 후보·증분↔새분석 차분 하네스 ③ Shadow SourceMap
+④ SourceMap + 호환 View ⑤⑥ 노드·문장 앵커 + 죽은 앵커 재바인딩(같은 브랜치) ⑦ 평가 캐시 수명(ledger 의 문장 없는
+줄·`_states_cache`) ⑧ 차분 하네스 재실행. `before_envs`·`return_vals` 는 평가마다 실행 사본에서 새로 만들어지고
+(`Engine.interpret_function_cfg_for_debug`), `ContractAnalyzer.during_annotations`·`post_annotations` 는 쓰기만 하고
+읽는 곳이 없다 — 둘 다 앵커 대상이 아니다.
 
 ---
 
@@ -75,6 +56,10 @@ add 순으로 적용하므로 그 순서와 CFG 수술의 연결부터 볼 것(`
 
 solc 컴파일 게이트로는 막을 수 없다. 이 소스는 합법이기 때문이다. `engine_api.Diagnostic` 주석에 따르면 solc
 게이트는 구현됐다가 꺼진 것이 아니라 **보류**된 상태고 코드가 없다.
+
+**더 넓은 증상 (2026-11-16 관찰).** 여러 줄 문장만이 아니다. 문장 **뒤에 붙은** 줄 주석도 같다. `total = 2; // c` 는
+줄이 `;` 로 끝나지 않아 다음 줄들과 합쳐져, `total = 2; // c } g(1, 2);` 한 레코드(9–12행)가 됐다 — 닫는 `}` 와
+다음 문장까지 삼켰다. 에디터 입력에서는 흔한 형태다. 미수정.
 
 ---
 
@@ -121,7 +106,46 @@ solc 컴파일 게이트로는 막을 수 없다. 이 소스는 합법이기 때
 
 ---
 
+## I16. 변수를 안 쓰게 된 뒤에도 증분 쪽에 이전 입력이 남는다 — 의심, 미확인
+
+`require(n > 3); total = 1;` → `require(n > 3);` 처럼 `total` 을 더 이상 참조하지 않게 되면, 새 분석은 `total` 슬롯이
+없어 EXIT `total` 이 ⊤ 인데 증분은 입력값 `[0,0]` 이다. 이전 소스의 슬롯이나 `related_variables` 가 `update` 뒤에도
+남는 것으로 보인다. 조사 전.
+
+---
+
 ## 해결됨
+
+### I1. 증분 `update` 가 `⊥` 를 낸다 — ✅ 2026-11-16
+
+원인은 줄 메타가 아니라 삭제 수술이었다. `DynamicCFGBuilder.delete_cfg_range` 가 지운 구간 뒤의 노드 중 공유
+sink 를 모두 버렸는데 함수 EXIT 도 포함돼, 함수 끝 `}` 바로 앞 문장·블록을 지우면 앞 노드가 EXIT 에 다시 이어지지
+않았다. 원래 사례(앞 추가 + 뒤 삭제)는 그 한 경우다. 이제 지운 문장의 제어 효과(require/assert → ERROR,
+return → RETURN, break → loop exit)만 빼고 EXIT 로 흘러 지나가는 간선은 잇는다. 회귀: `temp/test_delete_fallthrough.py`.
+
+### I13. 루프 안 블록을 지우면 바깥 루프가 통째로 사라진다 — ✅ 2026-11-16
+
+삭제 구간 `descendants(entry) ∩ ancestors(exit_)` 가 exit_ 에서 멈추지 않아, 블록이 루프 안이면 바깥 루프 back edge 의
+사이클 전체가 들어갔다(루프 안 if 삭제 → 함수 전체 ⊥). 반대로 블록 안 `return` 처럼 exit_ 에 닿지 않는 노드는 빠져
+고아로 남았다. `DynamicCFGBuilder._delete_region` 이 entry 에서 따라가되 sink 로 가는 간선(return·revert·require/assert
+실패)은 따라가지 않고, break·continue 노드와 exit_ 에서는 멈춘다. 블록 밖으로 나가는 간선은 이 둘뿐이다(sink 간선을
+만드는 빌더는 return·revert·require·assert 넷). 단일 진입 검사로 새는 경우를 수술 실패로 올린다.
+
+### I14. 감싸기·벗기기가 조용히 틀린다 — ✅ 2026-11-16
+
+`x;` → `if (c) { x; }`(감싸기)는 diff 가 "if 헤더 추가"만 내 `x` 가 if 밖에 남았고, 반대(벗기기)는 "if 헤더 삭제"가 블록
+전체를 지워 `x` 도 사라졌다. diff 가 텍스트가 같은 `x` 를 equal 로 짝지었기 때문이다. `incremental.diff_records` 가
+추가·삭제된 블록 헤더 안의 equal 레코드를 delete + add 로 낸다 — 모든 op 가 연속 범위 하나만 건드린다. 블록 범위는
+레코드에서 구한다(어떤 레코드도 덮지 않는 줄 = 단독 `}`). 못 구하면 `IncrementalSurgeryError`.
+
+### I15. `} else {` 삭제가 줄을 하나 더 지운다 — ✅ 2026-11-16
+
+else·else-if 절 삭제가 `ok` 로 끝나면서 엔진 줄 공간을 소스보다 한 줄 짧게 만들었다(`if_join` 이 `line_info` 에서 사라지고,
+그 뒤 if 아래 추가가 `No CFG node found after line N` 로 실패). `_apply_delete` 가 레코드 범위 `[startLine, endLine]` 을 그대로
+지웠는데, 헤더 레코드의 endLine 은 가짜 `}` 줄이고 본문이 먼저 지워진 뒤에는 그 줄이 절의 실제 닫는 `}` 와 겹친다. 일반 헤더는
+그 줄까지 지우는 게 맞지만 `} else {`·`} else if (…) {` 는 그 줄의 `}` 가 앞 블록을 닫으므로 헤더 줄만 지운다
+(`engine_api._apply_delete`). 회귀: `temp/test_delete_fallthrough.py` 의 else·else-if 삭제 사례(수정 전 5 실패). `} catch {` 는
+증분 편집 자체가 미지원(`_is_risky_op`)이라 해당 없다.
 
 ### I2. 식별자 `from` 이 키워드로 파싱된다 — ✅ 2026-11-09
 

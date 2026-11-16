@@ -62,7 +62,9 @@ def summarize(ev):
             branches.add((n.src_line, n.cond_type, k,
                           tuple(name for name, s in sinks.items() if s is not None and s in r)))
     exit_state = {k: v for k, v in by[cfg.exit].state.items() if k in ("n", "total")}
-    return {"exit": exit_state, "exit_reachable": cfg.exit in reach(cfg.entry), "branches": branches}
+    # 줄 좌표: EXIT 의 줄(`}`)이 어긋나면 그 뒤 편집이 엉뚱한 줄에 꽂힌다(I15)
+    return {"exit": exit_state, "exit_reachable": cfg.exit in reach(cfg.entry), "branches": branches,
+            "exit_line": by[cfg.exit].src_line}
 
 
 def run(before, after):
@@ -102,6 +104,33 @@ CASES = [
     ("while 본문 안 가운데 if 블록 삭제",
      "while (total < n) {\n    if (total > 5) {\n        total = total + 1;\n    }\n    total = total + 1;\n}",
      "while (total < n) {\n    total = total + 1;\n}"),
+    ("while 본문 안 return 이 든 if 삭제",
+     "while (total < n) {\n    total = total + 1;\n    if (total > 8) {\n        return;\n    }\n}",
+     "while (total < n) {\n    total = total + 1;\n}"),
+    ("while 본문 안 require 가 든 if 삭제",
+     "while (total < n) {\n    if (total > 5) {\n        require(n > 7);\n        total = total + 1;\n    }\n    total = total + 1;\n}",
+     "while (total < n) {\n    total = total + 1;\n}"),
+    # 감싸기·벗기기 (diff 가 블록 안↔밖으로 옮긴 equal 레코드를 delete+add 로 낸다)
+    ("if 벗기기", "total = 3;\nif (n > 5) {\n    total = 1;\n}", "total = 3;\ntotal = 1;"),
+    ("if 감싸기", "total = 3;\ntotal = 1;", "total = 3;\nif (n > 5) {\n    total = 1;\n}"),
+    ("while 감싸기", "total = 3;\ntotal = total + 1;", "total = 3;\nwhile (total < n) {\n    total = total + 1;\n}"),
+    ("while 벗기기", "total = 3;\nwhile (total < n) {\n    total = total + 1;\n}", "total = 3;\ntotal = total + 1;"),
+    ("중첩 if 를 감싼 바깥 if 벗기기", "if (n > 2) {\n    if (n > 5) {\n        total = 1;\n    }\n    total = total + 1;\n}",
+     "if (n > 5) {\n    total = 1;\n}\ntotal = total + 1;"),
+    ("두 문장 중 하나만 감싸기", "total = 1;\ntotal = total + 2;", "if (n > 5) {\n    total = 1;\n}\ntotal = total + 2;"),
+    ("else 삭제·본문은 if 뒤로", "if (n > 5) {\n    total = 1;\n} else {\n    total = 2;\n}",
+     "if (n > 5) {\n    total = 1;\n}\ntotal = 2;"),
+    ("else 추가·기존 문장을 else 안으로", "if (n > 5) {\n    total = 1;\n}\ntotal = 2;",
+     "if (n > 5) {\n    total = 1;\n} else {\n    total = 2;\n}"),
+    ("else 절 삭제", "if (n > 5) {\n    total = 1;\n} else {\n    total = 2;\n}\ntotal = total + 3;",
+     "if (n > 5) {\n    total = 1;\n}\ntotal = total + 3;"),
+    ("else-if 절 삭제(뒤 else 유지)",
+     "if (n > 5) {\n    total = 1;\n} else if (n > 2) {\n    total = 2;\n} else {\n    total = 3;\n}\ntotal = total + 3;",
+     "if (n > 5) {\n    total = 1;\n} else {\n    total = 3;\n}\ntotal = total + 3;"),
+    ("마지막 else-if 절 삭제",
+     "if (n > 5) {\n    total = 1;\n} else if (n > 2) {\n    total = 2;\n}",
+     "if (n > 5) {\n    total = 1;\n}"),
+    ("헤더 조건만 수정(본문 유지)", "if (n > 5) {\n    total = 1;\n}", "if (n > 7) {\n    total = 1;\n}"),
     ("마지막 require 삭제(ERROR 간선 제거)", "total = 1;\nrequire(n > 3);", "total = 1;"),
     ("첫 require 삭제(ERROR 간선 제거)", "require(n > 3);\ntotal = 1;", "total = 1;"),
     ("마지막 assert 삭제", "total = 1;\nassert(n > 3);", "total = 1;"),
@@ -126,10 +155,47 @@ for name, b, a in CASES:
         problems.append("EXIT 미도달")
     if inc["exit"] != fresh["exit"]:
         problems.append("EXIT 증분=%s 새분석=%s" % (inc["exit"], fresh["exit"]))
+    if inc["exit_line"] != fresh["exit_line"]:
+        problems.append("EXIT 줄 증분=%s 새분석=%s" % (inc["exit_line"], fresh["exit_line"]))
     if inc["branches"] != fresh["branches"]:
         problems.append("분기 증분-새분석=%s 새분석-증분=%s"
                         % (sorted(inc["branches"] - fresh["branches"]), sorted(fresh["branches"] - inc["branches"])))
     check(name, not problems, "; ".join(problems))
+
+print("[2] 삭제 구간 계산 — break/continue 가 든 블록 (update 는 break/continue 편집을 미지원으로 거부하므로 빌더 직접 호출)")
+#   기대: 블록 노드만 사라지고, 바깥 루프·sink 는 남고, ENTRY 에서 EXIT 에 닿는다.
+DIRECT = [
+    ("루프 안 continue·return 이 든 if 삭제",
+     "while (total < n) {\n    total = total + 1;\n    if (total > 5) {\n        if (n > 7) {\n            continue;\n        }\n"
+     "        if (n > 8) {\n            return;\n        }\n        total = total + 1;\n    }\n}",
+     6, {"while_join_4", "while_cond_4", "while_body_4", "while_exit_4", "Assign_5"}),
+    ("break 가 든 while 통째 삭제",
+     "total = 1;\nwhile (total < n) {\n    if (total > 5) {\n        break;\n    }\n    total = total + 1;\n}",
+     5, {"Assign_4"}),
+]
+import networkx as nx
+for name, body, line, keep in DIRECT:
+    try:
+        with contextlib.redirect_stdout(io.StringIO()):
+            s = engine_api.EngineSession()
+            s.analyze(slice_solidity(W(body)), contract="C", func="f")
+        fcfg = s._resolve_fcfg("C", "f")[2]
+        G = fcfg.graph
+        before = {n.name for n in G.nodes}
+        s._ca.builder.delete_cfg_range(fcfg=fcfg, start_line=line)
+        after = {n.name for n in G.nodes}
+        entry = next(n for n in G.nodes if n.name == "ENTRY")
+        sinks = {"ENTRY", "EXIT", "RETURN", "ERROR"}
+        problems = []
+        if not (keep | sinks) <= after:
+            problems.append("사라지면 안 되는 노드 삭제: %s" % sorted((keep | sinks) - after))
+        if after - keep - sinks:
+            problems.append("남으면 안 되는 노드: %s" % sorted(after - keep - sinks))
+        if fcfg.get_exit_node() not in nx.descendants(G, entry):
+            problems.append("EXIT 미도달")
+        check(name, not problems, "; ".join(problems) + "  (삭제 전 %s)" % sorted(before))
+    except Exception as e:
+        check(name, False, "예외 %s: %s" % (type(e).__name__, e))
 
 print("실패 %d" % fails)
 sys.exit(1 if fails else 0)

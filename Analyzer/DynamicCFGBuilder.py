@@ -1650,6 +1650,47 @@ class DynamicCFGBuilder:
         cond.condition_expr = new_expr
         return True
 
+    @staticmethod
+    def _delete_region(G, entry: CFGNode, exit_: CFGNode) -> set:
+        """삭제할 블록의 노드 집합 = entry 에서 출발해 exit_ 까지 따라간 노드들 (2026-11-13).
+
+        예전 식 `descendants(entry) ∩ ancestors(exit_)` 는 도달성만 보고 exit_ 에서 멈추지 않았다. 블록이 루프 안에
+        있으면 exit_ → 바깥 루프 back edge 로 사이클이 생겨 **바깥 루프 전체**가 두 집합 모두에 들어갔고
+        (루프 안 if 삭제 → 함수 전체 ⊥), 반대로 블록 안 `return` 처럼 exit_ 에 닿지 않는 노드는 빠져 고아로 남았다.
+
+        블록 밖으로 나가는 간선은 빌더가 만드는 것뿐이다:
+          · sink 로 가는 간선 — return(RETURN)·revert(ERROR)·require/assert 실패(ERROR). **간선**을 따라가지 않는다
+            (require/assert 는 참 쪽이 블록 안으로 이어지므로 노드에서 멈추면 안 된다).
+          · break → 감싸는 루프의 exit, continue → 감싸는 루프의 join(for 는 증감식). **노드**는 넣고 후속은 따라가지 않는다.
+            지우는 루프 자신의 break/continue 라면 그 목적지는 어차피 다른 경로로 닿는다.
+          · exit_ — 넣고 후속은 따라가지 않는다.
+        """
+        def _sink(n):
+            return (getattr(n, "function_exit_node", False) or getattr(n, "return_exit_node", False)
+                    or getattr(n, "error_exit_node", False))
+
+        def _jump(n):
+            return any(getattr(st, "statement_type", None) in ("break", "continue")
+                       for st in (getattr(n, "statements", None) or ()))
+
+        region, stack = set(), [entry]
+        while stack:
+            x = stack.pop()
+            if x in region:
+                continue
+            region.add(x)
+            if x is exit_ or _jump(x):
+                continue
+            stack.extend(s for s in G.successors(x) if not _sink(s))
+        # 단일 진입 검사: entry 말고는 블록 바깥에서 들어오는 간선이 없어야 한다. 목록에 없는 방식으로 블록 밖에
+        #   샜다면(새 구문 빌더 등) 바깥 노드가 끌려 들어와 여기서 걸린다 — 조용한 ⊥ 대신 수술 실패로 올린다.
+        leaked = [n for n in region if n is not entry and any(p not in region for p in G.predecessors(n))]
+        if leaked or exit_ not in region:
+            raise RuntimeError(
+                f"delete region not single-entry: entry={getattr(entry, 'name', entry)} "
+                f"exit={getattr(exit_, 'name', exit_)} leaked={[getattr(n, 'name', n) for n in leaked]}")
+        return region
+
     def delete_cfg_range(self, *, fcfg: FunctionCFG, start_line: int, kind: str = "auto",
                          end_line: int | None = None) -> list[CFGNode]:
         """start_line 의 statement/블록을 CFG 에서 제거하고 pred→succ 재연결 후 succ 재해석.
@@ -1672,10 +1713,7 @@ class DynamicCFGBuilder:
             return []  # 이미 제거됨 → no-op
 
         entry, exit_ = self._delete_endpoints(node0, fcfg)
-        if entry is exit_:
-            region = {entry}
-        else:
-            region = (nx.descendants(G, entry) & nx.ancestors(G, exit_)) | {entry, exit_}
+        region = self._delete_region(G, entry, exit_)
 
         def _is_shared_sink(n: CFGNode) -> bool:
             # 공유 sink(RETURN/ERROR/EXIT)·loop_exit 은 다른 분기도 참조 → 엣지 드롭, 노드 보존

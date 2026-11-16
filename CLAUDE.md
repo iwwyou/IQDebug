@@ -58,7 +58,7 @@ npx tsc --noEmit             # 타입체크
 
 - 통과: `test_session_flow`, `test_update`, `test_delete_cfg`, `test_try_catch`, `test_sparse_array`,
   `test_set_intents`, `test_ireturn_cast`, `test_blank_during`, `smoke_engine_api`(의존성 로드 단계 제외),
-  `test_overload_target`(2026-10-28 추가 — overload 타깃 지정), `test_try_catch`, `test_nav_symmetry`, `test_registry`, `test_normalize_source`·`test_multiline`(2026-11-06 추가), `test_intent_keywords`(2026-11-13 추가)
+  `test_overload_target`(2026-10-28 추가 — overload 타깃 지정), `test_try_catch`, `test_nav_symmetry`, `test_registry`, `test_normalize_source`·`test_multiline`(2026-11-06 추가), `test_intent_keywords`(2026-11-13 추가), `test_delete_fallthrough`(2026-11-16 추가 — 증분 update ≡ 새 analyze 차분)
 - ⚠ 여러 스크립트가 `⊤`·`—` 를 출력해 **cp949 콘솔에서 UnicodeEncodeError 로 죽는다**(단언 자체는 통과).
   `PYTHONIOENCODING=utf-8` 로 실행할 것.
 - 부분 실패(데이터셋 의존): `test_transaction` T8 — 옛 데이터셋 파일(`evaluation/Dataset/target_contraction_auto/*.sol`)이

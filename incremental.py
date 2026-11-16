@@ -84,6 +84,55 @@ class EditOp:
     kind: str = "auto"  # delete/modify 라우팅용 construct 종류 (kind_of)
 
 
+class BlockExtentError(ValueError):
+    """블록 헤더 레코드의 닫는 `}` 줄을 레코드에서 찾지 못했다 — 호출자는 증분 수술을 거부한다."""
+
+
+def _is_header(rec: dict) -> bool:
+    """블록 헤더 레코드 = slice 가 `헤더 ⏎ }` 2줄로 낸 것 (endLine 은 가짜 `}` 줄이다)."""
+    return rec["code"].endswith("\n}")
+
+
+def _block_body(records: list[dict], h: int) -> range:
+    """records[h](블록 헤더)가 여는 블록 **안**의 레코드 인덱스 범위 (2026-11-13).
+
+    닫는 `}` 는 레코드가 아니다. slice 는 단독 `}` 줄만 건너뛰고(빈 줄·주석 줄도 레코드로 낸다) 줄 번호는
+    소스와 1:1 이므로, **어떤 레코드도 덮지 않는 줄 = 단독 `}`** 다. 헤더 레코드는 [startLine, endLine-1] 을,
+    나머지는 [startLine, endLine] 을 덮는다. `} else {` 처럼 closeBefore 인 레코드는 그 줄에서 블록 하나를
+    닫는다(if 의 본문은 else 줄 앞에서 끝난다).
+    """
+    hdr = records[h]
+    starts = {}
+    covered: set[int] = set()
+    for r in records:
+        starts.setdefault(r["startLine"], r)
+        last = r["endLine"] - 1 if _is_header(r) else r["endLine"]
+        covered.update(range(r["startLine"], max(r["startLine"], last) + 1))
+    limit = max(r["endLine"] for r in records) + 1000
+    depth, line = 1, hdr["endLine"]
+    while line <= limit:
+        r = starts.get(line)
+        if r is not None and r is not hdr:
+            if r.get("closeBefore"):
+                depth -= 1
+                if depth == 0:
+                    break
+            if _is_header(r):
+                depth += 1
+        elif line not in covered:
+            depth -= 1
+            if depth == 0:
+                break
+        line += 1
+    else:
+        raise BlockExtentError(f"line {hdr['startLine']}: 블록 `{hdr['code'].splitlines()[0]}` 의 닫는 `}}` 를 찾지 못함")
+    close = line
+    k = h + 1
+    while k < len(records) and records[k]["startLine"] < close:
+        k += 1
+    return range(h + 1, k)
+
+
 def _span(rec: dict) -> int:
     """레코드가 차지하는 라인 수 = endLine - startLine + 1 (>=1)."""
     sp = rec["endLine"] - rec["startLine"] + 1
@@ -97,12 +146,41 @@ def diff_records(prev: list[dict], new: list[dict]) -> list[EditOp]:
     * difflib 의 opcode(equal/insert/delete/replace)를 엔진 좌표 op 로 번역한다.
     * replace 가 1:1(레코드 한 개↔한 개)·동일 span 이면 `modify`(인플레이스), 그 외는 delete+add.
     * 좌→우 순차 적용 전제(각 op 후 엔진이 뒤 라인을 시프트). 반환 순서대로 update_code 호출하면 된다.
+    * (2026-11-13) **감싸기·벗기기**: 블록 헤더가 추가·삭제됐는데 그 블록 안 레코드가 텍스트로 "equal" 이면,
+      그 레코드는 같은 자리에 남은 것이 아니라 블록 안↔밖으로 **옮겨진** 것이다. equal 로 두면 헤더 삭제가 블록
+      전체(본문 포함)를 지우거나 헤더 추가가 기존 문장을 블록 밖에 남긴다(조용한 오분석). 그런 레코드는
+      delete(이전 자리) + add(새 자리)로 낸다. 그러면 모든 op 가 연속 범위 하나만 건드린다:
+        감싸기 `x;` → `if (c) { x; }`  = delete `x;` · add `if (c) {` · add `x;`
+        벗기기 `if (c) { x; }` → `x;`  = delete `x;` · delete `if (c) {` · add `x;`
+      블록 범위를 못 찾으면 BlockExtentError (호출자가 거부).
     """
     sm = difflib.SequenceMatcher(
         a=[r["code"] for r in prev],
         b=[r["code"] for r in new],
         autojunk=False,
     )
+    opcodes = sm.get_opcodes()
+
+    # 블록 헤더의 추가·삭제로 블록 안↔밖을 옮긴 equal 레코드 (prev 인덱스)
+    eq = {}                                   # prev i -> new j (equal)
+    for tag, i1, i2, j1, j2 in opcodes:
+        if tag == "equal":
+            eq.update({i1 + k: j1 + k for k in range(i2 - i1)})
+    eq_inv = {j: i for i, j in eq.items()}
+    moved: set[int] = set()
+    for tag, i1, i2, j1, j2 in opcodes:
+        if tag == "equal":
+            continue
+        is_modify = (tag == "replace" and (i2 - i1) == 1 and (j2 - j1) == 1 and _span(prev[i1]) == _span(new[j1]))
+        if is_modify:
+            continue                          # 헤더 조건만 바뀜 — 본문은 그대로 그 블록 안
+        for i in range(i1, i2):               # 삭제된 헤더: 이전 소스에서 그 블록 안의 equal
+            if _is_header(prev[i]):
+                moved.update(b for b in _block_body(prev, i) if b in eq)
+        for j in range(j1, j2):               # 추가된 헤더: 새 소스에서 그 블록 안의 equal
+            if _is_header(new[j]):
+                moved.update(eq_inv[b] for b in _block_body(new, j) if b in eq_inv)
+
     ops: list[EditOp] = []
 
     def _del(r: dict) -> EditOp:
@@ -115,8 +193,12 @@ def diff_records(prev: list[dict], new: list[dict]) -> list[EditOp]:
 
     # 좌표 = 레코드의 실제 startLine/endLine (delete=prev 공간, add=new 공간). 호출자가
     #   modify(무이동) → delete(아래부터) → add(위부터) 순으로 적용해 좌표 정합 유지.
-    for tag, i1, i2, j1, j2 in sm.get_opcodes():
+    for tag, i1, i2, j1, j2 in opcodes:
         if tag == "equal":
+            for i in range(i1, i2):
+                if i in moved:
+                    ops.append(_del(prev[i]))
+                    ops.append(_add(new[eq[i]]))
             continue
         elif tag == "delete":
             ops.extend(_del(prev[i]) for i in range(i1, i2))

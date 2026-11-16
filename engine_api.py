@@ -2094,7 +2094,7 @@ class EngineSession:
         적용 순서 = modify(무이동) → delete(아래부터) → add(위부터) 로 라인 좌표 정합 유지.
         invalid 면 {"ok": False, diagnostics} 반환하고 상태 유지(잘못된 부분삭제 CFG 손상 차단).
         """
-        from incremental import diff_records, syntax_valid
+        from incremental import BlockExtentError, diff_records, syntax_valid
         from Dependencies.main import slice_solidity
 
         ok, diags = syntax_valid(new_source)
@@ -2108,7 +2108,10 @@ class EngineSession:
             self._editor_errors = [Diagnostic(line=ex.line if ex.line is not None else -1,
                                               message=str(ex), category="semantic")]
             return {"ok": False, "diagnostics": [asdict(d) for d in self._editor_errors]}
-        ops = diff_records(self._prev_records, new_records)
+        try:
+            ops = diff_records(self._prev_records, new_records)
+        except BlockExtentError as ex:      # (2026-11-13) 감싸기·벗기기 판정 불가 — 조용히 진행하지 않는다
+            raise IncrementalSurgeryError(f"증분 편집 미지원: {ex} (세션 상태는 변경 전 그대로)") from ex
         mods = [o for o in ops if o.event == "modify"]
         dels = sorted((o for o in ops if o.event == "delete"), key=lambda o: o.start, reverse=True)
         adds = sorted((o for o in ops if o.event == "add"), key=lambda o: o.start)
@@ -2221,6 +2224,12 @@ class EngineSession:
         _, _, fcfg = self._resolve_fcfg(sc.contract or None, sc.function or None)
         if fcfg is not None:
             self._ca.builder.delete_cfg_range(fcfg=fcfg, start_line=start, kind=kind)
+        # (2026-11-16, KNOWN_ISSUES I15) `} else {` / `} else if (…) {` 레코드는 그 줄의 `}` 가 **앞 블록을 닫는다** —
+        #   그 `}` 는 남아야 한다. 헤더 레코드의 endLine 은 가짜 `}` 줄이고, 본문이 먼저(아래부터) 지워진 뒤에는 그 줄이
+        #   이 절의 실제 닫는 `}`(또는 다음 `} else {`)와 겹친다. 일반 헤더는 그 줄까지 지우는 게 맞지만, 앞 블록을
+        #   닫는 레코드는 헤더 줄만 지우고 남은 `}` 가 앞 블록을 닫게 둔다. 예전엔 한 줄을 더 지워 줄 공간이 어긋났다.
+        if kind in ("else", "else if", "else_if") and end > start:
+            end -= 1
         self._sa.update_code(start, end, "", "delete")
 
     def _apply_modify(self, op) -> None:
