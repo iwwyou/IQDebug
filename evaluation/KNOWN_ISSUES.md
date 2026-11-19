@@ -3,7 +3,8 @@
 구현 세션 소유. 재현이 확인됐지만 아직 고치지 않은 오류를 적는다. 지원 범위 밖으로 **결정한** 구문은 여기가
 아니라 `evaluation/reviews/round9_operations.md` §9 에 있다. 할 일 순서는 `evaluation/ROADMAP.md`.
 
-수치 기준: 타깃 486(`evaluation/Dataset/targets_final.json`), 2026-11-13 빌드·파일럿.
+수치 기준: 타깃 486(`evaluation/Dataset/targets_final.json`, 2026-11-19 폐기 · `temp/dataset_legacy/` 로 옮김), 2026-11-13 빌드·파일럿.
+새 데이터셋(415 파일, `evaluation/Dataset/target_functions.json`) 기준 재측정은 `deps/` 재빌드 뒤에 한다.
 번호는 바꾸지 않는다. 해결된 항목은 맨 아래 "해결됨" 으로 옮기고 번호를 남긴다.
 
 ---
@@ -115,6 +116,16 @@ solc 컴파일 게이트로는 막을 수 없다. 이 소스는 합법이기 때
 ---
 
 ## 해결됨
+
+### I17. `this.f()` 의 callee 가 호출자의 `msg.sender` 를 쓴다 — ✅ 2026-11-16
+
+`this.f()` 는 메시지 호출이라 callee 안의 `msg.sender` 는 컨트랙트 자신이어야 하는데, `Engine._interpret_callee_body` 가
+호출자 환경의 전역(`msg.*` 포함)을 그대로 넘겼다. 그래서 `require(msg.sender == address(this))` 가 거짓 → EXIT ⊥
+(거짓 unreachable), 반대로 callee 의 `require(msg.sender == owner)` 는 호출자 기준으로 통과해 실제로는 revert 하는 경로를
+도달 가능으로 냈다(거짓 reachable). 1차 외부 검토(2.1절)가 지적해 실측으로 확인했다. 이제 `invoke_callee` 가 호출 종류를
+`frame_kind` 로 넘기고, `kind == "this"` 이면 callee 프레임의 `msg.sender = address(this)`(symbolicAddress 1), `msg.value = 0` 으로
+두며, 복귀 시 callee 의 `msg.*` 를 호출자에게 되쓰지 않는다(호출자의 값은 그대로). 내부 호출은 같은 프레임이라 바꾸지 않는다.
+남은 한계: `this.f{value: x}()` 의 값 전달은 미지원(0). 타깃 486 중 `this.f()` 는 4 파일 5 회. 회귀: `temp/test_this_context.py`.
 
 ### I1. 증분 `update` 가 `⊥` 를 낸다 — ✅ 2026-11-16
 

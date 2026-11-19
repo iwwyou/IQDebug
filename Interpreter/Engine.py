@@ -1161,10 +1161,12 @@ class Engine:
         self._pending_call_expr = call_expr
         # (2026-10-23) 호출자 선택자 ↔ 파라미터 대응 — 호출자 프레임에서 계산 (Storage.callee_aliases)
         self._pending_aliases = self.an.storage.callee_aliases(fcfg, call_expr, kind)
-        return self.interpret_function_cfg(fcfg, caller_env, param_bindings=bindings, param_sources=sources)
+        return self.interpret_function_cfg(fcfg, caller_env, param_bindings=bindings, param_sources=sources,
+                                           frame_kind=kind)
 
     def interpret_function_cfg(self, fcfg: FunctionCFG, caller_env: dict[str, Variables] | None = None,
-                               param_bindings: dict | None = None, param_sources: dict | None = None):
+                               param_bindings: dict | None = None, param_sources: dict | None = None,
+                               frame_kind: str | None = None):
         fcfg = self._composed_callee(fcfg)   # (Phase 4, D6) modifier 합성본
         an = self.an
         _old_func = an.current_target_function
@@ -1198,7 +1200,7 @@ class Engine:
         #   callee 컨텍스트가 남아 이후 기록·During 검증이 조용히 꺼졌다.
         try:
             return self._interpret_callee_body(fcfg, caller_env, _call_site_node, param_bindings, param_sources,
-                                               _call_expr)
+                                               _call_expr, frame_kind)
         finally:
             self._call_stack().pop()
             an.storage.pop_frame()
@@ -1214,7 +1216,7 @@ class Engine:
             self._call_site_node = _call_site_node
 
     def _interpret_callee_body(self, fcfg: FunctionCFG, caller_env, _call_site_node,
-                               param_bindings=None, param_sources=None, _call_expr=None):
+                               param_bindings=None, param_sources=None, _call_expr=None, frame_kind=None):
         """interpret_function_cfg 의 본체(진입 env 구성 → worklist → exit 처리 → caller 되쓰기).
         노드/컨텍스트 복원은 호출자(interpret_function_cfg)의 finally 가 맡는다."""
         an = self.an
@@ -1259,6 +1261,21 @@ class Engine:
                 if not self._is_shared_storage(k, v):
                     continue
                 start_block.variables[k] = VariableEnv.copy_single_variable(v)
+
+        # (2026-11-16) `this.f()` 는 메시지 호출 — callee 프레임의 호출 컨텍스트가 바뀐다.
+        #   msg.sender = 현재 컨트랙트(symbolicAddress 1 = "this"), msg.value = 0 (`{value: …}` 옵션은 미지원).
+        #   예전엔 호출자의 msg.sender 를 그대로 넘겨 `require(msg.sender == address(this))` 가 거짓 → EXIT ⊥ (unsound).
+        if frame_kind == "this":
+            _ms = start_block.variables.get("msg.sender")
+            if _ms is not None:
+                _ms = VariableEnv.copy_single_variable(_ms)
+                _ms.value = an.addr_mgr.make_symbolic_address(1, "this")
+                start_block.variables["msg.sender"] = _ms
+            _mv = start_block.variables.get("msg.value")
+            if _mv is not None:
+                _mv = VariableEnv.copy_single_variable(_mv)
+                _mv.value = UnsignedIntegerInterval(0, 0, 256)
+                start_block.variables["msg.value"] = _mv
 
         # (Phase 4) 인자 바인딩 — invoke_callee 가 만든 새 파라미터 객체
         for pname, b in (param_bindings or {}).items():
@@ -1310,6 +1327,9 @@ class Engine:
                 if k in _callee_params:
                     continue
                 if not self._is_shared_storage(k, v):
+                    continue
+                # (2026-11-16) `this.f()` 프레임의 msg.* 는 callee 의 것 — 호출자 컨텍스트에 되쓰지 않는다
+                if frame_kind == "this" and k.startswith("msg."):
                     continue
                 if k in caller_env:
                     cv = caller_env[k]

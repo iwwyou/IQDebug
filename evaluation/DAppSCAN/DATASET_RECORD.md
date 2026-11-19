@@ -13,6 +13,9 @@ Threats to Validity* 작성 근거. **이 문서는 구현 세션의 기록이�
 
 ## 1. 데이터셋의 역할과 선정 원칙
 
+> 2026-11-16: 현행 결정(공통 데이터셋 원칙, 버그는 고쳐서 포함)은 `evaluation/ROADMAP.md` §0. 아래는 당시 기록.
+> 2026-11-19: 평가 대상은 415 파일 · 2,653 함수로 동결했다(§8 머리말, `../Dataset/DATASET_SELECTION.md`). 482·480 분모는 폐기.
+
 평가 대상은 **IQDebug** — 구체 트랜잭션 trace 를 재생하지 않고, abstract interpretation(구간
 도메인)으로 미리 계산한 추상 프로그램 상태 위에서 디버거 operation(Step Forward/Backward,
 Step Into/Out, Breakpoint, Continue)을 수행하는 소스 수준 디버거. 논문의 기여는 **그 operation
@@ -225,6 +228,18 @@ Aave V3·Compound·Frax 등 실제 프로토콜은 **유지**한다.
 
 ## 8. 타깃 함수 선정 정책 (AST 기준으로 확정)
 
+> **2026-11-19 동결 — 이 절의 아래 내용보다 우선한다.** 평가 대상은 **415 파일 · 2,653 함수**(T1 1,608 · T2 1,045)다.
+> 569(옵션 2′)에서 출발해 `../Dataset/select_functions.py` 하나로 낸다(중복 62 → 컴파일 실패 5 → 선정 함수 없음 87).
+> 정본 `../Dataset/target_functions.json`, 원천 → 최종 전 과정과 재현 방법은 `../Dataset/DATASET_SELECTION.md`, 판정 로직과 검토 이력은 `../Dataset/PIPELINE_RECORD.md`.
+> 아래의 486 · 482 · 480, 실질 타깃 1,941 · 1,900, `trivial_*` 사유, `requires_storage_binding` 348 은 **폐기된 이전 기준**이다
+> (551 을 출발점으로 잘못 쓴 집합, parse-only AST 의 과다 계수, 손 판정).
+
+> 2026-11-16: 현행 결정(연산 계층 추가안, 함수 태그, `is_root`, 호출 지점 CG1–CG4)은 `evaluation/ROADMAP.md` §0. 아래는 당시 기록.
+> 2026-11-17: 타깃 486 전수 컴파일 검사·정규화 바이트코드 비교·호출 지점 CG1–CG4 집계 완료(`../Dataset/compile_survey.py`).
+> 483 컴파일·바이트코드 전부 일치, 실패 3(원본도 실패), free function 0. 수치는 ROADMAP 의 "§0 상세 경위" §0.3-6.
+> **평가 대상 480 파일**(2026-11-17 확정, ROADMAP §0.A-3). 486 에서 6 개를 뺀다. stub 3, 원본 컴파일 불가 1(token_audit),
+> 정책 버전(pragma 허용 최대 solc, optimizer off) 컴파일 불가 2(Compound cToken, eden governance)이며, 보완 규칙은 두지 않는다.
+
 - **T1** = 일반 계약의 구현·본문 있는 `public`/`external` 일반 함수. 명칭은 **ABI-visible contract
   function** 이고 "트랜잭션 진입점" 이라 단정하지 않는다(library public, abstract 계약의 virtual 등은
   성격이 다르다). 호출 그래프 in-degree 0 을 쓰지 않는 이유: `transfer` 처럼 내부에서도 불리지만
@@ -374,6 +389,10 @@ analysis 와 navigation 이 갈리는 대표 사례: **루프 본문 안에서�
 
 ## 12. 산출물 (재현성)
 
+> 2026-11-19: 동결 파이프라인에 필요 없는 파일은 `temp/dataset_legacy/evaluation/…` 로 원래 경로 그대로 옮겼다 —
+> `ast_manifest.*`, `target_analysis.*`, `audit_*`, `scan_*.py`, `dappscan_ge08.json`·`dappscan_projects.json`, `suspected_flattened_report.json`, `targets_v2–v4.json`, `historical/`,
+> `../Dataset/targets_final.json`·`compile_survey_486.json`·`compile_retry.py`. 아래 표의 경로는 당시 위치다.
+
 | 파일 | 내용 |
 |---|---|
 | `select_targets.py` | v5 선정 로직 정본 |
@@ -387,4 +406,9 @@ analysis 와 navigation 이 갈리는 대표 사례: **루프 본문 안에서�
 | `target_analysis.py` / `target_analysis.json` | **타깃 정책 집계** — 실질 타깃 규칙·제외 사유 3분류·overload 그룹·중복 제거 후 수·입력 생성용 파라미터 형태·modifier 해석 상태. manifest(사실)와 정책(판단)의 분리 지점 |
 | `reviews/` | 외부 검토 이력 — `README.md`(라운드별 지적과 반영), `dataset_selection/REVIEW_PROMPT_round5.md`, `target_and_input/REVIEW_PROMPT_round6.md` |
 | `../../temp/test_overload_target.py` | overload 타깃 지정 회귀 가드(6차 C9) |
+| `../Dataset/compile_survey.py` / `compile_survey_486.json` | 타깃 486 전수 — 도구 중립 컴파일 검사(pragma 허용 최대 solc, optimizer off), 원본↔정규화 바이트코드 비교(`bytecodeHash = none`), 타입 AST 기반 호출 지점 CG1–CG4 분류(내부 callee·modifier 전이). 2026-11-17 |
+| `../Dataset/compile_retry.py` | 위 결과의 컴파일 실패 타깃을 optimizer·viaIR 로 버전별 재시도(원인 확인용) |
+| **`../Dataset/select_functions.py` / `target_functions.json`** | **2026-11-19 동결 정본.** 569 → 415 파일 · 2,653 함수. F1 폐포 · F2 중복 · F3 컴파일·바이트코드 비교 · F4 후보 · F5 선정(타입 AST), 함수별 원시 특징·판정·태그 |
+| **`../Dataset/DATASET_SELECTION.md`** | 원천 → 최종 선정 전 과정과 재현 방법을 한 곳에 모은 논문용 기록 |
+| `../Dataset/PIPELINE_RECORD.md` | 두 스크립트의 입력·로직·결과와 외부 검토 반영 이력 |
 | `DATASET_RECORD.md` | 이 문서 |

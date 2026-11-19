@@ -10,3 +10,6 @@ frontend/dist/
 
 # 데이터셋 원본 — 별도 git 저장소(sparse checkout)
 evaluation/DAppSCAN/repo/
+
+# 486 기준 옛 deps (생성물, 2026-11-19 이동)
+temp/dataset_legacy/evaluation/Dataset/deps_486/

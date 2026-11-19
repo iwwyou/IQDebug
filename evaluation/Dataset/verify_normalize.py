@@ -74,9 +74,9 @@ def check_tokens(paths):
             r["무중괄호 잔존"] += 1
             bad.append((rel, "left"))
         lines = n.text.count("\n") + 1
+        vals = [n.line_map[k] for k in sorted(n.line_map)]        # (2026-11-19) 단조성 검사가 `if False` 로 꺼져 있었다
         if sorted(n.line_map) != list(range(1, lines + 1)) or \
-                any(a > b for a, b in zip(list(n.line_map.values()), list(n.line_map.values())[1:])
-                    if False):
+                any(a > b for a, b in zip(vals, vals[1:])):
             r["줄 대응 불완전"] += 1
     return dict(r), bad
 

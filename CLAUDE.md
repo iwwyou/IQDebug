@@ -58,7 +58,7 @@ npx tsc --noEmit             # 타입체크
 
 - 통과: `test_session_flow`, `test_update`, `test_delete_cfg`, `test_try_catch`, `test_sparse_array`,
   `test_set_intents`, `test_ireturn_cast`, `test_blank_during`, `smoke_engine_api`(의존성 로드 단계 제외),
-  `test_overload_target`(2026-10-28 추가 — overload 타깃 지정), `test_try_catch`, `test_nav_symmetry`, `test_registry`, `test_normalize_source`·`test_multiline`(2026-11-06 추가), `test_intent_keywords`(2026-11-13 추가), `test_delete_fallthrough`(2026-11-16 추가 — 증분 update ≡ 새 analyze 차분)
+  `test_overload_target`(2026-10-28 추가 — overload 타깃 지정), `test_try_catch`, `test_nav_symmetry`, `test_registry`, `test_normalize_source`·`test_multiline`(2026-11-06 추가), `test_intent_keywords`(2026-11-13 추가), `test_delete_fallthrough`(2026-11-16 추가 — 증분 update ≡ 새 analyze 차분), `test_this_context`(2026-11-16 추가 — `this.f()` 의 msg.sender/msg.value)
 - ⚠ 여러 스크립트가 `⊤`·`—` 를 출력해 **cp949 콘솔에서 UnicodeEncodeError 로 죽는다**(단언 자체는 통과).
   `PYTHONIOENCODING=utf-8` 로 실행할 것.
 - 부분 실패(데이터셋 의존): `test_transaction` T8 — 옛 데이터셋 파일(`evaluation/Dataset/target_contraction_auto/*.sol`)이
@@ -136,4 +136,5 @@ DebugInitializer=입력→추상값, YulEval).
 - 학위논문 원문(읽기 전용): `...\IntentKeeper\paper\Phd_thesis\main.tex` — Design 864–3099행
   (디버깅 설계 2957–3099), Evaluation 3102–4583행. ACM 템플릿은 `...\IntentKeeper\paper\acmart-primary\`.
 - 데이터셋: `evaluation/DAppSCAN/repo`(sparse checkout — `DAppSCAN-source/contracts` + `SWCsource`),
-  pragma 스캔 `evaluation/DAppSCAN/scan_pragma.py` → `dappscan_ge08.json`.
+  선정 파이프라인 정본은 `evaluation/Dataset/DATASET_SELECTION.md`(원천 → 415 파일 · 2,653 함수, 재현 방법). 옛 조사 도구·이전 판 산출물
+  (`scan_pragma.py`, `targets_v2–v4`, `targets_final.json` 등)은 2026-11-19 `temp/dataset_legacy/` 로 옮겼다.
