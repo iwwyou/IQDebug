@@ -1,0 +1,262 @@
+{
+ "functions": 2653,
+ "stage": {
+  "ok": 1180,
+  "evaluate": 588,
+  "analyze": 117,
+  "deps_load": 683,
+  "structure": 85
+ },
+ "stage_by_tier": {
+  "T1": {
+   "ok": 623,
+   "analyze": 55,
+   "evaluate": 429,
+   "deps_load": 437,
+   "structure": 64
+  },
+  "T2": {
+   "ok": 557,
+   "evaluate": 159,
+   "analyze": 62,
+   "deps_load": 246,
+   "structure": 21
+  }
+ },
+ "stage_by_deps": {
+  "complete": {
+   "ok": 1179,
+   "evaluate": 553,
+   "structure": 8
+  },
+  "deps_only_incomplete": {
+   "deps_load": 514,
+   "ok": 1,
+   "evaluate": 35
+  },
+  "target_unit_incomplete": {
+   "analyze": 117,
+   "deps_load": 169,
+   "structure": 77
+  },
+  "build_error": {}
+ },
+ "fail_reasons_top": [
+  [
+   "deps_load | DependencyNotReady: 의존성 1개 단위가 Complete 가 아니라 분석할 수 없다 (build_001): ErrorReporter = Invalid (['L53 update_code",
+   162
+  ],
+  [
+   "deps_load | DependencyNotReady: 의존성 1개 단위가 Complete 가 아니라 분석할 수 없다 (build_001): DataTypes = Pending (['ReserveConfiguratio",
+   100
+  ],
+  [
+   "evaluate | states 없음 (입력 0개 또는 전부 입력 오류)",
+   63
+  ],
+  [
+   "deps_load | DependencyNotReady: 의존성 2개 단위가 Complete 가 아니라 분석할 수 없다 (build_001): DataTypes = Pending (['ReserveConfiguratio",
+   57
+  ],
+  [
+   "evaluate | ValueError: using-for lookup: static type of receiver of '.mul(...)' is unknown",
+   51
+  ],
+  [
+   "deps_load | DependencyNotReady: 의존성 1개 단위가 Complete 가 아니라 분석할 수 없다 (build_001): IStakefishServicesContract = Invalid (['L3",
+   43
+  ],
+  [
+   "deps_load | DependencyNotReady: 의존성 1개 단위가 Complete 가 아니라 분석할 수 없다 (build_001): Context = Invalid (['L18 update_code: Cont",
+   41
+  ],
+  [
+   "evaluate | ValueError: Cannot join intervals of different type lengths",
+   40
+  ],
+  [
+   "analyze | IncrementalSurgeryError: 증분 분석 실패: line 345 `event Deposit( address indexed provider, uint tokenId, uint `: Va",
+   38
+  ],
+  [
+   "deps_load | DependencyNotReady: 의존성 3개 단위가 Complete 가 아니라 분석할 수 없다 (build_001): ErrorReporter = Invalid (['L29 update_code",
+   36
+  ],
+  [
+   "deps_load | DependencyNotReady: 의존성 2개 단위가 Complete 가 아니라 분석할 수 없다 (build_001): ErrorReporter = Invalid (['L29 update_code",
+   33
+  ],
+  [
+   "deps_load | DependencyNotReady: 의존성 1개 단위가 Complete 가 아니라 분석할 수 없다 (build_001): Ania = Invalid (['L35 ctx=simpleStatement:",
+   28
+  ],
+  [
+   "deps_load | DependencyNotReady: 의존성 3개 단위가 Complete 가 아니라 분석할 수 없다 (build_001): DataTypes = Pending (['ReserveConfiguratio",
+   28
+  ],
+  [
+   "evaluate | ValueError: inline assembly: Yul `if` at `CErc20Delegator.delegateTo line 424` is not supported yet (Yul 제어 흐름",
+   26
+  ],
+  [
+   "structure | ValueError: target contract 'GovernorAlpha' is not defined in the analyzed source",
+   26
+  ],
+  [
+   "evaluate | UnresolvedName: This 'ERC721' is may be array or struct but may not be declared",
+   26
+  ],
+  [
+   "evaluate | ValueError: inline assembly: Yul `statement that does not parse on its own line (여러 줄에 걸친 Yul 식)` at `VotingPo",
+   22
+  ],
+  [
+   "deps_load | DependencyNotReady: 의존성 1개 단위가 Complete 가 아니라 분석할 수 없다 (build_001): History = Invalid (['L314 update_code: Fun",
+   20
+  ],
+  [
+   "deps_load | DependencyNotReady: 의존성 3개 단위가 Complete 가 아니라 분석할 수 없다 (build_001): ConsiderationInternalView = Invalid (['L47",
+   19
+  ],
+  [
+   "deps_load | DependencyNotReady: 의존성 2개 단위가 Complete 가 아니라 분석할 수 없다 (build_001): ErrorReporter = Invalid (['L53 update_code",
+   18
+  ],
+  [
+   "evaluate | ValueError: using-for lookup: static type of receiver of '.div(...)' is unknown",
+   18
+  ],
+  [
+   "structure | ValueError: target contract 'Keep3rV2OracleFactory' is not defined in the analyzed source",
+   18
+  ],
+  [
+   "analyze | IncrementalSurgeryError: 증분 분석 실패: line 42 `string private _name;`: ValueError: Function context not found for",
+   16
+  ],
+  [
+   "deps_load | DependencyNotReady: 의존성 1개 단위가 Complete 가 아니라 분석할 수 없다 (build_001): ConsiderationStructs = Pending (['Addition",
+   16
+  ],
+  [
+   "analyze | IncrementalSurgeryError: 증분 분석 실패: line 237 `require(_length + 31 >= _length, \"slice_overflow\");`: ValueError:",
+   14
+  ],
+  [
+   "deps_load | DependencyNotReady: 의존성 2개 단위가 Complete 가 아니라 분석할 수 없다 (build_001): ConsiderationPure = Invalid (['L49 update_",
+   14
+  ],
+  [
+   "deps_load | DependencyNotReady: 의존성 1개 단위가 Complete 가 아니라 분석할 수 없다 (build_001): GovernorBravoInterfaces = Pending (['CompI",
+   13
+  ],
+  [
+   "deps_load | DependencyNotReady: 의존성 1개 단위가 Complete 가 아니라 분석할 수 없다 (build_001): InitializableImmutableAdminUpgradeabilityP",
+   12
+  ],
+  [
+   "analyze | IncrementalSurgeryError: 증분 분석 실패: line 37 `mapping(RewardType => RewardTypeInfo) public categories;`: ValueEr",
+   11
+  ],
+  [
+   "deps_load | DependencyNotReady: 의존성 1개 단위가 Complete 가 아니라 분석할 수 없다 (build_001): ErrorReporter = Invalid (['L29 update_code",
+   11
+  ],
+  [
+   "deps_load | DependencyNotReady: 의존성 4개 단위가 Complete 가 아니라 분석할 수 없다 (build_001): ConsiderationInternal = Invalid (['L60 upd",
+   11
+  ],
+  [
+   "evaluate | ValueError: inline assembly: Yul `statement that does not parse on its own line (여러 줄에 걸친 Yul 식)` at `Proxy._d",
+   10
+  ],
+  [
+   "evaluate | ValueError: unresolved member '.sub' on UnsignedIntegerInterval value UnsignedIntegerInterval([0, 115792089237",
+   9
+  ],
+  [
+   "analyze | IncrementalSurgeryError: 증분 분석 실패: line 101 `uint256[2] public _SWAPBACK_THRESHOLD = [1, 10000];`: TypeError: ",
+   9
+  ],
+  [
+   "deps_load | DependencyNotReady: 의존성 2개 단위가 Complete 가 아니라 분석할 수 없다 (build_001): CErc20Delegate = Invalid (['L15 update_cod",
+   8
+  ],
+  [
+   "evaluate | ValueError: Literal context '0' not handled for 'Variables'",
+   8
+  ],
+  [
+   "evaluate | ValueError: Cannot resolve overload for 'div_': arg types=[None, 'uint'], candidates=[['Exp', 'Exp'], ['Exp', ",
+   8
+  ],
+  [
+   "structure | ValueError: target contract 'Keep3rV2Oracle' is not defined in the analyzed source",
+   8
+  ],
+  [
+   "evaluate | ValueError: using-for lookup: static type of receiver of '.transfer(...)' is unknown",
+   7
+  ],
+  [
+   "evaluate | ValueError: '_values' not in struct 'set'",
+   7
+  ]
+ ],
+ "abstract": {
+  "functions": 299,
+  "reaches_unimplemented": 83,
+  "stage_reaching_unimpl": {
+   "ok": 28,
+   "deps_load": 46,
+   "evaluate": 9
+  },
+  "stage_not_reaching": {
+   "ok": 116,
+   "evaluate": 62,
+   "deps_load": 26,
+   "analyze": 8,
+   "structure": 4
+  }
+ },
+ "nav_violations": {
+  "S1": 0,
+  "S2": 11,
+  "S3": 0,
+  "S4": 0
+ },
+ "slots": {
+  "functions_with_slots": 1768,
+  "total": 12740,
+  "by_kind": {
+   "Param": 4096,
+   "IReturn": 508,
+   "StateVar": 6963,
+   "GlobalVar": 1173
+  },
+  "functions_with_IReturn": 203,
+  "functions_with_requires_index": 223,
+  "functions_with_value_errors": 7,
+  "functions_with_immutable_slot": 137,
+  "functions_reading_immutable_ast": 233
+ },
+ "states": {
+  "ok_functions": 1180,
+  "with_partial_bottom": 294,
+  "with_empty_in_state": 64,
+  "with_exit_top": 465,
+  "with_opaque_call": 199,
+  "with_lowlevel_call": 93
+ },
+ "time": {
+  "evaluate_median": 0.076,
+  "evaluate_p95": 0.546,
+  "evaluate_max": 58.23
+ },
+ "workers": {
+  "timeout": 0,
+  "crash": 0
+ },
+ "generated": "2026-11-20T17:44:33",
+ "scope": "all"
+}

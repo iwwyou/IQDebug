@@ -1065,9 +1065,11 @@ class Evaluation :
                 by_sig.setdefault(sig, []).append(f)
         return by_sig
 
-    def _dispatch(self, L, name, arguments, named_arguments, variables):
+    def _dispatch(self, L, name, arguments, named_arguments, variables, allow_abstract=False):
         """① 오버로드 해소: 선형화 전체의 시그니처(선언 포함) 중 인자에 맞는 것 하나.
-        ② 디스패치: 그 시그니처의 **본문 있는** 첫 함수(가장 파생된 override). 없으면 추상 → 오류."""
+        ② 디스패치: 그 시그니처의 **본문 있는** 첫 함수(가장 파생된 override). 없으면 추상 → 오류.
+        (2026-11-20) `allow_abstract=True`(이름 호출만): 구현이 없으면 오류 대신 **선언**을 돌려준다 —
+        호출자가 미구현 요약(`_unimplemented_call_summary`)으로 처리한다."""
         by_sig = self._functions_named(L, name)
         where = [self._cfg_name(c) for c in L]
         if not by_sig:
@@ -1086,6 +1088,8 @@ class Evaluation :
                                  f"(candidates {list(reps)} in {where})")
         sig = next(s for s, f in reps.items() if f is chosen)
         impl = next((f for f in by_sig[sig] if f.has_body), None)
+        if impl is None and allow_abstract:
+            return by_sig[sig][0]
         if impl is None:
             raise ValueError(f"call to '{name}{sig}': no implementation in {where} (선언만 있음 — 추상)")
         return impl
@@ -3251,9 +3255,15 @@ class Evaluation :
             #   선언(파라미터 미기록 → "인자 0개")을 호출 대상으로 잡았다(52_H_23 `getReserves(foreignAsset)`).
             L = self.linearize(self._dispatch_root_cfg())
             function_cfg = (self._dispatch(L, function_name, expr.arguments or [], expr.named_arguments or {},
-                                           variables)
+                                           variables, allow_abstract=True)
                             if self._functions_named(L, function_name) else None)
             functions_source = None
+            # (2026-11-20) 타깃 선형화 안에 구현이 없는 함수(abstract 계약의 미구현 virtual) — 구현은 하위 계약이
+            #   정하므로 어떤 구현이든 될 수 있다 → 요약. 반환값 ⊤ 는 CG3 와 같지만, 구현이 **같은 storage** 에서
+            #   돌기 때문에 CG3 의 "내 storage 불변" 전제는 쓸 수 없다(view/pure 만 상태 유지).
+            if function_cfg is not None and not function_cfg.has_body:
+                return self._mapping_lookup_if_needed(
+                    self._unimplemented_call_summary(function_cfg, expr, variables), callerObject)
 
         if not function_cfg:
             # ★ (Phase 4, D3/D4) 예전엔 여기서 `pending_callee_name` 을 남기고 uint256 ⊤ 를 반환했다(반환 타입 무시).
@@ -3310,6 +3320,29 @@ class Evaluation :
         return_value = self.engine.invoke_callee(function_cfg, arg_values, variables, kind="internal",
                                                  call_expr=expr)
         return self._mapping_lookup_if_needed(return_value, callerObject)
+
+    def _unimplemented_call_summary(self, fcfg, expr, variables):
+        """(2026-11-20) 구현 없는 internal 함수 호출의 요약.
+          · 인자는 평가한다(인자 식의 부수효과·오류는 그대로).
+          · view/pure 가 아니면 변경 가능한 상태변수 전체 ⊤ (constant·immutable 은 `isConstant` — 유지).
+          · 복합 타입 인자(memory·storage 참조) ⊤ — pure 함수도 memory 인자는 바꿀 수 있다.
+            view/pure 의 storage 참조 인자는 바뀔 수 없지만 여기서 둘을 구분하지 않는다(보수적).
+          · 반환값 = 선언 반환 타입의 ⊤."""
+        args = [self.evaluate_expression(a, variables, None, None) for a in (expr.arguments or [])]
+        args += [self.evaluate_expression(a, variables, None, None) for a in (expr.named_arguments or {}).values()]
+        owner_cfg = self._executing_contract_cfg()
+        if getattr(fcfg, "mutability", None) not in ("view", "pure"):
+            for name, v in list(variables.items()):
+                if "." not in name and getattr(v, "scope", None) == "state" and not getattr(v, "isConstant", False):
+                    self.engine._havoc(v, owner_cfg)
+        for a in args:
+            if isinstance(a, (StructVariable, ArrayVariable, MappingVariable)):
+                self.engine._havoc(a, owner_cfg)
+        rts = self.declared_return_types(fcfg)
+        tops = [self._top_of_type(t, owner_cfg, f"{fcfg.function_name}_ret{i}") for i, t in enumerate(rts)]
+        if not tops:
+            return None
+        return tops[0] if len(tops) == 1 else tops
 
     def _ordered_call_args(self, arguments, named_arguments, param_names, variables, function_name):
         """위치 인자 + 이름 인자 → 파라미터 순서의 값 리스트 (caller env 에서 평가)."""

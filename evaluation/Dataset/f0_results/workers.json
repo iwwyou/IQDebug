@@ -1,0 +1,2907 @@
+{
+ "BlockSec-blocksec_aloe_1.1_signed/aloe-blend-fd1635d8928c74ed24550d3f0d9a63f284a7f872/contracts/libraries/Math.sol": {
+  "target": "BlockSec-blocksec_aloe_1.1_signed/aloe-blend-fd1635d8928c74ed24550d3f0d9a63f284a7f872/contracts/libraries/Math.sol",
+  "id": "Math_d4597386",
+  "status": 0,
+  "rows": 1,
+  "sec": 1.8
+ },
+ "BlockSec-blocksec_alpaca_v1.0_signed/bsc-alpaca-contract-cb13e32fe5a4ba6f63b0235bd4624715592e4abe/contracts/8.10/utils/Math.sol": {
+  "target": "BlockSec-blocksec_alpaca_v1.0_signed/bsc-alpaca-contract-cb13e32fe5a4ba6f63b0235bd4624715592e4abe/contracts/8.10/utils/Math.sol",
+  "id": "Math_58bb7199",
+  "status": 0,
+  "rows": 3,
+  "sec": 1.9
+ },
+ "BlockSec-blocksec_alpaca_v1.0_signed/bsc-alpaca-contract-cb13e32fe5a4ba6f63b0235bd4624715592e4abe/contracts/8.10/utils/AlpacaMath.sol": {
+  "target": "BlockSec-blocksec_alpaca_v1.0_signed/bsc-alpaca-contract-cb13e32fe5a4ba6f63b0235bd4624715592e4abe/contracts/8.10/utils/AlpacaMath.sol",
+  "id": "AlpacaMath_b90a5689",
+  "status": 0,
+  "rows": 2,
+  "sec": 2.0
+ },
+ "BlockSec-blocksec_alpaca_v1.0_signed/bsc-alpaca-contract-e7c3899416e86a045011febec7a5cc986176e406/contracts/8.10/utils/FullMath.sol": {
+  "target": "BlockSec-blocksec_alpaca_v1.0_signed/bsc-alpaca-contract-e7c3899416e86a045011febec7a5cc986176e406/contracts/8.10/utils/FullMath.sol",
+  "id": "FullMath_3af4673b",
+  "status": 0,
+  "rows": 2,
+  "sec": 2.2
+ },
+ "BlockSec-blocksec_alpaca_v1.0_signed/bsc-alpaca-contract-cb13e32fe5a4ba6f63b0235bd4624715592e4abe/contracts/8.10/utils/SafeToken.sol": {
+  "target": "BlockSec-blocksec_alpaca_v1.0_signed/bsc-alpaca-contract-cb13e32fe5a4ba6f63b0235bd4624715592e4abe/contracts/8.10/utils/SafeToken.sol",
+  "id": "SafeToken_97edd53f",
+  "status": 0,
+  "rows": 5,
+  "sec": 2.1
+ },
+ "BlockSec-blocksec_alpaca_v1.0_signed/bsc-alpaca-contract-e7c3899416e86a045011febec7a5cc986176e406/contracts/8.10/utils/FixedPointMathLib.sol": {
+  "target": "BlockSec-blocksec_alpaca_v1.0_signed/bsc-alpaca-contract-e7c3899416e86a045011febec7a5cc986176e406/contracts/8.10/utils/FixedPointMathLib.sol",
+  "id": "FixedPointMathLib_f7c355fe",
+  "status": 0,
+  "rows": 4,
+  "sec": 3.1
+ },
+ "BlockSec-blocksec_stnd_v1.7_signed/standard-evm-d7c016ca098a4e5a554583c499fc0cead4db7088/contracts/oracle/DiaCoinInfo.sol": {
+  "target": "BlockSec-blocksec_stnd_v1.7_signed/standard-evm-d7c016ca098a4e5a554583c499fc0cead4db7088/contracts/oracle/DiaCoinInfo.sol",
+  "id": "DiaCoinInfo_abf83f5a",
+  "status": 0,
+  "rows": 1,
+  "sec": 2.2
+ },
+ "BlockSec-blocksec_stnd_v1.7_signed/standard-evm-d7c016ca098a4e5a554583c499fc0cead4db7088/contracts/oracle/DiaKeyValue.sol": {
+  "target": "BlockSec-blocksec_stnd_v1.7_signed/standard-evm-d7c016ca098a4e5a554583c499fc0cead4db7088/contracts/oracle/DiaKeyValue.sol",
+  "id": "DiaKeyValue_37a60e1a",
+  "status": 0,
+  "rows": 1,
+  "sec": 2.1
+ },
+ "BlockSec-blocksec_stnd_v1.7_signed/standard-evm-d7c016ca098a4e5a554583c499fc0cead4db7088/contracts/oracle/Price.sol": {
+  "target": "BlockSec-blocksec_stnd_v1.7_signed/standard-evm-d7c016ca098a4e5a554583c499fc0cead4db7088/contracts/oracle/Price.sol",
+  "id": "Price_47a4dede",
+  "status": 0,
+  "rows": 1,
+  "sec": 2.1
+ },
+ "BlockSec-blocksec_coordinape_v1.1_signed/coordinape-protocol-7a8e6173305696c72195fa4242126d284611270c/contracts/ApeProtocol/ApeAllowanceModule.sol": {
+  "target": "BlockSec-blocksec_coordinape_v1.1_signed/coordinape-protocol-7a8e6173305696c72195fa4242126d284611270c/contracts/ApeProtocol/ApeAllowanceModule.sol",
+  "id": "ApeAllowanceModule_0c9aa896",
+  "status": 0,
+  "rows": 3,
+  "sec": 2.5
+ },
+ "BlockSec-blocksec_stnd_v1.7_signed/standard-evm-d7c016ca098a4e5a554583c499fc0cead4db7088/contracts/pools/bond/Equation.sol": {
+  "target": "BlockSec-blocksec_stnd_v1.7_signed/standard-evm-d7c016ca098a4e5a554583c499fc0cead4db7088/contracts/pools/bond/Equation.sol",
+  "id": "Equation_d77b0bab",
+  "status": 0,
+  "rows": 2,
+  "sec": 2.2
+ },
+ "BlockSec-blocksec_stnd_v1.7_signed/standard-evm-d7c016ca098a4e5a554583c499fc0cead4db7088/contracts/pools/dividend/legacy/ClaimAll.sol": {
+  "target": "BlockSec-blocksec_stnd_v1.7_signed/standard-evm-d7c016ca098a4e5a554583c499fc0cead4db7088/contracts/pools/dividend/legacy/ClaimAll.sol",
+  "id": "ClaimAll_daefadbc",
+  "status": 0,
+  "rows": 2,
+  "sec": 2.3
+ },
+ "BlockSec-blocksec_stnd_v1.7_signed/standard-evm-d7c016ca098a4e5a554583c499fc0cead4db7088/contracts/vaults/meter/libraries/Math.sol": {
+  "target": "BlockSec-blocksec_stnd_v1.7_signed/standard-evm-d7c016ca098a4e5a554583c499fc0cead4db7088/contracts/vaults/meter/libraries/Math.sol",
+  "id": "Math_b341cdb9",
+  "status": 0,
+  "rows": 2,
+  "sec": 2.1
+ },
+ "BlockSec-blocksec_stnd_v1.7_signed/standard-evm-d7c016ca098a4e5a554583c499fc0cead4db7088/contracts/pools/liquidation/TransferHelper.sol": {
+  "target": "BlockSec-blocksec_stnd_v1.7_signed/standard-evm-d7c016ca098a4e5a554583c499fc0cead4db7088/contracts/pools/liquidation/TransferHelper.sol",
+  "id": "TransferHelper_e7ef5bc2",
+  "status": 0,
+  "rows": 4,
+  "sec": 2.2
+ },
+ "BlockSec-blocksec_stnd_v1.7_signed/standard-evm-d7c016ca098a4e5a554583c499fc0cead4db7088/contracts/vaults/meter/libraries/SafeMath.sol": {
+  "target": "BlockSec-blocksec_stnd_v1.7_signed/standard-evm-d7c016ca098a4e5a554583c499fc0cead4db7088/contracts/vaults/meter/libraries/SafeMath.sol",
+  "id": "SafeMath_68c99a90",
+  "status": 0,
+  "rows": 1,
+  "sec": 2.0
+ },
+ "BlockSec-blocksec_stnd_v1.7_signed/standard-evm-d7c016ca098a4e5a554583c499fc0cead4db7088/contracts/vaults/meter/libraries/UQ112x112.sol": {
+  "target": "BlockSec-blocksec_stnd_v1.7_signed/standard-evm-d7c016ca098a4e5a554583c499fc0cead4db7088/contracts/vaults/meter/libraries/UQ112x112.sol",
+  "id": "UQ112x112_8aa68036",
+  "status": 0,
+  "rows": 1,
+  "sec": 2.0
+ },
+ "Chainsecurity-Angle Protocol  Borrowing Module/angle-borrow-0363b6a137a44e22ee06b3187ba74f7798c1af08/contracts/keeperMulticall/RevertReasonParser.sol": {
+  "target": "Chainsecurity-Angle Protocol  Borrowing Module/angle-borrow-0363b6a137a44e22ee06b3187ba74f7798c1af08/contracts/keeperMulticall/RevertReasonParser.sol",
+  "id": "RevertReasonParser_f16341b8",
+  "status": 0,
+  "rows": 2,
+  "sec": 2.2
+ },
+ "Chainsecurity-Angle Protocol/angle-core-46e6d32837cbe97a4af0adb693e63afa0d01fc3e/contracts/oracle/OracleAbstract.sol": {
+  "target": "Chainsecurity-Angle Protocol/angle-core-46e6d32837cbe97a4af0adb693e63afa0d01fc3e/contracts/oracle/OracleAbstract.sol",
+  "id": "OracleAbstract_797f360d",
+  "status": 0,
+  "rows": 4,
+  "sec": 2.1
+ },
+ "Chainsecurity-Angle Protocol/angle-core-46e6d32837cbe97a4af0adb693e63afa0d01fc3e/contracts/dao/Timelock.sol": {
+  "target": "Chainsecurity-Angle Protocol/angle-core-46e6d32837cbe97a4af0adb693e63afa0d01fc3e/contracts/dao/Timelock.sol",
+  "id": "Timelock_e958da61",
+  "status": 0,
+  "rows": 2,
+  "sec": 2.5
+ },
+ "BlockSec-blocksec_stnd_v1.7_signed/standard-evm-d7c016ca098a4e5a554583c499fc0cead4db7088/misc/UsingLiquidityProtectionService.sol": {
+  "target": "BlockSec-blocksec_stnd_v1.7_signed/standard-evm-d7c016ca098a4e5a554583c499fc0cead4db7088/misc/UsingLiquidityProtectionService.sol",
+  "id": "UsingLiquidityProtectionService_3f210cee",
+  "status": 0,
+  "rows": 3,
+  "sec": 2.7
+ },
+ "Chainsecurity-Angle Protocol/angle-core-46e6d32837cbe97a4af0adb693e63afa0d01fc3e/contracts/utils/FunctionUtils.sol": {
+  "target": "Chainsecurity-Angle Protocol/angle-core-46e6d32837cbe97a4af0adb693e63afa0d01fc3e/contracts/utils/FunctionUtils.sol",
+  "id": "FunctionUtils_ba5a735b",
+  "status": 0,
+  "rows": 1,
+  "sec": 2.2
+ },
+ "Chainsecurity-Compound  cToken unredacted/compound-protocol-4a54ec5c55b66ea67d44b76f3056f0ed7229db8c/contracts/BaseJumpRateModelV2.sol": {
+  "target": "Chainsecurity-Compound  cToken unredacted/compound-protocol-4a54ec5c55b66ea67d44b76f3056f0ed7229db8c/contracts/BaseJumpRateModelV2.sol",
+  "id": "BaseJumpRateModelV2_64b8694d",
+  "status": 0,
+  "rows": 5,
+  "sec": 2.4
+ },
+ "Chainsecurity-Compound  cToken unredacted/compound-protocol-4a54ec5c55b66ea67d44b76f3056f0ed7229db8c/contracts/CErc20.sol": {
+  "target": "Chainsecurity-Compound  cToken unredacted/compound-protocol-4a54ec5c55b66ea67d44b76f3056f0ed7229db8c/contracts/CErc20.sol",
+  "id": "CErc20_090f2d8f",
+  "status": 0,
+  "rows": 14,
+  "sec": 2.4
+ },
+ "Chainsecurity-Compound  cToken unredacted/compound-protocol-4a54ec5c55b66ea67d44b76f3056f0ed7229db8c/contracts/CDaiDelegate.sol": {
+  "target": "Chainsecurity-Compound  cToken unredacted/compound-protocol-4a54ec5c55b66ea67d44b76f3056f0ed7229db8c/contracts/CDaiDelegate.sol",
+  "id": "CDaiDelegate_e70ffc25",
+  "status": 0,
+  "rows": 8,
+  "sec": 2.9
+ },
+ "Chainsecurity-Compound  cToken unredacted/compound-protocol-4a54ec5c55b66ea67d44b76f3056f0ed7229db8c/contracts/CErc20Delegate.sol": {
+  "target": "Chainsecurity-Compound  cToken unredacted/compound-protocol-4a54ec5c55b66ea67d44b76f3056f0ed7229db8c/contracts/CErc20Delegate.sol",
+  "id": "CErc20Delegate_502ff768",
+  "status": 0,
+  "rows": 2,
+  "sec": 2.6
+ },
+ "Chainsecurity-Compound  cToken unredacted/compound-protocol-4a54ec5c55b66ea67d44b76f3056f0ed7229db8c/contracts/CEther.sol": {
+  "target": "Chainsecurity-Compound  cToken unredacted/compound-protocol-4a54ec5c55b66ea67d44b76f3056f0ed7229db8c/contracts/CEther.sol",
+  "id": "CEther_7064be0a",
+  "status": 0,
+  "rows": 9,
+  "sec": 2.5
+ },
+ "Chainsecurity-Compound  cToken unredacted/compound-protocol-4a54ec5c55b66ea67d44b76f3056f0ed7229db8c/contracts/CToken.sol": {
+  "target": "Chainsecurity-Compound  cToken unredacted/compound-protocol-4a54ec5c55b66ea67d44b76f3056f0ed7229db8c/contracts/CToken.sol",
+  "id": "CToken_1ad2fa00",
+  "status": 0,
+  "rows": 42,
+  "sec": 2.3
+ },
+ "Chainsecurity-Compound  cToken unredacted/compound-protocol-4a54ec5c55b66ea67d44b76f3056f0ed7229db8c/contracts/Comptroller.sol": {
+  "target": "Chainsecurity-Compound  cToken unredacted/compound-protocol-4a54ec5c55b66ea67d44b76f3056f0ed7229db8c/contracts/Comptroller.sol",
+  "id": "Comptroller_7c2ded7e",
+  "status": 0,
+  "rows": 44,
+  "sec": 3.4
+ },
+ "Chainsecurity-Compound  cToken unredacted/compound-protocol-4a54ec5c55b66ea67d44b76f3056f0ed7229db8c/contracts/ComptrollerG7.sol": {
+  "target": "Chainsecurity-Compound  cToken unredacted/compound-protocol-4a54ec5c55b66ea67d44b76f3056f0ed7229db8c/contracts/ComptrollerG7.sol",
+  "id": "ComptrollerG7_94a080c0",
+  "status": 0,
+  "rows": 43,
+  "sec": 3.1
+ },
+ "BlockSec-blocksec_multichain_vemult_v1.0_signed/veMULTI-bac804399d1ea280e5bd8cdc9488b6fa6a0a7fcc/contracts/ve.sol": {
+  "target": "BlockSec-blocksec_multichain_vemult_v1.0_signed/veMULTI-bac804399d1ea280e5bd8cdc9488b6fa6a0a7fcc/contracts/ve.sol",
+  "id": "ve_82ab93af",
+  "status": 0,
+  "rows": 38,
+  "sec": 12.7
+ },
+ "Chainsecurity-Compound  cToken unredacted/compound-protocol-4a54ec5c55b66ea67d44b76f3056f0ed7229db8c/contracts/Governance/GovernorBravoDelegate.sol": {
+  "target": "Chainsecurity-Compound  cToken unredacted/compound-protocol-4a54ec5c55b66ea67d44b76f3056f0ed7229db8c/contracts/Governance/GovernorBravoDelegate.sol",
+  "id": "GovernorBravoDelegate_a9457620",
+  "status": 0,
+  "rows": 12,
+  "sec": 2.3
+ },
+ "Chainsecurity-Compound  cToken unredacted/compound-protocol-4a54ec5c55b66ea67d44b76f3056f0ed7229db8c/contracts/Governance/GovernorAlpha.sol": {
+  "target": "Chainsecurity-Compound  cToken unredacted/compound-protocol-4a54ec5c55b66ea67d44b76f3056f0ed7229db8c/contracts/Governance/GovernorAlpha.sol",
+  "id": "GovernorAlpha_d86ca7f9",
+  "status": 0,
+  "rows": 13,
+  "sec": 2.4
+ },
+ "Chainsecurity-Compound  cToken unredacted/compound-protocol-4a54ec5c55b66ea67d44b76f3056f0ed7229db8c/contracts/Governance/GovernorBravoDelegator.sol": {
+  "target": "Chainsecurity-Compound  cToken unredacted/compound-protocol-4a54ec5c55b66ea67d44b76f3056f0ed7229db8c/contracts/Governance/GovernorBravoDelegator.sol",
+  "id": "GovernorBravoDelegator_60b5094c",
+  "status": 0,
+  "rows": 1,
+  "sec": 1.5
+ },
+ "Chainsecurity-Compound  cToken unredacted/compound-protocol-4a54ec5c55b66ea67d44b76f3056f0ed7229db8c/contracts/JumpRateModelV2.sol": {
+  "target": "Chainsecurity-Compound  cToken unredacted/compound-protocol-4a54ec5c55b66ea67d44b76f3056f0ed7229db8c/contracts/JumpRateModelV2.sol",
+  "id": "JumpRateModelV2_8716e8fb",
+  "status": 0,
+  "rows": 1,
+  "sec": 1.7
+ },
+ "Chainsecurity-Compound  cToken unredacted/compound-protocol-4a54ec5c55b66ea67d44b76f3056f0ed7229db8c/contracts/JumpRateModel.sol": {
+  "target": "Chainsecurity-Compound  cToken unredacted/compound-protocol-4a54ec5c55b66ea67d44b76f3056f0ed7229db8c/contracts/JumpRateModel.sol",
+  "id": "JumpRateModel_ec5c9f8c",
+  "status": 0,
+  "rows": 3,
+  "sec": 1.8
+ },
+ "Chainsecurity-Compound  cToken unredacted/compound-protocol-4a54ec5c55b66ea67d44b76f3056f0ed7229db8c/contracts/Lens/CompoundLens.sol": {
+  "target": "Chainsecurity-Compound  cToken unredacted/compound-protocol-4a54ec5c55b66ea67d44b76f3056f0ed7229db8c/contracts/Lens/CompoundLens.sol",
+  "id": "CompoundLens_abf584a1",
+  "status": 0,
+  "rows": 18,
+  "sec": 2.6
+ },
+ "Chainsecurity-Compound  cToken unredacted/compound-protocol-4a54ec5c55b66ea67d44b76f3056f0ed7229db8c/contracts/Maximillion.sol": {
+  "target": "Chainsecurity-Compound  cToken unredacted/compound-protocol-4a54ec5c55b66ea67d44b76f3056f0ed7229db8c/contracts/Maximillion.sol",
+  "id": "Maximillion_861fa3aa",
+  "status": 0,
+  "rows": 2,
+  "sec": 1.9
+ },
+ "Chainsecurity-Compound  cToken unredacted/compound-protocol-4a54ec5c55b66ea67d44b76f3056f0ed7229db8c/contracts/Reservoir.sol": {
+  "target": "Chainsecurity-Compound  cToken unredacted/compound-protocol-4a54ec5c55b66ea67d44b76f3056f0ed7229db8c/contracts/Reservoir.sol",
+  "id": "Reservoir_6ac33396",
+  "status": 0,
+  "rows": 5,
+  "sec": 2.1
+ },
+ "Chainsecurity-Compound  cToken unredacted/compound-protocol-4a54ec5c55b66ea67d44b76f3056f0ed7229db8c/contracts/SafeMath.sol": {
+  "target": "Chainsecurity-Compound  cToken unredacted/compound-protocol-4a54ec5c55b66ea67d44b76f3056f0ed7229db8c/contracts/SafeMath.sol",
+  "id": "SafeMath_9336e4df",
+  "status": 0,
+  "rows": 7,
+  "sec": 1.8
+ },
+ "Chainsecurity-Compound  cToken unredacted/compound-protocol-4a54ec5c55b66ea67d44b76f3056f0ed7229db8c/contracts/SimplePriceOracle.sol": {
+  "target": "Chainsecurity-Compound  cToken unredacted/compound-protocol-4a54ec5c55b66ea67d44b76f3056f0ed7229db8c/contracts/SimplePriceOracle.sol",
+  "id": "SimplePriceOracle_b445d9e6",
+  "status": 0,
+  "rows": 2,
+  "sec": 2.0
+ },
+ "Chainsecurity-Compound  cToken unredacted/compound-protocol-4a54ec5c55b66ea67d44b76f3056f0ed7229db8c/contracts/Timelock.sol": {
+  "target": "Chainsecurity-Compound  cToken unredacted/compound-protocol-4a54ec5c55b66ea67d44b76f3056f0ed7229db8c/contracts/Timelock.sol",
+  "id": "Timelock_711adb34",
+  "status": 0,
+  "rows": 2,
+  "sec": 2.2
+ },
+ "Chainsecurity-Compound  cToken unredacted/compound-protocol-4a54ec5c55b66ea67d44b76f3056f0ed7229db8c/contracts/Unitroller.sol": {
+  "target": "Chainsecurity-Compound  cToken unredacted/compound-protocol-4a54ec5c55b66ea67d44b76f3056f0ed7229db8c/contracts/Unitroller.sol",
+  "id": "Unitroller_f45e49fe",
+  "status": 0,
+  "rows": 4,
+  "sec": 2.1
+ },
+ "Chainsecurity-Compound  cToken unredacted/compound-protocol-4a54ec5c55b66ea67d44b76f3056f0ed7229db8c/contracts/WhitePaperInterestRateModel.sol": {
+  "target": "Chainsecurity-Compound  cToken unredacted/compound-protocol-4a54ec5c55b66ea67d44b76f3056f0ed7229db8c/contracts/WhitePaperInterestRateModel.sol",
+  "id": "WhitePaperInterestRateModel_5e754bf3",
+  "status": 0,
+  "rows": 3,
+  "sec": 2.1
+ },
+ "Chainsecurity-Compound  cToken unredacted/compound-protocol-4a54ec5c55b66ea67d44b76f3056f0ed7229db8c/contracts/Governance/Comp.sol": {
+  "target": "Chainsecurity-Compound  cToken unredacted/compound-protocol-4a54ec5c55b66ea67d44b76f3056f0ed7229db8c/contracts/Governance/Comp.sol",
+  "id": "Comp_4cd6f076",
+  "status": 0,
+  "rows": 12,
+  "sec": 10.6
+ },
+ "Chainsecurity-Primitive Finance  Core engine smart contracts/rmm-core-c44f8ca1ee43772ec4ba56e031bdb6fb8aac0ca3/contracts/PrimitiveFactory.sol": {
+  "target": "Chainsecurity-Primitive Finance  Core engine smart contracts/rmm-core-c44f8ca1ee43772ec4ba56e031bdb6fb8aac0ca3/contracts/PrimitiveFactory.sol",
+  "id": "PrimitiveFactory_13f8e76b",
+  "status": 0,
+  "rows": 2,
+  "sec": 4.4
+ },
+ "Chainsecurity-Primitive Finance  Core engine smart contracts/rmm-core-c44f8ca1ee43772ec4ba56e031bdb6fb8aac0ca3/contracts/libraries/Margin.sol": {
+  "target": "Chainsecurity-Primitive Finance  Core engine smart contracts/rmm-core-c44f8ca1ee43772ec4ba56e031bdb6fb8aac0ca3/contracts/libraries/Margin.sol",
+  "id": "Margin_2942150b",
+  "status": 0,
+  "rows": 2,
+  "sec": 1.8
+ },
+ "Chainsecurity-Primitive Finance  Core engine smart contracts/rmm-core-c44f8ca1ee43772ec4ba56e031bdb6fb8aac0ca3/contracts/libraries/ReplicationMath.sol": {
+  "target": "Chainsecurity-Primitive Finance  Core engine smart contracts/rmm-core-c44f8ca1ee43772ec4ba56e031bdb6fb8aac0ca3/contracts/libraries/ReplicationMath.sol",
+  "id": "ReplicationMath_5a8fb922",
+  "status": 0,
+  "rows": 4,
+  "sec": 5.9
+ },
+ "Chainsecurity-Primitive Finance  Core engine smart contracts/rmm-core-c44f8ca1ee43772ec4ba56e031bdb6fb8aac0ca3/contracts/libraries/Reserve.sol": {
+  "target": "Chainsecurity-Primitive Finance  Core engine smart contracts/rmm-core-c44f8ca1ee43772ec4ba56e031bdb6fb8aac0ca3/contracts/libraries/Reserve.sol",
+  "id": "Reserve_37d16089",
+  "status": 0,
+  "rows": 5,
+  "sec": 2.4
+ },
+ "Chainsecurity-Primitive Finance  Core engine smart contracts/rmm-core-c44f8ca1ee43772ec4ba56e031bdb6fb8aac0ca3/contracts/libraries/Transfers.sol": {
+  "target": "Chainsecurity-Primitive Finance  Core engine smart contracts/rmm-core-c44f8ca1ee43772ec4ba56e031bdb6fb8aac0ca3/contracts/libraries/Transfers.sol",
+  "id": "Transfers_6c3de270",
+  "status": 0,
+  "rows": 1,
+  "sec": 1.9
+ },
+ "Chainsecurity-Primitive Finance  Core engine smart contracts/rmm-core-c44f8ca1ee43772ec4ba56e031bdb6fb8aac0ca3/contracts/libraries/Units.sol": {
+  "target": "Chainsecurity-Primitive Finance  Core engine smart contracts/rmm-core-c44f8ca1ee43772ec4ba56e031bdb6fb8aac0ca3/contracts/libraries/Units.sol",
+  "id": "Units_6a4772a0",
+  "status": 0,
+  "rows": 4,
+  "sec": 2.9
+ },
+ "Chainsecurity-Primitive Finance  Core engine smart contracts/rmm-core-c44f8ca1ee43772ec4ba56e031bdb6fb8aac0ca3/contracts/libraries/CumulativeNormalDistribution.sol": {
+  "target": "Chainsecurity-Primitive Finance  Core engine smart contracts/rmm-core-c44f8ca1ee43772ec4ba56e031bdb6fb8aac0ca3/contracts/libraries/CumulativeNormalDistribution.sol",
+  "id": "CumulativeNormalDistribution_63d9325a",
+  "status": 0,
+  "rows": 5,
+  "sec": 17.9
+ },
+ "Chainsulting-ApeCoin/0x4d224452801ACEd8B2F0aebE155379bb5D594381/token/ERC20/ERC20.sol": {
+  "target": "Chainsulting-ApeCoin/0x4d224452801ACEd8B2F0aebE155379bb5D594381/token/ERC20/ERC20.sol",
+  "id": "ERC20_a06bd273",
+  "status": 0,
+  "rows": 8,
+  "sec": 4.1
+ },
+ "Chainsecurity-Primitive Finance  Core engine smart contracts/rmm-core-c44f8ca1ee43772ec4ba56e031bdb6fb8aac0ca3/contracts/PrimitiveEngine.sol": {
+  "target": "Chainsecurity-Primitive Finance  Core engine smart contracts/rmm-core-c44f8ca1ee43772ec4ba56e031bdb6fb8aac0ca3/contracts/PrimitiveEngine.sol",
+  "id": "PrimitiveEngine_58facc56",
+  "status": 0,
+  "rows": 13,
+  "sec": 20.9
+ },
+ "Chainsecurity-Compound  cToken unredacted/compound-protocol-4a54ec5c55b66ea67d44b76f3056f0ed7229db8c/contracts/CErc20Delegator.sol": {
+  "target": "Chainsecurity-Compound  cToken unredacted/compound-protocol-4a54ec5c55b66ea67d44b76f3056f0ed7229db8c/contracts/CErc20Delegator.sol",
+  "id": "CErc20Delegator_b72f0db4",
+  "status": 0,
+  "rows": 36,
+  "sec": 35.4
+ },
+ "Coinfabrik-MintingFactoryV2, BaseUpgradableMarketplace & KODAV3UpgradableGatedMarketplace/known-origin-contracts-v3-d592c5f4fa4e0b6fc65a1fce43e302706aedf607/contracts/access/legacy/SelfServiceAccessControls.sol": {
+  "target": "Coinfabrik-MintingFactoryV2, BaseUpgradableMarketplace & KODAV3UpgradableGatedMarketplace/known-origin-contracts-v3-d592c5f4fa4e0b6fc65a1fce43e302706aedf607/contracts/access/legacy/SelfServiceAccessControls.sol",
+  "id": "SelfServiceAccessControls_144ac416",
+  "status": 0,
+  "rows": 1,
+  "sec": 1.9
+ },
+ "Coinfabrik-MintingFactoryV2, BaseUpgradableMarketplace & KODAV3UpgradableGatedMarketplace/known-origin-contracts-v3-d592c5f4fa4e0b6fc65a1fce43e302706aedf607/contracts/access/legacy/libs/AccessControl.sol": {
+  "target": "Coinfabrik-MintingFactoryV2, BaseUpgradableMarketplace & KODAV3UpgradableGatedMarketplace/known-origin-contracts-v3-d592c5f4fa4e0b6fc65a1fce43e302706aedf607/contracts/access/legacy/libs/AccessControl.sol",
+  "id": "AccessControl_3bbcd2d5",
+  "status": 0,
+  "rows": 4,
+  "sec": 2.3
+ },
+ "Coinfabrik-MintingFactoryV2, BaseUpgradableMarketplace & KODAV3UpgradableGatedMarketplace/known-origin-contracts-v3-d592c5f4fa4e0b6fc65a1fce43e302706aedf607/contracts/access/legacy/libs/Ownable.sol": {
+  "target": "Coinfabrik-MintingFactoryV2, BaseUpgradableMarketplace & KODAV3UpgradableGatedMarketplace/known-origin-contracts-v3-d592c5f4fa4e0b6fc65a1fce43e302706aedf607/contracts/access/legacy/libs/Ownable.sol",
+  "id": "Ownable_f6d45c58",
+  "status": 0,
+  "rows": 1,
+  "sec": 1.9
+ },
+ "Coinfabrik-MintingFactoryV2, BaseUpgradableMarketplace & KODAV3UpgradableGatedMarketplace/known-origin-contracts-v3-d592c5f4fa4e0b6fc65a1fce43e302706aedf607/contracts/access/legacy/libs/RBAC.sol": {
+  "target": "Coinfabrik-MintingFactoryV2, BaseUpgradableMarketplace & KODAV3UpgradableGatedMarketplace/known-origin-contracts-v3-d592c5f4fa4e0b6fc65a1fce43e302706aedf607/contracts/access/legacy/libs/RBAC.sol",
+  "id": "RBAC_c76c0309",
+  "status": 0,
+  "rows": 2,
+  "sec": 1.9
+ },
+ "Coinfabrik-MintingFactoryV2, BaseUpgradableMarketplace & KODAV3UpgradableGatedMarketplace/known-origin-contracts-v3-d592c5f4fa4e0b6fc65a1fce43e302706aedf607/contracts/collab/handlers/CollabFundsHandlerBase.sol": {
+  "target": "Coinfabrik-MintingFactoryV2, BaseUpgradableMarketplace & KODAV3UpgradableGatedMarketplace/known-origin-contracts-v3-d592c5f4fa4e0b6fc65a1fce43e302706aedf607/contracts/collab/handlers/CollabFundsHandlerBase.sol",
+  "id": "CollabFundsHandlerBase_4287c43b",
+  "status": 0,
+  "rows": 1,
+  "sec": 2.1
+ },
+ "Coinfabrik-MintingFactoryV2, BaseUpgradableMarketplace & KODAV3UpgradableGatedMarketplace/known-origin-contracts-v3-d592c5f4fa4e0b6fc65a1fce43e302706aedf607/contracts/access/legacy/libs/Whitelist.sol": {
+  "target": "Coinfabrik-MintingFactoryV2, BaseUpgradableMarketplace & KODAV3UpgradableGatedMarketplace/known-origin-contracts-v3-d592c5f4fa4e0b6fc65a1fce43e302706aedf607/contracts/access/legacy/libs/Whitelist.sol",
+  "id": "Whitelist_a5be8b47",
+  "status": 0,
+  "rows": 5,
+  "sec": 2.1
+ },
+ "Coinfabrik-MintingFactoryV2, BaseUpgradableMarketplace & KODAV3UpgradableGatedMarketplace/known-origin-contracts-v3-d592c5f4fa4e0b6fc65a1fce43e302706aedf607/contracts/core/Konstants.sol": {
+  "target": "Coinfabrik-MintingFactoryV2, BaseUpgradableMarketplace & KODAV3UpgradableGatedMarketplace/known-origin-contracts-v3-d592c5f4fa4e0b6fc65a1fce43e302706aedf607/contracts/core/Konstants.sol",
+  "id": "Konstants_a90bec03",
+  "status": 0,
+  "rows": 1,
+  "sec": 1.9
+ },
+ "Coinfabrik-MintingFactoryV2, BaseUpgradableMarketplace & KODAV3UpgradableGatedMarketplace/known-origin-contracts-v3-d592c5f4fa4e0b6fc65a1fce43e302706aedf607/contracts/deployer/KOCreate2OmniDeployer.sol": {
+  "target": "Coinfabrik-MintingFactoryV2, BaseUpgradableMarketplace & KODAV3UpgradableGatedMarketplace/known-origin-contracts-v3-d592c5f4fa4e0b6fc65a1fce43e302706aedf607/contracts/deployer/KOCreate2OmniDeployer.sol",
+  "id": "KOCreate2OmniDeployer_ac91ecce",
+  "status": 0,
+  "rows": 1,
+  "sec": 1.7
+ },
+ "Coinfabrik-MintingFactoryV2, BaseUpgradableMarketplace & KODAV3UpgradableGatedMarketplace/known-origin-contracts-v3-d592c5f4fa4e0b6fc65a1fce43e302706aedf607/contracts/spikes/core/mixins/MintBatchViaSig.sol": {
+  "target": "Coinfabrik-MintingFactoryV2, BaseUpgradableMarketplace & KODAV3UpgradableGatedMarketplace/known-origin-contracts-v3-d592c5f4fa4e0b6fc65a1fce43e302706aedf607/contracts/spikes/core/mixins/MintBatchViaSig.sol",
+  "id": "MintBatchViaSig_caa96261",
+  "status": 0,
+  "rows": 1,
+  "sec": 2.2
+ },
+ "Coinfabrik-MintingFactoryV2, BaseUpgradableMarketplace & KODAV3UpgradableGatedMarketplace/known-origin-contracts-v3-d592c5f4fa4e0b6fc65a1fce43e302706aedf607/contracts/spikes/collaborators/handlers/FundsReceiver.sol": {
+  "target": "Coinfabrik-MintingFactoryV2, BaseUpgradableMarketplace & KODAV3UpgradableGatedMarketplace/known-origin-contracts-v3-d592c5f4fa4e0b6fc65a1fce43e302706aedf607/contracts/spikes/collaborators/handlers/FundsReceiver.sol",
+  "id": "FundsReceiver_22aff7d7",
+  "status": 0,
+  "rows": 1,
+  "sec": 1.9
+ },
+ "Chainsecurity-Primitive Finance  Core engine smart contracts/rmm-core-c44f8ca1ee43772ec4ba56e031bdb6fb8aac0ca3/contracts/libraries/ABDKMath64x64.sol": {
+  "target": "Chainsecurity-Primitive Finance  Core engine smart contracts/rmm-core-c44f8ca1ee43772ec4ba56e031bdb6fb8aac0ca3/contracts/libraries/ABDKMath64x64.sol",
+  "id": "ABDKMath64x64_c191f644",
+  "status": 0,
+  "rows": 21,
+  "sec": 26.4
+ },
+ "Coinfabrik-MintingFactoryV2, BaseUpgradableMarketplace & KODAV3UpgradableGatedMarketplace/known-origin-contracts-v3-d592c5f4fa4e0b6fc65a1fce43e302706aedf607/contracts/spikes/core/mixins/NFTPermit.sol": {
+  "target": "Coinfabrik-MintingFactoryV2, BaseUpgradableMarketplace & KODAV3UpgradableGatedMarketplace/known-origin-contracts-v3-d592c5f4fa4e0b6fc65a1fce43e302706aedf607/contracts/spikes/core/mixins/NFTPermit.sol",
+  "id": "NFTPermit_af064c40",
+  "status": 0,
+  "rows": 1,
+  "sec": 2.4
+ },
+ "Coinspect-Tempus Audit/tempus-protocol-ee5964bd416770e00639a4053b45f346e4bf8b93/contracts/stats/ChainlinkTokenPairPriceFeed/ChainlinkTokenPairPriceFeed.sol": {
+  "target": "Coinspect-Tempus Audit/tempus-protocol-ee5964bd416770e00639a4053b45f346e4bf8b93/contracts/stats/ChainlinkTokenPairPriceFeed/ChainlinkTokenPairPriceFeed.sol",
+  "id": "ChainlinkTokenPairPriceFeed_fb38b49e",
+  "status": 0,
+  "rows": 1,
+  "sec": 1.6
+ },
+ "Coinspect-Tempus Audit/tempus-protocol-ee5964bd416770e00639a4053b45f346e4bf8b93/contracts/math/Fixed256x18.sol": {
+  "target": "Coinspect-Tempus Audit/tempus-protocol-ee5964bd416770e00639a4053b45f346e4bf8b93/contracts/math/Fixed256x18.sol",
+  "id": "Fixed256x18_26aaf0d6",
+  "status": 0,
+  "rows": 2,
+  "sec": 1.8
+ },
+ "Cystack-AOC BEP-20 - v1.3/AOC_BEP0x53cB59f3Ee1035daD6b63F88d9150EA70a1f2605/contracts/library/DateTime.sol": {
+  "target": "Cystack-AOC BEP-20 - v1.3/AOC_BEP0x53cB59f3Ee1035daD6b63F88d9150EA70a1f2605/contracts/library/DateTime.sol",
+  "id": "DateTime_d687e924",
+  "status": 0,
+  "rows": 2,
+  "sec": 1.9
+ },
+ "HAECHI_AUDIT-Fractional/contracts-37f9428fe9a5596c93ed9dfccb7be41afc0646ee/src/ERC721VaultFactory.sol": {
+  "target": "HAECHI_AUDIT-Fractional/contracts-37f9428fe9a5596c93ed9dfccb7be41afc0646ee/src/ERC721VaultFactory.sol",
+  "id": "ERC721VaultFactory_c5dd3a1d",
+  "status": 0,
+  "rows": 1,
+  "sec": 2.8
+ },
+ "HAECHI_AUDIT-Fractional/contracts-37f9428fe9a5596c93ed9dfccb7be41afc0646ee/src/ERC721TokenVault.sol": {
+  "target": "HAECHI_AUDIT-Fractional/contracts-37f9428fe9a5596c93ed9dfccb7be41afc0646ee/src/ERC721TokenVault.sol",
+  "id": "ERC721TokenVault_a6ab271f",
+  "status": 0,
+  "rows": 13,
+  "sec": 5.3
+ },
+ "Hacken-Arkania Protocol/Code-4fe28aed2e2549ba649ed2edb6a11ef7d2ac73fd/AniaLottery.sol": {
+  "target": "Hacken-Arkania Protocol/Code-4fe28aed2e2549ba649ed2edb6a11ef7d2ac73fd/AniaLottery.sol",
+  "id": "AniaLottery_2f084b1e",
+  "status": 0,
+  "rows": 20,
+  "sec": 2.2
+ },
+ "HAECHI_AUDIT-Fractional/contracts-37f9428fe9a5596c93ed9dfccb7be41afc0646ee/src/IndexERC721.sol": {
+  "target": "HAECHI_AUDIT-Fractional/contracts-37f9428fe9a5596c93ed9dfccb7be41afc0646ee/src/IndexERC721.sol",
+  "id": "IndexERC721_a03b7cf4",
+  "status": 0,
+  "rows": 4,
+  "sec": 3.3
+ },
+ "Hacken-Arkania Protocol/Code-4fe28aed2e2549ba649ed2edb6a11ef7d2ac73fd/AniaStake.sol": {
+  "target": "Hacken-Arkania Protocol/Code-4fe28aed2e2549ba649ed2edb6a11ef7d2ac73fd/AniaStake.sol",
+  "id": "AniaStake_acba83e8",
+  "status": 0,
+  "rows": 8,
+  "sec": 1.9
+ },
+ "Cystack-AOC BEP-20 - v1.3/AOC_BEP0x53cB59f3Ee1035daD6b63F88d9150EA70a1f2605/contracts/AOC_BEP.sol": {
+  "target": "Cystack-AOC BEP-20 - v1.3/AOC_BEP0x53cB59f3Ee1035daD6b63F88d9150EA70a1f2605/contracts/AOC_BEP.sol",
+  "id": "AOC_BEP_5f9c6dc0",
+  "status": 0,
+  "rows": 16,
+  "sec": 13.2
+ },
+ "Cystack-AOC ERC-20 V2 - v1.2/AOC_ERC200x41cc978FaE6f34B25553A498D1e245FDF944FF3E/contracts/AOC_ERC20.sol": {
+  "target": "Cystack-AOC ERC-20 V2 - v1.2/AOC_ERC200x41cc978FaE6f34B25553A498D1e245FDF944FF3E/contracts/AOC_ERC20.sol",
+  "id": "AOC_ERC20_c66d7ee9",
+  "status": 0,
+  "rows": 16,
+  "sec": 13.4
+ },
+ "Hacken-Bolide-V1/contracts-9ca0cf09d7707bcbd942f0000f11059c5fb9c026/farming/contracts/libs/PancakeVoteProxy.sol": {
+  "target": "Hacken-Bolide-V1/contracts-9ca0cf09d7707bcbd942f0000f11059c5fb9c026/farming/contracts/libs/PancakeVoteProxy.sol",
+  "id": "PancakeVoteProxy_e8b09ed7",
+  "status": 0,
+  "rows": 2,
+  "sec": 2.1
+ },
+ "Hacken-CGU/CGUToken0x747D74dB20cc422F39ab54EDB2A3Ce21f3C98AF1/contracts/CGUToken.sol": {
+  "target": "Hacken-CGU/CGUToken0x747D74dB20cc422F39ab54EDB2A3Ce21f3C98AF1/contracts/CGUToken.sol",
+  "id": "CGUToken_cfa677fd",
+  "status": 0,
+  "rows": 9,
+  "sec": 4.3
+ },
+ "Hacken-CGU/CGUToken0x747D74dB20cc422F39ab54EDB2A3Ce21f3C98AF1/contracts/ERC20.sol": {
+  "target": "Hacken-CGU/CGUToken0x747D74dB20cc422F39ab54EDB2A3Ce21f3C98AF1/contracts/ERC20.sol",
+  "id": "ERC20_cf5813ae",
+  "status": 0,
+  "rows": 8,
+  "sec": 4.2
+ },
+ "Hacken-FoilNetwork/tge-seed-round-smart-contract-D3522A4628CE735058E57852AB1425600D296FC8/Lockup.sol": {
+  "target": "Hacken-FoilNetwork/tge-seed-round-smart-contract-D3522A4628CE735058E57852AB1425600D296FC8/Lockup.sol",
+  "id": "Lockup_bea75be1",
+  "status": 0,
+  "rows": 2,
+  "sec": 2.5
+ },
+ "Hacken-Forbitspace/forbitspaceX-bep20-19fc2b037b743e9f795709c72f004efe1109aaaf/contracts/libraries/Address.sol": {
+  "target": "Hacken-Forbitspace/forbitspaceX-bep20-19fc2b037b743e9f795709c72f004efe1109aaaf/contracts/libraries/Address.sol",
+  "id": "Address_07e397b6",
+  "status": 0,
+  "rows": 5,
+  "sec": 2.5
+ },
+ "Hacken-Forbitspace/forbitspaceX-bep20-19fc2b037b743e9f795709c72f004efe1109aaaf/contracts/libraries/Ownable.sol": {
+  "target": "Hacken-Forbitspace/forbitspaceX-bep20-19fc2b037b743e9f795709c72f004efe1109aaaf/contracts/libraries/Ownable.sol",
+  "id": "Ownable_91e03ff2",
+  "status": 0,
+  "rows": 2,
+  "sec": 2.4
+ },
+ "Hacken-Forbitspace/forbitspaceX-bep20-19fc2b037b743e9f795709c72f004efe1109aaaf/contracts/libraries/Payment.sol": {
+  "target": "Hacken-Forbitspace/forbitspaceX-bep20-19fc2b037b743e9f795709c72f004efe1109aaaf/contracts/libraries/Payment.sol",
+  "id": "Payment_5f352aea",
+  "status": 0,
+  "rows": 5,
+  "sec": 2.6
+ },
+ "Hacken-Forbitspace/forbitspaceX-bep20-19fc2b037b743e9f795709c72f004efe1109aaaf/contracts/libraries/SafeBEP20.sol": {
+  "target": "Hacken-Forbitspace/forbitspaceX-bep20-19fc2b037b743e9f795709c72f004efe1109aaaf/contracts/libraries/SafeBEP20.sol",
+  "id": "SafeBEP20_9a7b7ca9",
+  "status": 0,
+  "rows": 4,
+  "sec": 2.8
+ },
+ "Hacken-Forbitspace/forbitspaceX-bep20-19fc2b037b743e9f795709c72f004efe1109aaaf/contracts/libraries/SafeMath.sol": {
+  "target": "Hacken-Forbitspace/forbitspaceX-bep20-19fc2b037b743e9f795709c72f004efe1109aaaf/contracts/libraries/SafeMath.sol",
+  "id": "SafeMath_a182b41a",
+  "status": 0,
+  "rows": 10,
+  "sec": 2.5
+ },
+ "Hacken-GOGOcoin/gogo-contracts-0204c6d60f7aaa5c195573fbd0e8388c9bc4a2ef/contracts/libraries/Babylonian.sol": {
+  "target": "Hacken-GOGOcoin/gogo-contracts-0204c6d60f7aaa5c195573fbd0e8388c9bc4a2ef/contracts/libraries/Babylonian.sol",
+  "id": "Babylonian_59090c8d",
+  "status": 0,
+  "rows": 1,
+  "sec": 2.3
+ },
+ "Hacken-GOGOcoin/gogo-contracts-0204c6d60f7aaa5c195573fbd0e8388c9bc4a2ef/contracts/libraries/LowGasSafeMath.sol": {
+  "target": "Hacken-GOGOcoin/gogo-contracts-0204c6d60f7aaa5c195573fbd0e8388c9bc4a2ef/contracts/libraries/LowGasSafeMath.sol",
+  "id": "LowGasSafeMath_255d69ed",
+  "status": 0,
+  "rows": 1,
+  "sec": 2.2
+ },
+ "Hacken-PolkaBridge/PolkaBridge-DEX-21b662c48caf08242bfa01621bbbafc957e4ff31/factory/contracts/UniswapV2ERC20.sol": {
+  "target": "Hacken-PolkaBridge/PolkaBridge-DEX-21b662c48caf08242bfa01621bbbafc957e4ff31/factory/contracts/UniswapV2ERC20.sol",
+  "id": "UniswapV2ERC20_26c7123c",
+  "status": 0,
+  "rows": 4,
+  "sec": 3.3
+ },
+ "Hacken-PolkaBridge/PolkaBridge-DEX-21b662c48caf08242bfa01621bbbafc957e4ff31/factory/contracts/UniswapV2Factory.sol": {
+  "target": "Hacken-PolkaBridge/PolkaBridge-DEX-21b662c48caf08242bfa01621bbbafc957e4ff31/factory/contracts/UniswapV2Factory.sol",
+  "id": "UniswapV2Factory_9cd48a50",
+  "status": 0,
+  "rows": 2,
+  "sec": 3.2
+ },
+ "Hacken-PolkaBridge/PolkaBridge-DEX-21b662c48caf08242bfa01621bbbafc957e4ff31/factory/contracts/UniswapV2Pair.sol": {
+  "target": "Hacken-PolkaBridge/PolkaBridge-DEX-21b662c48caf08242bfa01621bbbafc957e4ff31/factory/contracts/UniswapV2Pair.sol",
+  "id": "UniswapV2Pair_3506098a",
+  "status": 0,
+  "rows": 6,
+  "sec": 5.6
+ },
+ "Hacken-PolkaBridge/PolkaBridge-DEX-21b662c48caf08242bfa01621bbbafc957e4ff31/factory/contracts/libraries/Math.sol": {
+  "target": "Hacken-PolkaBridge/PolkaBridge-DEX-21b662c48caf08242bfa01621bbbafc957e4ff31/factory/contracts/libraries/Math.sol",
+  "id": "Math_84d9779e",
+  "status": 0,
+  "rows": 2,
+  "sec": 2.4
+ },
+ "Hacken-PolkaBridge/PolkaBridge-DEX-21b662c48caf08242bfa01621bbbafc957e4ff31/factory/contracts/libraries/SafeMath.sol": {
+  "target": "Hacken-PolkaBridge/PolkaBridge-DEX-21b662c48caf08242bfa01621bbbafc957e4ff31/factory/contracts/libraries/SafeMath.sol",
+  "id": "SafeMath_fd530fc9",
+  "status": 0,
+  "rows": 2,
+  "sec": 2.1
+ },
+ "Hacken-PolkaBridge/PolkaBridge-DEX-21b662c48caf08242bfa01621bbbafc957e4ff31/factory/contracts/libraries/UQ112x112.sol": {
+  "target": "Hacken-PolkaBridge/PolkaBridge-DEX-21b662c48caf08242bfa01621bbbafc957e4ff31/factory/contracts/libraries/UQ112x112.sol",
+  "id": "UQ112x112_dd4b9fbd",
+  "status": 0,
+  "rows": 1,
+  "sec": 2.2
+ },
+ "Hacken-PolkaBridge/PolkaBridge-DEX-21b662c48caf08242bfa01621bbbafc957e4ff31/factory/contracts/utils/OwnableFactory.sol": {
+  "target": "Hacken-PolkaBridge/PolkaBridge-DEX-21b662c48caf08242bfa01621bbbafc957e4ff31/factory/contracts/utils/OwnableFactory.sol",
+  "id": "OwnableFactory_868101a6",
+  "status": 0,
+  "rows": 2,
+  "sec": 2.4
+ },
+ "Hacken-Samurai Legends/contract_samurai-legends-tokens-aff9f451dffc6854f29375ac21f8cedba8ee1101/contracts/Array.sol": {
+  "target": "Hacken-Samurai Legends/contract_samurai-legends-tokens-aff9f451dffc6854f29375ac21f8cedba8ee1101/contracts/Array.sol",
+  "id": "Array_c504bf03",
+  "status": 0,
+  "rows": 1,
+  "sec": 2.3
+ },
+ "Coinbae-SpaceMonkey/SpaceMonkey0x9298f766581650e81357f5C66C91cc003f2b75Aa/root/workspace/GXC/contracts/SPMK/SpaceMonkey.sol": {
+  "target": "Coinbae-SpaceMonkey/SpaceMonkey0x9298f766581650e81357f5C66C91cc003f2b75Aa/root/workspace/GXC/contracts/SPMK/SpaceMonkey.sol",
+  "id": "SpaceMonkey_84e54382",
+  "status": 0,
+  "rows": 37,
+  "sec": 207.9
+ },
+ "Hacken-Tenderize/tender-core-1fd606141625171fe792045ae9233890262d2d62/contracts/helpers/Multicall.sol": {
+  "target": "Hacken-Tenderize/tender-core-1fd606141625171fe792045ae9233890262d2d62/contracts/helpers/Multicall.sol",
+  "id": "Multicall_9da7b2b0",
+  "status": 0,
+  "rows": 1,
+  "sec": 2.5
+ },
+ "Hacken-Tenderize/tender-core-1fd606141625171fe792045ae9233890262d2d62/contracts/libs/MathUtils.sol": {
+  "target": "Hacken-Tenderize/tender-core-1fd606141625171fe792045ae9233890262d2d62/contracts/libs/MathUtils.sol",
+  "id": "MathUtils_63aacaec",
+  "status": 0,
+  "rows": 4,
+  "sec": 2.4
+ },
+ "Hacken-Tenderize/tender-core-1fd606141625171fe792045ae9233890262d2d62/contracts/tenderizer/WithdrawalLocks.sol": {
+  "target": "Hacken-Tenderize/tender-core-1fd606141625171fe792045ae9233890262d2d62/contracts/tenderizer/WithdrawalLocks.sol",
+  "id": "WithdrawalLocks_75ed0bcc",
+  "status": 0,
+  "rows": 1,
+  "sec": 2.3
+ },
+ "Hacken-Tenderize/tender-core-1fd606141625171fe792045ae9233890262d2d62/contracts/tenderizer/WithdrawalPools.sol": {
+  "target": "Hacken-Tenderize/tender-core-1fd606141625171fe792045ae9233890262d2d62/contracts/tenderizer/WithdrawalPools.sol",
+  "id": "WithdrawalPools_28f6d8f5",
+  "status": 0,
+  "rows": 8,
+  "sec": 3.7
+ },
+ "Hacken-Tenderize/tender-core-5b3b625d09e0bc02529946d9f2128af0c08c1a31/contracts/helpers/Multicall.sol": {
+  "target": "Hacken-Tenderize/tender-core-5b3b625d09e0bc02529946d9f2128af0c08c1a31/contracts/helpers/Multicall.sol",
+  "id": "Multicall_c590747b",
+  "status": 0,
+  "rows": 1,
+  "sec": 2.4
+ },
+ "Hacken-Travelcare/TravelCare0x826e5Ec70DbC5607fF9218011FBb97F9a8D97953/contracts/TravelCare.sol": {
+  "target": "Hacken-Travelcare/TravelCare0x826e5Ec70DbC5607fF9218011FBb97F9a8D97953/contracts/TravelCare.sol",
+  "id": "TravelCare_1e261514",
+  "status": 0,
+  "rows": 11,
+  "sec": 3.1
+ },
+ "Chainsecurity-Compound  cToken unredacted/compound-protocol-4a54ec5c55b66ea67d44b76f3056f0ed7229db8c/contracts/ExponentialNoError.sol": {
+  "target": "Chainsecurity-Compound  cToken unredacted/compound-protocol-4a54ec5c55b66ea67d44b76f3056f0ed7229db8c/contracts/ExponentialNoError.sol",
+  "id": "ExponentialNoError_0704cce4",
+  "status": 0,
+  "rows": 6,
+  "sec": 111.8
+ },
+ "Hacken-Valhalla/Solidity-70de7d9daccb6d812b2ab96f20fb4aa2605e2601/erc20/Address.sol": {
+  "target": "Hacken-Valhalla/Solidity-70de7d9daccb6d812b2ab96f20fb4aa2605e2601/erc20/Address.sol",
+  "id": "Address_e3215d42",
+  "status": 0,
+  "rows": 5,
+  "sec": 2.5
+ },
+ "Hacken-Valhalla/Solidity-70de7d9daccb6d812b2ab96f20fb4aa2605e2601/erc20/Ownable.sol": {
+  "target": "Hacken-Valhalla/Solidity-70de7d9daccb6d812b2ab96f20fb4aa2605e2601/erc20/Ownable.sol",
+  "id": "Ownable_6dabcb99",
+  "status": 0,
+  "rows": 2,
+  "sec": 2.6
+ },
+ "Hacken-Bitcoin SB-V2/code/BSB_StakingSmartStakers.sol": {
+  "target": "Hacken-Bitcoin SB-V2/code/BSB_StakingSmartStakers.sol",
+  "id": "BSB_StakingSmartStakers_c1079bac",
+  "status": 0,
+  "rows": 22,
+  "sec": 58.1
+ },
+ "Hacken-Bitcoin SB-V2/code/BSB_StakingSoftStakers.sol": {
+  "target": "Hacken-Bitcoin SB-V2/code/BSB_StakingSoftStakers.sol",
+  "id": "BSB_StakingSoftStakers_f553f17d",
+  "status": 0,
+  "rows": 22,
+  "sec": 58.4
+ },
+ "Hacken-Valhalla/Solidity-70de7d9daccb6d812b2ab96f20fb4aa2605e2601/erc721/Strings.sol": {
+  "target": "Hacken-Valhalla/Solidity-70de7d9daccb6d812b2ab96f20fb4aa2605e2601/erc721/Strings.sol",
+  "id": "Strings_523af327",
+  "status": 0,
+  "rows": 3,
+  "sec": 2.7
+ },
+ "Hacken-Valhalla/Solidity-70de7d9daccb6d812b2ab96f20fb4aa2605e2601/erc721/ERC721Enumerable.sol": {
+  "target": "Hacken-Valhalla/Solidity-70de7d9daccb6d812b2ab96f20fb4aa2605e2601/erc721/ERC721Enumerable.sol",
+  "id": "ERC721Enumerable_b7fa0b84",
+  "status": 0,
+  "rows": 7,
+  "sec": 3.7
+ },
+ "Hacken-Splash/splash-core-b38add0749f450a528197909005f6666cf609960/src/utils/ABDKMath64x64.sol": {
+  "target": "Hacken-Splash/splash-core-b38add0749f450a528197909005f6666cf609960/src/utils/ABDKMath64x64.sol",
+  "id": "ABDKMath64x64_f7d63bf3",
+  "status": 0,
+  "rows": 21,
+  "sec": 28.3
+ },
+ "Hacken-Bitcoin SB-V2/code/BSB_StakingStrongStakers.sol": {
+  "target": "Hacken-Bitcoin SB-V2/code/BSB_StakingStrongStakers.sol",
+  "id": "BSB_StakingStrongStakers_afdcd890",
+  "status": 0,
+  "rows": 22,
+  "sec": 60.3
+ },
+ "Hacken-Valhalla/Solidity-70de7d9daccb6d812b2ab96f20fb4aa2605e2601/market/SafeERC20.sol": {
+  "target": "Hacken-Valhalla/Solidity-70de7d9daccb6d812b2ab96f20fb4aa2605e2601/market/SafeERC20.sol",
+  "id": "SafeERC20_c435787e",
+  "status": 0,
+  "rows": 4,
+  "sec": 2.8
+ },
+ "Hacken-Valhalla/Solidity-70de7d9daccb6d812b2ab96f20fb4aa2605e2601/erc721/ERC721.sol": {
+  "target": "Hacken-Valhalla/Solidity-70de7d9daccb6d812b2ab96f20fb4aa2605e2601/erc721/ERC721.sol",
+  "id": "ERC721_11a83c96",
+  "status": 0,
+  "rows": 13,
+  "sec": 10.5
+ },
+ "Hacken-ZIXXAR INTERNATIONAL DISTRIBUTION SRL/staking-smart-contracts-e6ba771bba2a1e2c438202e246c963da2f3aa00f/Staking.sol": {
+  "target": "Hacken-ZIXXAR INTERNATIONAL DISTRIBUTION SRL/staking-smart-contracts-e6ba771bba2a1e2c438202e246c963da2f3aa00f/Staking.sol",
+  "id": "Staking_ee890a71",
+  "status": 0,
+  "rows": 5,
+  "sec": 3.5
+ },
+ "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/ARTHX/ARTHXTaxController.sol": {
+  "target": "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/ARTHX/ARTHXTaxController.sol",
+  "id": "ARTHXTaxController_1e0e2274",
+  "status": 0,
+  "rows": 1,
+  "sec": 3.0
+ },
+ "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/ARTHX/TokenVesting.sol": {
+  "target": "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/ARTHX/TokenVesting.sol",
+  "id": "TokenVesting_a4fc9d47",
+  "status": 0,
+  "rows": 4,
+  "sec": 3.1
+ },
+ "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/ARTHX/ARTHX.sol": {
+  "target": "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/ARTHX/ARTHX.sol",
+  "id": "ARTHX_05f1d579",
+  "status": 0,
+  "rows": 5,
+  "sec": 5.1
+ },
+ "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/Arth/ArthBridge.sol": {
+  "target": "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/Arth/ArthBridge.sol",
+  "id": "ArthBridge_9079192a",
+  "status": 0,
+  "rows": 2,
+  "sec": 2.8
+ },
+ "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/Arth/IncentiveControllerRouter.sol": {
+  "target": "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/Arth/IncentiveControllerRouter.sol",
+  "id": "IncentiveControllerRouter_40a70713",
+  "status": 0,
+  "rows": 1,
+  "sec": 2.9
+ },
+ "Hacken-Valhalla/Solidity-70de7d9daccb6d812b2ab96f20fb4aa2605e2601/erc721/mynft.sol": {
+  "target": "Hacken-Valhalla/Solidity-70de7d9daccb6d812b2ab96f20fb4aa2605e2601/erc721/mynft.sol",
+  "id": "mynft_f11b0ff6",
+  "status": 0,
+  "rows": 10,
+  "sec": 14.2
+ },
+ "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/Arth/Arth.sol": {
+  "target": "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/Arth/Arth.sol",
+  "id": "Arth_d738943e",
+  "status": 0,
+  "rows": 9,
+  "sec": 7.9
+ },
+ "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/Arth/Pools/ArthPoolLibrary.sol": {
+  "target": "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/Arth/Pools/ArthPoolLibrary.sol",
+  "id": "ArthPoolLibrary_0cb88b27",
+  "status": 0,
+  "rows": 3,
+  "sec": 2.9
+ },
+ "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/Curves/Sigmoid.sol": {
+  "target": "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/Curves/Sigmoid.sol",
+  "id": "Sigmoid_21a6a991",
+  "status": 0,
+  "rows": 6,
+  "sec": 2.9
+ },
+ "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/Arth/ArthController.sol": {
+  "target": "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/Arth/ArthController.sol",
+  "id": "ArthController_a496844e",
+  "status": 0,
+  "rows": 12,
+  "sec": 8.0
+ },
+ "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/ERC20/AnyswapV4Token.sol": {
+  "target": "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/ERC20/AnyswapV4Token.sol",
+  "id": "AnyswapV4Token_1c35c495",
+  "status": 0,
+  "rows": 7,
+  "sec": 4.9
+ },
+ "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/ERC20/ERC20.sol": {
+  "target": "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/ERC20/ERC20.sol",
+  "id": "ERC20_4f45c6a0",
+  "status": 0,
+  "rows": 10,
+  "sec": 5.7
+ },
+ "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/ERC20/SafeERC20.sol": {
+  "target": "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/ERC20/SafeERC20.sol",
+  "id": "SafeERC20_4171e14f",
+  "status": 0,
+  "rows": 4,
+  "sec": 2.7
+ },
+ "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/ERC20/PoolToken.sol": {
+  "target": "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/ERC20/PoolToken.sol",
+  "id": "PoolToken_b7250af8",
+  "status": 0,
+  "rows": 4,
+  "sec": 4.1
+ },
+ "Hacken-Valhalla/Solidity-70de7d9daccb6d812b2ab96f20fb4aa2605e2601/erc20/ERC20.sol": {
+  "target": "Hacken-Valhalla/Solidity-70de7d9daccb6d812b2ab96f20fb4aa2605e2601/erc20/ERC20.sol",
+  "id": "ERC20_31260819",
+  "status": 0,
+  "rows": 14,
+  "sec": 21.1
+ },
+ "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/ERC20/ERC20Custom.sol": {
+  "target": "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/ERC20/ERC20Custom.sol",
+  "id": "ERC20Custom_2c6ab768",
+  "status": 0,
+  "rows": 11,
+  "sec": 6.5
+ },
+ "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/ERC20/WETH.sol": {
+  "target": "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/ERC20/WETH.sol",
+  "id": "WETH_3f4ba140",
+  "status": 0,
+  "rows": 2,
+  "sec": 2.3
+ },
+ "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/ERC20/extensions/ERC20Permit.sol": {
+  "target": "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/ERC20/extensions/ERC20Permit.sol",
+  "id": "ERC20Permit_113442fe",
+  "status": 0,
+  "rows": 3,
+  "sec": 2.6
+ },
+ "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/Arth/IncentiveController.sol": {
+  "target": "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/Arth/IncentiveController.sol",
+  "id": "IncentiveController_473f4e73",
+  "status": 0,
+  "rows": 18,
+  "sec": 18.3
+ },
+ "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/ERC20/Variants/SushiToken.sol": {
+  "target": "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/ERC20/Variants/SushiToken.sol",
+  "id": "SushiToken_7d9b9f28",
+  "status": 0,
+  "rows": 8,
+  "sec": 5.5
+ },
+ "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/Genesis/BondingCurve.sol": {
+  "target": "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/Genesis/BondingCurve.sol",
+  "id": "BondingCurve_92357fc5",
+  "status": 0,
+  "rows": 1,
+  "sec": 1.9
+ },
+ "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/ERC20/extensions/ERC20Snapshot.sol": {
+  "target": "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/ERC20/extensions/ERC20Snapshot.sol",
+  "id": "ERC20Snapshot_048d0243",
+  "status": 0,
+  "rows": 7,
+  "sec": 6.0
+ },
+ "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/Governance/Timelock.sol": {
+  "target": "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/Governance/Timelock.sol",
+  "id": "Timelock_627aba94",
+  "status": 0,
+  "rows": 2,
+  "sec": 2.4
+ },
+ "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/Oracle/ChainlinkETHUSDPriceConsumer.sol": {
+  "target": "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/Oracle/ChainlinkETHUSDPriceConsumer.sol",
+  "id": "ChainlinkETHUSDPriceConsumer_701b561e",
+  "status": 0,
+  "rows": 4,
+  "sec": 2.3
+ },
+ "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/Oracle/UniswapPairOracle.sol": {
+  "target": "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/Oracle/UniswapPairOracle.sol",
+  "id": "UniswapPairOracle_438dc37b",
+  "status": 0,
+  "rows": 3,
+  "sec": 2.7
+ },
+ "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/Genesis/Genesis.sol": {
+  "target": "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/Genesis/Genesis.sol",
+  "id": "Genesis_95428455",
+  "status": 0,
+  "rows": 10,
+  "sec": 5.2
+ },
+ "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/Router/ArthPoolRouter.sol": {
+  "target": "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/Router/ArthPoolRouter.sol",
+  "id": "ArthPoolRouter_cc6088ae",
+  "status": 0,
+  "rows": 12,
+  "sec": 3.2
+ },
+ "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/Router/ArthPoolRouterWithPermit.sol": {
+  "target": "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/Router/ArthPoolRouterWithPermit.sol",
+  "id": "ArthPoolRouterWithPermit_1be3f0bf",
+  "status": 0,
+  "rows": 8,
+  "sec": 3.0
+ },
+ "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/ERC20/Variants/Comp.sol": {
+  "target": "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/ERC20/Variants/Comp.sol",
+  "id": "Comp_7e6f9eb1",
+  "status": 0,
+  "rows": 12,
+  "sec": 13.6
+ },
+ "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/Staking/Pausable.sol": {
+  "target": "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/Staking/Pausable.sol",
+  "id": "Pausable_f7149687",
+  "status": 0,
+  "rows": 1,
+  "sec": 2.1
+ },
+ "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/access/AccessControl.sol": {
+  "target": "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/access/AccessControl.sol",
+  "id": "AccessControl_3a459df9",
+  "status": 0,
+  "rows": 6,
+  "sec": 2.4
+ },
+ "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/amos/ArthPoolInvestorForV2.sol": {
+  "target": "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/amos/ArthPoolInvestorForV2.sol",
+  "id": "ArthPoolInvestorForV2_6f02898f",
+  "status": 0,
+  "rows": 16,
+  "sec": 6.8
+ },
+ "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/security/PullPayment.sol": {
+  "target": "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/security/PullPayment.sol",
+  "id": "PullPayment_f7a61772",
+  "status": 0,
+  "rows": 3,
+  "sec": 1.7
+ },
+ "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/amos/ArthLendingAMO.sol": {
+  "target": "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/amos/ArthLendingAMO.sol",
+  "id": "ArthLendingAMO_f944e9ba",
+  "status": 0,
+  "rows": 22,
+  "sec": 10.4
+ },
+ "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/utils/Arrays.sol": {
+  "target": "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/utils/Arrays.sol",
+  "id": "Arrays_13624ea9",
+  "status": 0,
+  "rows": 1,
+  "sec": 1.9
+ },
+ "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/utils/Address.sol": {
+  "target": "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/utils/Address.sol",
+  "id": "Address_dfba818b",
+  "status": 0,
+  "rows": 5,
+  "sec": 1.9
+ },
+ "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/utils/Counters.sol": {
+  "target": "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/utils/Counters.sol",
+  "id": "Counters_88d998e0",
+  "status": 0,
+  "rows": 1,
+  "sec": 2.0
+ },
+ "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/utils/EnumerableSet.sol": {
+  "target": "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/utils/EnumerableSet.sol",
+  "id": "EnumerableSet_00a5097d",
+  "status": 0,
+  "rows": 2,
+  "sec": 2.6
+ },
+ "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/utils/Strings.sol": {
+  "target": "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/utils/Strings.sol",
+  "id": "Strings_0fcc6c39",
+  "status": 0,
+  "rows": 3,
+  "sec": 2.2
+ },
+ "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/utils/StringHelpers.sol": {
+  "target": "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/utils/StringHelpers.sol",
+  "id": "StringHelpers_5cb89c4e",
+  "status": 0,
+  "rows": 7,
+  "sec": 4.5
+ },
+ "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/utils/cryptography/ECDSA.sol": {
+  "target": "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/utils/cryptography/ECDSA.sol",
+  "id": "ECDSA_5ea0c716",
+  "status": 0,
+  "rows": 1,
+  "sec": 1.7
+ },
+ "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/utils/cryptography/MerkleProof.sol": {
+  "target": "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/utils/cryptography/MerkleProof.sol",
+  "id": "MerkleProof_8206f06e",
+  "status": 0,
+  "rows": 1,
+  "sec": 1.9
+ },
+ "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/utils/cryptography/draft-EIP712.sol": {
+  "target": "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/utils/cryptography/draft-EIP712.sol",
+  "id": "draft-EIP712_e5acb14d",
+  "status": 0,
+  "rows": 1,
+  "sec": 2.1
+ },
+ "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/Arth/Pools/ArthPool.sol": {
+  "target": "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/Arth/Pools/ArthPool.sol",
+  "id": "ArthPool_bebc77b4",
+  "status": 0,
+  "rows": 25,
+  "sec": 50.8
+ },
+ "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/utils/escrow/ConditionalEscrow.sol": {
+  "target": "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/utils/escrow/ConditionalEscrow.sol",
+  "id": "ConditionalEscrow_0682e33d",
+  "status": 0,
+  "rows": 1,
+  "sec": 2.0
+ },
+ "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/utils/escrow/Escrow.sol": {
+  "target": "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/utils/escrow/Escrow.sol",
+  "id": "Escrow_099102c9",
+  "status": 0,
+  "rows": 1,
+  "sec": 2.0
+ },
+ "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/utils/escrow/RefundEscrow.sol": {
+  "target": "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/utils/escrow/RefundEscrow.sol",
+  "id": "RefundEscrow_62b55cd5",
+  "status": 0,
+  "rows": 5,
+  "sec": 2.4
+ },
+ "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/utils/introspection/ERC165Storage.sol": {
+  "target": "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/utils/introspection/ERC165Storage.sol",
+  "id": "ERC165Storage_6cedb99a",
+  "status": 0,
+  "rows": 1,
+  "sec": 2.0
+ },
+ "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/utils/introspection/ERC165Checker.sol": {
+  "target": "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/utils/introspection/ERC165Checker.sol",
+  "id": "ERC165Checker_859115a2",
+  "status": 0,
+  "rows": 3,
+  "sec": 2.4
+ },
+ "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/utils/math/Babylonian.sol": {
+  "target": "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/utils/math/Babylonian.sol",
+  "id": "Babylonian_3868e726",
+  "status": 0,
+  "rows": 1,
+  "sec": 1.9
+ },
+ "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/utils/introspection/ERC1820Implementer.sol": {
+  "target": "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/utils/introspection/ERC1820Implementer.sol",
+  "id": "ERC1820Implementer_09439869",
+  "status": 0,
+  "rows": 1,
+  "sec": 2.0
+ },
+ "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/utils/math/Math.sol": {
+  "target": "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/utils/math/Math.sol",
+  "id": "Math_d2bca4e4",
+  "status": 0,
+  "rows": 4,
+  "sec": 2.0
+ },
+ "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/Staking/StakingRewardsDual.sol": {
+  "target": "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/Staking/StakingRewardsDual.sol",
+  "id": "StakingRewardsDual_f83592cb",
+  "status": 0,
+  "rows": 18,
+  "sec": 30.7
+ },
+ "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/utils/math/SafeDecimalMath.sol": {
+  "target": "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/utils/math/SafeDecimalMath.sol",
+  "id": "SafeDecimalMath_5635b109",
+  "status": 0,
+  "rows": 4,
+  "sec": 2.0
+ },
+ "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/utils/math/FixedPoint.sol": {
+  "target": "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/utils/math/FixedPoint.sol",
+  "id": "FixedPoint_6b430155",
+  "status": 0,
+  "rows": 4,
+  "sec": 5.3
+ },
+ "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/utils/math/SafeMath.sol": {
+  "target": "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/utils/math/SafeMath.sol",
+  "id": "SafeMath_47787708",
+  "status": 0,
+  "rows": 10,
+  "sec": 1.9
+ },
+ "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/utils/math/SignedSafeMath.sol": {
+  "target": "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/utils/math/SignedSafeMath.sol",
+  "id": "SignedSafeMath_a571a6f6",
+  "status": 0,
+  "rows": 2,
+  "sec": 1.6
+ },
+ "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/utils/structs/EnumerableSet.sol": {
+  "target": "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/utils/structs/EnumerableSet.sol",
+  "id": "EnumerableSet_a21c3593",
+  "status": 0,
+  "rows": 2,
+  "sec": 2.5
+ },
+ "Inspex-Admin & Poll/iAM-Admin-Poll-Token-main/access/Adminnable.sol": {
+  "target": "Inspex-Admin & Poll/iAM-Admin-Poll-Token-main/access/Adminnable.sol",
+  "id": "Adminnable_e305201d",
+  "status": 0,
+  "rows": 1,
+  "sec": 2.0
+ },
+ "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/utils/structs/EnumerableMap.sol": {
+  "target": "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/utils/structs/EnumerableMap.sol",
+  "id": "EnumerableMap_055c0044",
+  "status": 0,
+  "rows": 3,
+  "sec": 3.9
+ },
+ "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/Staking/StakingRewards.sol": {
+  "target": "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/Staking/StakingRewards.sol",
+  "id": "StakingRewards_4ae532aa",
+  "status": 0,
+  "rows": 22,
+  "sec": 38.0
+ },
+ "Inspex-Admin & Poll/iAM-Admin-Poll-Token-main/admin/adminManage.sol": {
+  "target": "Inspex-Admin & Poll/iAM-Admin-Poll-Token-main/admin/adminManage.sol",
+  "id": "adminManage_42599c82",
+  "status": 0,
+  "rows": 7,
+  "sec": 2.3
+ },
+ "Inspex-Admin & Poll/iAM-Admin-Poll-Token-main/libraries/Bytes32.sol": {
+  "target": "Inspex-Admin & Poll/iAM-Admin-Poll-Token-main/libraries/Bytes32.sol",
+  "id": "Bytes32_6ebb80c8",
+  "status": 0,
+  "rows": 1,
+  "sec": 2.0
+ },
+ "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/utils/math/MagnitudesAndPowers.sol": {
+  "target": "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/utils/math/MagnitudesAndPowers.sol",
+  "id": "MagnitudesAndPowers_d5a36b39",
+  "status": 0,
+  "rows": 2,
+  "sec": 10.0
+ },
+ "Inspex-Revenue Sharing Pool & Shield/LuckyLion-RevenueSharing-342db925e80c9e62fce7505d24431e3d82199b87/contracts/utils/Counters.sol": {
+  "target": "Inspex-Revenue Sharing Pool & Shield/LuckyLion-RevenueSharing-342db925e80c9e62fce7505d24431e3d82199b87/contracts/utils/Counters.sol",
+  "id": "Counters_2b9257ff",
+  "status": 0,
+  "rows": 1,
+  "sec": 1.9
+ },
+ "Inspex-xALPACA/xALPACA-contract-8c58dd3aaade09ae51de49dc44e7784fd63efa53/contracts/8.7/GrassHouseGateway.sol": {
+  "target": "Inspex-xALPACA/xALPACA-contract-8c58dd3aaade09ae51de49dc44e7784fd63efa53/contracts/8.7/GrassHouseGateway.sol",
+  "id": "GrassHouseGateway_70f148eb",
+  "status": 0,
+  "rows": 1,
+  "sec": 1.7
+ },
+ "Inspex-Token & Vesting/MooMonster-Contract-2d07e927e5e8f66afea5cbdfb89b32ef74cfe385/contracts/TImelock.sol": {
+  "target": "Inspex-Token & Vesting/MooMonster-Contract-2d07e927e5e8f66afea5cbdfb89b32ef74cfe385/contracts/TImelock.sol",
+  "id": "TImelock_5bf4f8b4",
+  "status": 0,
+  "rows": 4,
+  "sec": 2.5
+ },
+ "Inspex-xALPACA/xALPACA-contract-8c58dd3aaade09ae51de49dc44e7784fd63efa53/contracts/8.7/SafeToken.sol": {
+  "target": "Inspex-xALPACA/xALPACA-contract-8c58dd3aaade09ae51de49dc44e7784fd63efa53/contracts/8.7/SafeToken.sol",
+  "id": "SafeToken_622bb2b7",
+  "status": 0,
+  "rows": 4,
+  "sec": 1.9
+ },
+ "Inspex-SimpliChef, Token, ZapBSC & Broker/simpli-smart-contract-4823d1ebbd84a35dd7e8f9fd7f5207ef5c85c419/contracts/timelock/access/AccessControl.sol": {
+  "target": "Inspex-SimpliChef, Token, ZapBSC & Broker/simpli-smart-contract-4823d1ebbd84a35dd7e8f9fd7f5207ef5c85c419/contracts/timelock/access/AccessControl.sol",
+  "id": "AccessControl_c7635bbf",
+  "status": 0,
+  "rows": 7,
+  "sec": 3.1
+ },
+ "Inspex-xALPACA/xALPACA-contract-ef03ba7873f7f252b074e0b521ea93537abdedb9/contracts/8.10/GrassHouseGateway.sol": {
+  "target": "Inspex-xALPACA/xALPACA-contract-ef03ba7873f7f252b074e0b521ea93537abdedb9/contracts/8.10/GrassHouseGateway.sol",
+  "id": "GrassHouseGateway_061aeff8",
+  "status": 0,
+  "rows": 1,
+  "sec": 1.9
+ },
+ "Inspex-xALPACA/xALPACA-contract-ef03ba7873f7f252b074e0b521ea93537abdedb9/contracts/8.10/utils/Math128.sol": {
+  "target": "Inspex-xALPACA/xALPACA-contract-ef03ba7873f7f252b074e0b521ea93537abdedb9/contracts/8.10/utils/Math128.sol",
+  "id": "Math128_e86d4c09",
+  "status": 0,
+  "rows": 2,
+  "sec": 1.9
+ },
+ "Inspex-xALPACA/xALPACA-contract-ef03ba7873f7f252b074e0b521ea93537abdedb9/contracts/8.10/SafeToken.sol": {
+  "target": "Inspex-xALPACA/xALPACA-contract-ef03ba7873f7f252b074e0b521ea93537abdedb9/contracts/8.10/SafeToken.sol",
+  "id": "SafeToken_004179b9",
+  "status": 0,
+  "rows": 4,
+  "sec": 2.0
+ },
+ "Inspex-SimpliChef, Token, ZapBSC & Broker/simpli-smart-contract-4823d1ebbd84a35dd7e8f9fd7f5207ef5c85c419/contracts/timelock/TimelockController.sol": {
+  "target": "Inspex-SimpliChef, Token, ZapBSC & Broker/simpli-smart-contract-4823d1ebbd84a35dd7e8f9fd7f5207ef5c85c419/contracts/timelock/TimelockController.sol",
+  "id": "TimelockController_561f5c55",
+  "status": 0,
+  "rows": 11,
+  "sec": 6.2
+ },
+ "PeckShield-AaveV3/code/aave-v3-core-14f6148e21b477d78347db6a1603039c9559e275/contracts/dependencies/weth/WETH9.sol": {
+  "target": "PeckShield-AaveV3/code/aave-v3-core-14f6148e21b477d78347db6a1603039c9559e275/contracts/dependencies/weth/WETH9.sol",
+  "id": "WETH9_ac3dbc1a",
+  "status": 0,
+  "rows": 3,
+  "sec": 2.9
+ },
+ "PeckShield-AaveV3/code/aave-v3-core-14f6148e21b477d78347db6a1603039c9559e275/contracts/deployments/ReservesSetupHelper.sol": {
+  "target": "PeckShield-AaveV3/code/aave-v3-core-14f6148e21b477d78347db6a1603039c9559e275/contracts/deployments/ReservesSetupHelper.sol",
+  "id": "ReservesSetupHelper_2a1e3a5d",
+  "status": 0,
+  "rows": 1,
+  "sec": 3.0
+ },
+ "PeckShield-AaveV3/code/aave-v3-core-14f6148e21b477d78347db6a1603039c9559e275/contracts/misc/AaveProtocolDataProvider.sol": {
+  "target": "PeckShield-AaveV3/code/aave-v3-core-14f6148e21b477d78347db6a1603039c9559e275/contracts/misc/AaveProtocolDataProvider.sol",
+  "id": "AaveProtocolDataProvider_bf88b1b0",
+  "status": 0,
+  "rows": 14,
+  "sec": 2.8
+ },
+ "PeckShield-AaveV3/code/aave-v3-core-14f6148e21b477d78347db6a1603039c9559e275/contracts/protocol/configuration/PoolAddressesProvider.sol": {
+  "target": "PeckShield-AaveV3/code/aave-v3-core-14f6148e21b477d78347db6a1603039c9559e275/contracts/protocol/configuration/PoolAddressesProvider.sol",
+  "id": "PoolAddressesProvider_7e67b88b",
+  "status": 0,
+  "rows": 12,
+  "sec": 1.9
+ },
+ "PeckShield-AaveV3/code/aave-v3-core-14f6148e21b477d78347db6a1603039c9559e275/contracts/misc/AaveOracle.sol": {
+  "target": "PeckShield-AaveV3/code/aave-v3-core-14f6148e21b477d78347db6a1603039c9559e275/contracts/misc/AaveOracle.sol",
+  "id": "AaveOracle_7cdb95cd",
+  "status": 0,
+  "rows": 6,
+  "sec": 4.4
+ },
+ "PeckShield-AaveV3/code/aave-v3-core-14f6148e21b477d78347db6a1603039c9559e275/contracts/protocol/configuration/PriceOracleSentinel.sol": {
+  "target": "PeckShield-AaveV3/code/aave-v3-core-14f6148e21b477d78347db6a1603039c9559e275/contracts/protocol/configuration/PriceOracleSentinel.sol",
+  "id": "PriceOracleSentinel_538430a4",
+  "status": 0,
+  "rows": 3,
+  "sec": 2.0
+ },
+ "PeckShield-AaveV3/code/aave-v3-core-14f6148e21b477d78347db6a1603039c9559e275/contracts/protocol/configuration/PoolAddressesProviderRegistry.sol": {
+  "target": "PeckShield-AaveV3/code/aave-v3-core-14f6148e21b477d78347db6a1603039c9559e275/contracts/protocol/configuration/PoolAddressesProviderRegistry.sol",
+  "id": "PoolAddressesProviderRegistry_c5f648b6",
+  "status": 0,
+  "rows": 3,
+  "sec": 2.2
+ },
+ "PeckShield-AaveV3/code/aave-v3-core-14f6148e21b477d78347db6a1603039c9559e275/contracts/protocol/libraries/aave-upgradeability/BaseImmutableAdminUpgradeabilityProxy.sol": {
+  "target": "PeckShield-AaveV3/code/aave-v3-core-14f6148e21b477d78347db6a1603039c9559e275/contracts/protocol/libraries/aave-upgradeability/BaseImmutableAdminUpgradeabilityProxy.sol",
+  "id": "BaseImmutableAdminUpgradeabilityProxy_2b7f1e83",
+  "status": 0,
+  "rows": 3,
+  "sec": 2.3
+ },
+ "PeckShield-AaveV3/code/aave-v3-core-14f6148e21b477d78347db6a1603039c9559e275/contracts/protocol/libraries/configuration/ReserveConfiguration.sol": {
+  "target": "PeckShield-AaveV3/code/aave-v3-core-14f6148e21b477d78347db6a1603039c9559e275/contracts/protocol/libraries/configuration/ReserveConfiguration.sol",
+  "id": "ReserveConfiguration_363c9518",
+  "status": 0,
+  "rows": 7,
+  "sec": 2.1
+ },
+ "PeckShield-AaveV3/code/aave-v3-core-14f6148e21b477d78347db6a1603039c9559e275/contracts/protocol/libraries/helpers/Helpers.sol": {
+  "target": "PeckShield-AaveV3/code/aave-v3-core-14f6148e21b477d78347db6a1603039c9559e275/contracts/protocol/libraries/helpers/Helpers.sol",
+  "id": "Helpers_750f3dbc",
+  "status": 0,
+  "rows": 2,
+  "sec": 1.8
+ },
+ "PeckShield-AaveV3/code/aave-v3-core-14f6148e21b477d78347db6a1603039c9559e275/contracts/protocol/libraries/configuration/UserConfiguration.sol": {
+  "target": "PeckShield-AaveV3/code/aave-v3-core-14f6148e21b477d78347db6a1603039c9559e275/contracts/protocol/libraries/configuration/UserConfiguration.sol",
+  "id": "UserConfiguration_61db21ab",
+  "status": 0,
+  "rows": 7,
+  "sec": 2.1
+ },
+ "PeckShield-AaveV3/code/aave-v3-core-14f6148e21b477d78347db6a1603039c9559e275/contracts/protocol/configuration/ACLManager.sol": {
+  "target": "PeckShield-AaveV3/code/aave-v3-core-14f6148e21b477d78347db6a1603039c9559e275/contracts/protocol/configuration/ACLManager.sol",
+  "id": "ACLManager_0402c14f",
+  "status": 0,
+  "rows": 19,
+  "sec": 7.0
+ },
+ "PeckShield-AaveV3/code/aave-v3-core-14f6148e21b477d78347db6a1603039c9559e275/contracts/protocol/libraries/logic/ConfiguratorLogic.sol": {
+  "target": "PeckShield-AaveV3/code/aave-v3-core-14f6148e21b477d78347db6a1603039c9559e275/contracts/protocol/libraries/logic/ConfiguratorLogic.sol",
+  "id": "ConfiguratorLogic_5ecb317f",
+  "status": 0,
+  "rows": 6,
+  "sec": 2.4
+ },
+ "PeckShield-AaveV3/code/aave-v3-core-14f6148e21b477d78347db6a1603039c9559e275/contracts/protocol/libraries/logic/BridgeLogic.sol": {
+  "target": "PeckShield-AaveV3/code/aave-v3-core-14f6148e21b477d78347db6a1603039c9559e275/contracts/protocol/libraries/logic/BridgeLogic.sol",
+  "id": "BridgeLogic_b7dd98b9",
+  "status": 0,
+  "rows": 2,
+  "sec": 3.0
+ },
+ "PeckShield-AaveV3/code/aave-v3-core-14f6148e21b477d78347db6a1603039c9559e275/contracts/protocol/libraries/logic/BorrowLogic.sol": {
+  "target": "PeckShield-AaveV3/code/aave-v3-core-14f6148e21b477d78347db6a1603039c9559e275/contracts/protocol/libraries/logic/BorrowLogic.sol",
+  "id": "BorrowLogic_7463c8f8",
+  "status": 0,
+  "rows": 4,
+  "sec": 3.2
+ },
+ "PeckShield-AaveV3/code/aave-v3-core-14f6148e21b477d78347db6a1603039c9559e275/contracts/protocol/libraries/logic/EModeLogic.sol": {
+  "target": "PeckShield-AaveV3/code/aave-v3-core-14f6148e21b477d78347db6a1603039c9559e275/contracts/protocol/libraries/logic/EModeLogic.sol",
+  "id": "EModeLogic_53c7bade",
+  "status": 0,
+  "rows": 1,
+  "sec": 2.9
+ },
+ "PeckShield-AaveV3/code/aave-v3-core-14f6148e21b477d78347db6a1603039c9559e275/contracts/protocol/libraries/logic/FlashLoanLogic.sol": {
+  "target": "PeckShield-AaveV3/code/aave-v3-core-14f6148e21b477d78347db6a1603039c9559e275/contracts/protocol/libraries/logic/FlashLoanLogic.sol",
+  "id": "FlashLoanLogic_cbeffac2",
+  "status": 0,
+  "rows": 2,
+  "sec": 3.5
+ },
+ "PeckShield-AaveV3/code/aave-v3-core-14f6148e21b477d78347db6a1603039c9559e275/contracts/protocol/libraries/logic/GenericLogic.sol": {
+  "target": "PeckShield-AaveV3/code/aave-v3-core-14f6148e21b477d78347db6a1603039c9559e275/contracts/protocol/libraries/logic/GenericLogic.sol",
+  "id": "GenericLogic_9e5b23cc",
+  "status": 0,
+  "rows": 2,
+  "sec": 2.6
+ },
+ "PeckShield-AaveV3/code/aave-v3-core-14f6148e21b477d78347db6a1603039c9559e275/contracts/protocol/libraries/logic/ReserveLogic.sol": {
+  "target": "PeckShield-AaveV3/code/aave-v3-core-14f6148e21b477d78347db6a1603039c9559e275/contracts/protocol/libraries/logic/ReserveLogic.sol",
+  "id": "ReserveLogic_f07ed9c5",
+  "status": 0,
+  "rows": 7,
+  "sec": 2.5
+ },
+ "PeckShield-AaveV3/code/aave-v3-core-14f6148e21b477d78347db6a1603039c9559e275/contracts/protocol/libraries/logic/LiquidationLogic.sol": {
+  "target": "PeckShield-AaveV3/code/aave-v3-core-14f6148e21b477d78347db6a1603039c9559e275/contracts/protocol/libraries/logic/LiquidationLogic.sol",
+  "id": "LiquidationLogic_df765d6f",
+  "status": 0,
+  "rows": 2,
+  "sec": 3.3
+ },
+ "PeckShield-AaveV3/code/aave-v3-core-14f6148e21b477d78347db6a1603039c9559e275/contracts/protocol/libraries/logic/SupplyLogic.sol": {
+  "target": "PeckShield-AaveV3/code/aave-v3-core-14f6148e21b477d78347db6a1603039c9559e275/contracts/protocol/libraries/logic/SupplyLogic.sol",
+  "id": "SupplyLogic_037c38b6",
+  "status": 0,
+  "rows": 4,
+  "sec": 3.5
+ },
+ "PeckShield-AaveV3/code/aave-v3-core-14f6148e21b477d78347db6a1603039c9559e275/contracts/protocol/libraries/math/PercentageMath.sol": {
+  "target": "PeckShield-AaveV3/code/aave-v3-core-14f6148e21b477d78347db6a1603039c9559e275/contracts/protocol/libraries/math/PercentageMath.sol",
+  "id": "PercentageMath_b9cd8b11",
+  "status": 0,
+  "rows": 2,
+  "sec": 2.1
+ },
+ "PeckShield-AaveV3/code/aave-v3-core-14f6148e21b477d78347db6a1603039c9559e275/contracts/protocol/libraries/math/MathUtils.sol": {
+  "target": "PeckShield-AaveV3/code/aave-v3-core-14f6148e21b477d78347db6a1603039c9559e275/contracts/protocol/libraries/math/MathUtils.sol",
+  "id": "MathUtils_8bdabdcd",
+  "status": 0,
+  "rows": 2,
+  "sec": 2.4
+ },
+ "PeckShield-AaveV3/code/aave-v3-core-14f6148e21b477d78347db6a1603039c9559e275/contracts/protocol/libraries/logic/ValidationLogic.sol": {
+  "target": "PeckShield-AaveV3/code/aave-v3-core-14f6148e21b477d78347db6a1603039c9559e275/contracts/protocol/libraries/logic/ValidationLogic.sol",
+  "id": "ValidationLogic_2b370493",
+  "status": 0,
+  "rows": 13,
+  "sec": 3.0
+ },
+ "PeckShield-AaveV3/code/aave-v3-core-14f6148e21b477d78347db6a1603039c9559e275/contracts/protocol/libraries/math/WadRayMath.sol": {
+  "target": "PeckShield-AaveV3/code/aave-v3-core-14f6148e21b477d78347db6a1603039c9559e275/contracts/protocol/libraries/math/WadRayMath.sol",
+  "id": "WadRayMath_6a97aa23",
+  "status": 0,
+  "rows": 6,
+  "sec": 2.3
+ },
+ "PeckShield-AaveV3/code/aave-v3-core-14f6148e21b477d78347db6a1603039c9559e275/contracts/protocol/pool/DefaultReserveInterestRateStrategy.sol": {
+  "target": "PeckShield-AaveV3/code/aave-v3-core-14f6148e21b477d78347db6a1603039c9559e275/contracts/protocol/pool/DefaultReserveInterestRateStrategy.sol",
+  "id": "DefaultReserveInterestRateStrategy_542e434d",
+  "status": 0,
+  "rows": 3,
+  "sec": 2.1
+ },
+ "PeckShield-AaveV3/code/aave-v3-core-14f6148e21b477d78347db6a1603039c9559e275/contracts/protocol/tokenization/AToken.sol": {
+  "target": "PeckShield-AaveV3/code/aave-v3-core-14f6148e21b477d78347db6a1603039c9559e275/contracts/protocol/tokenization/AToken.sol",
+  "id": "AToken_c4caaada",
+  "status": 0,
+  "rows": 13,
+  "sec": 2.5
+ },
+ "PeckShield-AaveV3/code/aave-v3-core-14f6148e21b477d78347db6a1603039c9559e275/contracts/protocol/tokenization/IncentivizedERC20.sol": {
+  "target": "PeckShield-AaveV3/code/aave-v3-core-14f6148e21b477d78347db6a1603039c9559e275/contracts/protocol/tokenization/IncentivizedERC20.sol",
+  "id": "IncentivizedERC20_6e26a343",
+  "status": 0,
+  "rows": 8,
+  "sec": 2.2
+ },
+ "PeckShield-AaveV3/code/aave-v3-core-14f6148e21b477d78347db6a1603039c9559e275/contracts/protocol/pool/PoolConfigurator.sol": {
+  "target": "PeckShield-AaveV3/code/aave-v3-core-14f6148e21b477d78347db6a1603039c9559e275/contracts/protocol/pool/PoolConfigurator.sol",
+  "id": "PoolConfigurator_4832e4e1",
+  "status": 0,
+  "rows": 35,
+  "sec": 2.9
+ },
+ "PeckShield-AaveV3/code/aave-v3-core-14f6148e21b477d78347db6a1603039c9559e275/contracts/protocol/tokenization/DelegationAwareAToken.sol": {
+  "target": "PeckShield-AaveV3/code/aave-v3-core-14f6148e21b477d78347db6a1603039c9559e275/contracts/protocol/tokenization/DelegationAwareAToken.sol",
+  "id": "DelegationAwareAToken_6ba4e7fb",
+  "status": 0,
+  "rows": 1,
+  "sec": 2.5
+ },
+ "PeckShield-AaveV3/code/aave-v3-core-14f6148e21b477d78347db6a1603039c9559e275/contracts/protocol/pool/Pool.sol": {
+  "target": "PeckShield-AaveV3/code/aave-v3-core-14f6148e21b477d78347db6a1603039c9559e275/contracts/protocol/pool/Pool.sol",
+  "id": "Pool_ed7a711b",
+  "status": 0,
+  "rows": 28,
+  "sec": 4.9
+ },
+ "PeckShield-AaveV3/code/aave-v3-core-14f6148e21b477d78347db6a1603039c9559e275/contracts/protocol/tokenization/base/DebtTokenBase.sol": {
+  "target": "PeckShield-AaveV3/code/aave-v3-core-14f6148e21b477d78347db6a1603039c9559e275/contracts/protocol/tokenization/base/DebtTokenBase.sol",
+  "id": "DebtTokenBase_e3aa8861",
+  "status": 0,
+  "rows": 3,
+  "sec": 2.3
+ },
+ "PeckShield-AaveV3/code/aave-v3-core-14f6148e21b477d78347db6a1603039c9559e275/contracts/protocol/tokenization/VariableDebtToken.sol": {
+  "target": "PeckShield-AaveV3/code/aave-v3-core-14f6148e21b477d78347db6a1603039c9559e275/contracts/protocol/tokenization/VariableDebtToken.sol",
+  "id": "VariableDebtToken_60935858",
+  "status": 0,
+  "rows": 8,
+  "sec": 2.5
+ },
+ "PeckShield-AaveV3/code/aave-v3-core-14f6148e21b477d78347db6a1603039c9559e275/contracts/protocol/tokenization/StableDebtToken.sol": {
+  "target": "PeckShield-AaveV3/code/aave-v3-core-14f6148e21b477d78347db6a1603039c9559e275/contracts/protocol/tokenization/StableDebtToken.sol",
+  "id": "StableDebtToken_6105c060",
+  "status": 0,
+  "rows": 12,
+  "sec": 2.7
+ },
+ "PeckShield-COGI/cogi_contracts-c5dc614395f77a5b07c83223e5c8bac9d14d2e2c/contracts/common/meta-transactions/ContextMixin.sol": {
+  "target": "PeckShield-COGI/cogi_contracts-c5dc614395f77a5b07c83223e5c8bac9d14d2e2c/contracts/common/meta-transactions/ContextMixin.sol",
+  "id": "ContextMixin_ea4ddedb",
+  "status": 0,
+  "rows": 1,
+  "sec": 2.2
+ },
+ "PeckShield-Convex_Frax/frax-cvx-platform-2f8573ee796daa022c1050b4a749bf08049c439b/contracts/contracts/FeeRegistry.sol": {
+  "target": "PeckShield-Convex_Frax/frax-cvx-platform-2f8573ee796daa022c1050b4a749bf08049c439b/contracts/contracts/FeeRegistry.sol",
+  "id": "FeeRegistry_43411ba1",
+  "status": 0,
+  "rows": 1,
+  "sec": 2.1
+ },
+ "PeckShield-Convex_Frax/frax-cvx-platform-2f8573ee796daa022c1050b4a749bf08049c439b/contracts/contracts/interfaces/MathUtil.sol": {
+  "target": "PeckShield-Convex_Frax/frax-cvx-platform-2f8573ee796daa022c1050b4a749bf08049c439b/contracts/contracts/interfaces/MathUtil.sol",
+  "id": "MathUtil_059d569e",
+  "status": 0,
+  "rows": 1,
+  "sec": 2.1
+ },
+ "PeckShield-Donut/crossroad-550a8c3c010dc8c1a46ea9191d3841462bd58d82/contracts/utils/TransferHelper.sol": {
+  "target": "PeckShield-Donut/crossroad-550a8c3c010dc8c1a46ea9191d3841462bd58d82/contracts/utils/TransferHelper.sol",
+  "id": "TransferHelper_72707d83",
+  "status": 0,
+  "rows": 1,
+  "sec": 2.1
+ },
+ "PeckShield-Convex_Frax/frax-cvx-platform-2f8573ee796daa022c1050b4a749bf08049c439b/contracts/contracts/PoolRegistry.sol": {
+  "target": "PeckShield-Convex_Frax/frax-cvx-platform-2f8573ee796daa022c1050b4a749bf08049c439b/contracts/contracts/PoolRegistry.sol",
+  "id": "PoolRegistry_8eaee45b",
+  "status": 0,
+  "rows": 2,
+  "sec": 2.3
+ },
+ "PeckShield-Duet_Bond/duet-bond-contract-549f7d3a4973a918cb12059cc1ef3f2ace56d9bc/contracts/ERC20Clonable.sol": {
+  "target": "PeckShield-Duet_Bond/duet-bond-contract-549f7d3a4973a918cb12059cc1ef3f2ace56d9bc/contracts/ERC20Clonable.sol",
+  "id": "ERC20Clonable_b42b266c",
+  "status": 0,
+  "rows": 8,
+  "sec": 3.0
+ },
+ "PeckShield-Hegic(v8888)/Hegic-v8888-2dcd44dc1ae07881e94d52fa618f9704bfd4ffda/contracts/utils/Math.sol": {
+  "target": "PeckShield-Hegic(v8888)/Hegic-v8888-2dcd44dc1ae07881e94d52fa618f9704bfd4ffda/contracts/utils/Math.sol",
+  "id": "Math_9e1d3b6e",
+  "status": 0,
+  "rows": 1,
+  "sec": 2.0
+ },
+ "PeckShield-Hegic_HardCore_Beta/hegic-hardcore-beta-e22e6f67f1ce99e1317fc52fa325b496464a95bd/contracts/utils/Math.sol": {
+  "target": "PeckShield-Hegic_HardCore_Beta/hegic-hardcore-beta-e22e6f67f1ce99e1317fc52fa325b496464a95bd/contracts/utils/Math.sol",
+  "id": "Math_365802a7",
+  "status": 0,
+  "rows": 1,
+  "sec": 2.0
+ },
+ "PeckShield-Hegic_HardCore_Beta/hegic-hardcore-beta-e22e6f67f1ce99e1317fc52fa325b496464a95bd/contracts/BondingCurve/buysell.sol": {
+  "target": "PeckShield-Hegic_HardCore_Beta/hegic-hardcore-beta-e22e6f67f1ce99e1317fc52fa325b496464a95bd/contracts/BondingCurve/buysell.sol",
+  "id": "buysell_59b65245",
+  "status": 0,
+  "rows": 2,
+  "sec": 2.2
+ },
+ "PeckShield-IronLend/iron-lend-f9a669850885895215579e3c2ae8d7124f0ef5c8/src/0.8.4/libs/Babylonian.sol": {
+  "target": "PeckShield-IronLend/iron-lend-f9a669850885895215579e3c2ae8d7124f0ef5c8/src/0.8.4/libs/Babylonian.sol",
+  "id": "Babylonian_d4426e8e",
+  "status": 0,
+  "rows": 1,
+  "sec": 2.0
+ },
+ "PeckShield-LensProtocol/lens-protocol-dd137b2dee64c5edf288df297ee4249a0e6c11d4/contracts/core/base/LensMultiState.sol": {
+  "target": "PeckShield-LensProtocol/lens-protocol-dd137b2dee64c5edf288df297ee4249a0e6c11d4/contracts/core/base/LensMultiState.sol",
+  "id": "LensMultiState_a3fc0a3d",
+  "status": 0,
+  "rows": 2,
+  "sec": 2.1
+ },
+ "PeckShield-LensProtocol/lens-protocol-dd137b2dee64c5edf288df297ee4249a0e6c11d4/contracts/core/modules/FeeModuleBase.sol": {
+  "target": "PeckShield-LensProtocol/lens-protocol-dd137b2dee64c5edf288df297ee4249a0e6c11d4/contracts/core/modules/FeeModuleBase.sol",
+  "id": "FeeModuleBase_d1f5e2bf",
+  "status": 0,
+  "rows": 3,
+  "sec": 2.3
+ },
+ "PeckShield-KaoyaSwap/contracts-8273073f1d6914f372790399378f177573c52e37/betting.sol": {
+  "target": "PeckShield-KaoyaSwap/contracts-8273073f1d6914f372790399378f177573c52e37/betting.sol",
+  "id": "betting_9bf96d3b",
+  "status": 0,
+  "rows": 4,
+  "sec": 2.8
+ },
+ "PeckShield-LensProtocol/lens-protocol-dd137b2dee64c5edf288df297ee4249a0e6c11d4/contracts/libraries/Helpers.sol": {
+  "target": "PeckShield-LensProtocol/lens-protocol-dd137b2dee64c5edf288df297ee4249a0e6c11d4/contracts/libraries/Helpers.sol",
+  "id": "Helpers_b74f23b3",
+  "status": 0,
+  "rows": 1,
+  "sec": 2.5
+ },
+ "PeckShield-LensProtocol/lens-protocol-dd137b2dee64c5edf288df297ee4249a0e6c11d4/contracts/core/modules/ModuleGlobals.sol": {
+  "target": "PeckShield-LensProtocol/lens-protocol-dd137b2dee64c5edf288df297ee4249a0e6c11d4/contracts/core/modules/ModuleGlobals.sol",
+  "id": "ModuleGlobals_fc62139a",
+  "status": 0,
+  "rows": 8,
+  "sec": 2.9
+ },
+ "PeckShield-Duet_Bond/duet-bond-contract-549f7d3a4973a918cb12059cc1ef3f2ace56d9bc/contracts/Pool.sol": {
+  "target": "PeckShield-Duet_Bond/duet-bond-contract-549f7d3a4973a918cb12059cc1ef3f2ace56d9bc/contracts/Pool.sol",
+  "id": "Pool_ed43a21f",
+  "status": 0,
+  "rows": 11,
+  "sec": 4.9
+ },
+ "PeckShield-VeChain/vvet-818fa11f7595e257cb28fa5475c17c60c11a4902/vvet/contracts/StakingModel.sol": {
+  "target": "PeckShield-VeChain/vvet-818fa11f7595e257cb28fa5475c17c60c11a4902/vvet/contracts/StakingModel.sol",
+  "id": "StakingModel_eacb9b6a",
+  "status": 0,
+  "rows": 7,
+  "sec": 3.0
+ },
+ "QuillAudits-1inch-Farming/farming-7a007ec7784cca2899889e99e46cf06d5788a7d9/contracts/accounting/UserAccounting.sol": {
+  "target": "QuillAudits-1inch-Farming/farming-7a007ec7784cca2899889e99e46cf06d5788a7d9/contracts/accounting/UserAccounting.sol",
+  "id": "UserAccounting_08dc3812",
+  "status": 0,
+  "rows": 4,
+  "sec": 2.5
+ },
+ "QuillAudits-AQEX Token Smart Contract/erc-20-token-3628abfa6ea2636866f7d5ad1f8cc570b0d5bb1b/Ownable.sol": {
+  "target": "QuillAudits-AQEX Token Smart Contract/erc-20-token-3628abfa6ea2636866f7d5ad1f8cc570b0d5bb1b/Ownable.sol",
+  "id": "Ownable_37ecc4c6",
+  "status": 0,
+  "rows": 2,
+  "sec": 2.1
+ },
+ "PeckShield-VeChain/vvet-818fa11f7595e257cb28fa5475c17c60c11a4902/vvet/contracts/VVET9.sol": {
+  "target": "PeckShield-VeChain/vvet-818fa11f7595e257cb28fa5475c17c60c11a4902/vvet/contracts/VVET9.sol",
+  "id": "VVET9_334e6a15",
+  "status": 0,
+  "rows": 6,
+  "sec": 3.7
+ },
+ "PeckShield-LensProtocol/lens-protocol-dd137b2dee64c5edf288df297ee4249a0e6c11d4/contracts/libraries/PublishingLogic.sol": {
+  "target": "PeckShield-LensProtocol/lens-protocol-dd137b2dee64c5edf288df297ee4249a0e6c11d4/contracts/libraries/PublishingLogic.sol",
+  "id": "PublishingLogic_1718839c",
+  "status": 0,
+  "rows": 9,
+  "sec": 5.7
+ },
+ "QuillAudits-AgriUT Smart Contract/AgriUT-2b175e68240e67cfebe30272cb374555f2a460fb/AgriUTToken.sol": {
+  "target": "QuillAudits-AgriUT Smart Contract/AgriUT-2b175e68240e67cfebe30272cb374555f2a460fb/AgriUTToken.sol",
+  "id": "AgriUTToken_e7325884",
+  "status": 0,
+  "rows": 10,
+  "sec": 3.1
+ },
+ "QuillAudits-Amplify Smart Contract/contracts-d8af5f11f3b6ab59d09a56ebc229012900dc1cc8/protocol/contracts/Asset/Asset.sol": {
+  "target": "QuillAudits-Amplify Smart Contract/contracts-d8af5f11f3b6ab59d09a56ebc229012900dc1cc8/protocol/contracts/Asset/Asset.sol",
+  "id": "Asset_0064a1bb",
+  "status": 0,
+  "rows": 7,
+  "sec": 2.0
+ },
+ "QuillAudits-AgriUT Smart Contract/AgriUT-a3638774be81be9f113ae0ddc54f4a5b84038947/AgriUTToken.sol": {
+  "target": "QuillAudits-AgriUT Smart Contract/AgriUT-a3638774be81be9f113ae0ddc54f4a5b84038947/AgriUTToken.sol",
+  "id": "AgriUTToken_efcf52be",
+  "status": 0,
+  "rows": 10,
+  "sec": 3.2
+ },
+ "QuillAudits-Amplify Smart Contract/contracts-d8af5f11f3b6ab59d09a56ebc229012900dc1cc8/protocol/contracts/Controller/StableCoin.sol": {
+  "target": "QuillAudits-Amplify Smart Contract/contracts-d8af5f11f3b6ab59d09a56ebc229012900dc1cc8/protocol/contracts/Controller/StableCoin.sol",
+  "id": "StableCoin_bb5e73ab",
+  "status": 0,
+  "rows": 2,
+  "sec": 2.2
+ },
+ "QuillAudits-Amplify Smart Contract/contracts-d8af5f11f3b6ab59d09a56ebc229012900dc1cc8/protocol/contracts/Controller/Controller.sol": {
+  "target": "QuillAudits-Amplify Smart Contract/contracts-d8af5f11f3b6ab59d09a56ebc229012900dc1cc8/protocol/contracts/Controller/Controller.sol",
+  "id": "Controller_5e5fc878",
+  "status": 0,
+  "rows": 36,
+  "sec": 3.2
+ },
+ "QuillAudits-Amplify Smart Contract/contracts-d8af5f11f3b6ab59d09a56ebc229012900dc1cc8/protocol/contracts/ERC20/ERC20.sol": {
+  "target": "QuillAudits-Amplify Smart Contract/contracts-d8af5f11f3b6ab59d09a56ebc229012900dc1cc8/protocol/contracts/ERC20/ERC20.sol",
+  "id": "ERC20_2b0d4e7e",
+  "status": 0,
+  "rows": 6,
+  "sec": 2.6
+ },
+ "QuillAudits-Amplify Smart Contract/contracts-d8af5f11f3b6ab59d09a56ebc229012900dc1cc8/protocol/contracts/ERC20/ERC20Burnable.sol": {
+  "target": "QuillAudits-Amplify Smart Contract/contracts-d8af5f11f3b6ab59d09a56ebc229012900dc1cc8/protocol/contracts/ERC20/ERC20Burnable.sol",
+  "id": "ERC20Burnable_9fa5c3bb",
+  "status": 0,
+  "rows": 2,
+  "sec": 2.3
+ },
+ "QuillAudits-Amplify Smart Contract/contracts-d8af5f11f3b6ab59d09a56ebc229012900dc1cc8/protocol/contracts/ERC20/ERC20Mintable.sol": {
+  "target": "QuillAudits-Amplify Smart Contract/contracts-d8af5f11f3b6ab59d09a56ebc229012900dc1cc8/protocol/contracts/ERC20/ERC20Mintable.sol",
+  "id": "ERC20Mintable_8e4f103e",
+  "status": 0,
+  "rows": 1,
+  "sec": 2.3
+ },
+ "QuillAudits-Amplify Smart Contract/contracts-d8af5f11f3b6ab59d09a56ebc229012900dc1cc8/protocol/contracts/ERC721/ERC721URIStorage.sol": {
+  "target": "QuillAudits-Amplify Smart Contract/contracts-d8af5f11f3b6ab59d09a56ebc229012900dc1cc8/protocol/contracts/ERC721/ERC721URIStorage.sol",
+  "id": "ERC721URIStorage_a81f76cc",
+  "status": 0,
+  "rows": 1,
+  "sec": 2.3
+ },
+ "QuillAudits-Amplify Smart Contract/contracts-d8af5f11f3b6ab59d09a56ebc229012900dc1cc8/protocol/contracts/ERC721/ERC721.sol": {
+  "target": "QuillAudits-Amplify Smart Contract/contracts-d8af5f11f3b6ab59d09a56ebc229012900dc1cc8/protocol/contracts/ERC721/ERC721.sol",
+  "id": "ERC721_be8d6992",
+  "status": 0,
+  "rows": 7,
+  "sec": 4.6
+ },
+ "QuillAudits-Amplify Smart Contract/contracts-d8af5f11f3b6ab59d09a56ebc229012900dc1cc8/protocol/contracts/Governance/VotingEscrow.sol": {
+  "target": "QuillAudits-Amplify Smart Contract/contracts-d8af5f11f3b6ab59d09a56ebc229012900dc1cc8/protocol/contracts/Governance/VotingEscrow.sol",
+  "id": "VotingEscrow_02ba21bc",
+  "status": 0,
+  "rows": 16,
+  "sec": 2.6
+ },
+ "QuillAudits-Amplify Smart Contract/contracts-d8af5f11f3b6ab59d09a56ebc229012900dc1cc8/protocol/contracts/InterestRate/WhitePaperInterestRateModel.sol": {
+  "target": "QuillAudits-Amplify Smart Contract/contracts-d8af5f11f3b6ab59d09a56ebc229012900dc1cc8/protocol/contracts/InterestRate/WhitePaperInterestRateModel.sol",
+  "id": "WhitePaperInterestRateModel_ae4ffd88",
+  "status": 0,
+  "rows": 3,
+  "sec": 2.0
+ },
+ "QuillAudits-Amplify Smart Contract/contracts-d8af5f11f3b6ab59d09a56ebc229012900dc1cc8/protocol/contracts/Governance/AMPT.sol": {
+  "target": "QuillAudits-Amplify Smart Contract/contracts-d8af5f11f3b6ab59d09a56ebc229012900dc1cc8/protocol/contracts/Governance/AMPT.sol",
+  "id": "AMPT_34a137ee",
+  "status": 0,
+  "rows": 13,
+  "sec": 5.5
+ },
+ "QuillAudits-Amplify Smart Contract/contracts-d8af5f11f3b6ab59d09a56ebc229012900dc1cc8/protocol/contracts/Liquidity/Borrower.sol": {
+  "target": "QuillAudits-Amplify Smart Contract/contracts-d8af5f11f3b6ab59d09a56ebc229012900dc1cc8/protocol/contracts/Liquidity/Borrower.sol",
+  "id": "Borrower_6d46a2b2",
+  "status": 0,
+  "rows": 11,
+  "sec": 1.8
+ },
+ "QuillAudits-Amplify Smart Contract/contracts-d8af5f11f3b6ab59d09a56ebc229012900dc1cc8/protocol/contracts/Liquidity/Lender.sol": {
+  "target": "QuillAudits-Amplify Smart Contract/contracts-d8af5f11f3b6ab59d09a56ebc229012900dc1cc8/protocol/contracts/Liquidity/Lender.sol",
+  "id": "Lender_82be97a5",
+  "status": 0,
+  "rows": 7,
+  "sec": 2.2
+ },
+ "QuillAudits-Amplify Smart Contract/contracts-d8af5f11f3b6ab59d09a56ebc229012900dc1cc8/protocol/contracts/Governance/AMPTChild.sol": {
+  "target": "QuillAudits-Amplify Smart Contract/contracts-d8af5f11f3b6ab59d09a56ebc229012900dc1cc8/protocol/contracts/Governance/AMPTChild.sol",
+  "id": "AMPTChild_10491ce7",
+  "status": 0,
+  "rows": 15,
+  "sec": 6.3
+ },
+ "QuillAudits-Amplify Smart Contract/contracts-d8af5f11f3b6ab59d09a56ebc229012900dc1cc8/protocol/contracts/Liquidity/Pool.sol": {
+  "target": "QuillAudits-Amplify Smart Contract/contracts-d8af5f11f3b6ab59d09a56ebc229012900dc1cc8/protocol/contracts/Liquidity/Pool.sol",
+  "id": "Pool_8f87b735",
+  "status": 0,
+  "rows": 26,
+  "sec": 2.8
+ },
+ "QuillAudits-Amplify Smart Contract/contracts-d8af5f11f3b6ab59d09a56ebc229012900dc1cc8/protocol/contracts/LossProvisionPool/LossProvisionPool.sol": {
+  "target": "QuillAudits-Amplify Smart Contract/contracts-d8af5f11f3b6ab59d09a56ebc229012900dc1cc8/protocol/contracts/LossProvisionPool/LossProvisionPool.sol",
+  "id": "LossProvisionPool_f7b03572",
+  "status": 0,
+  "rows": 4,
+  "sec": 2.8
+ },
+ "QuillAudits-Amplify Smart Contract/contracts-d8af5f11f3b6ab59d09a56ebc229012900dc1cc8/protocol/contracts/Vesting/VestingFactory.sol": {
+  "target": "QuillAudits-Amplify Smart Contract/contracts-d8af5f11f3b6ab59d09a56ebc229012900dc1cc8/protocol/contracts/Vesting/VestingFactory.sol",
+  "id": "VestingFactory_23745b14",
+  "status": 0,
+  "rows": 1,
+  "sec": 2.6
+ },
+ "QuillAudits-Amplify Smart Contract/contracts-d8af5f11f3b6ab59d09a56ebc229012900dc1cc8/protocol/contracts/utils/CarefulMath.sol": {
+  "target": "QuillAudits-Amplify Smart Contract/contracts-d8af5f11f3b6ab59d09a56ebc229012900dc1cc8/protocol/contracts/utils/CarefulMath.sol",
+  "id": "CarefulMath_a99ae347",
+  "status": 0,
+  "rows": 6,
+  "sec": 2.3
+ },
+ "QuillAudits-Amplify Smart Contract/contracts-d8af5f11f3b6ab59d09a56ebc229012900dc1cc8/protocol/contracts/utils/ErrorReporter.sol": {
+  "target": "QuillAudits-Amplify Smart Contract/contracts-d8af5f11f3b6ab59d09a56ebc229012900dc1cc8/protocol/contracts/utils/ErrorReporter.sol",
+  "id": "ErrorReporter_9884ca96",
+  "status": 0,
+  "rows": 1,
+  "sec": 1.7
+ },
+ "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/Staking/StakingRewardsDualV2.sol": {
+  "target": "ImmuneBytes-MahaDAO (Genesis.sol)-Audit Report/arthcoin-v2-95fac3e9dca2af67c974f2f87c2c385c4bc03df2/contracts/Staking/StakingRewardsDualV2.sol",
+  "id": "StakingRewardsDualV2_91973e0e",
+  "status": 0,
+  "rows": 32,
+  "sec": 86.7
+ },
+ "QuillAudits-Amplify Smart Contract/contracts-d8af5f11f3b6ab59d09a56ebc229012900dc1cc8/protocol/contracts/utils/Exponential.sol": {
+  "target": "QuillAudits-Amplify Smart Contract/contracts-d8af5f11f3b6ab59d09a56ebc229012900dc1cc8/protocol/contracts/utils/Exponential.sol",
+  "id": "Exponential_1b9b062f",
+  "status": 0,
+  "rows": 7,
+  "sec": 2.3
+ },
+ "QuillAudits-Amplify Smart Contract/contracts-d8af5f11f3b6ab59d09a56ebc229012900dc1cc8/protocol/contracts/utils/SmartWalletWhitelist.sol": {
+  "target": "QuillAudits-Amplify Smart Contract/contracts-d8af5f11f3b6ab59d09a56ebc229012900dc1cc8/protocol/contracts/utils/SmartWalletWhitelist.sol",
+  "id": "SmartWalletWhitelist_c57f2e1b",
+  "status": 0,
+  "rows": 1,
+  "sec": 2.0
+ },
+ "QuillAudits-Checkdot Smart Contract/CheckdotERC20Contract-8a47ef13ace93e0bd473fb1c3893790569a2adc8/contracts/CheckDot.sol": {
+  "target": "QuillAudits-Checkdot Smart Contract/CheckdotERC20Contract-8a47ef13ace93e0bd473fb1c3893790569a2adc8/contracts/CheckDot.sol",
+  "id": "CheckDot_a3cd6969",
+  "status": 0,
+  "rows": 1,
+  "sec": 2.0
+ },
+ "QuillAudits-Big League Smart Contract/code/StandardToken.sol": {
+  "target": "QuillAudits-Big League Smart Contract/code/StandardToken.sol",
+  "id": "StandardToken_bda6bcc5",
+  "status": 0,
+  "rows": 9,
+  "sec": 3.5
+ },
+ "QuillAudits-Amplify Smart Contract/contracts-d8af5f11f3b6ab59d09a56ebc229012900dc1cc8/protocol/contracts/Vesting/Vesting.sol": {
+  "target": "QuillAudits-Amplify Smart Contract/contracts-d8af5f11f3b6ab59d09a56ebc229012900dc1cc8/protocol/contracts/Vesting/Vesting.sol",
+  "id": "Vesting_37804481",
+  "status": 0,
+  "rows": 16,
+  "sec": 10.7
+ },
+ "QuillAudits-Amplify_Child_Token_Smart_Contract/contracts-31526ea5e5c5a1c308d0065aab1f57ec8d765fc6/AMPTChild.sol": {
+  "target": "QuillAudits-Amplify_Child_Token_Smart_Contract/contracts-31526ea5e5c5a1c308d0065aab1f57ec8d765fc6/AMPTChild.sol",
+  "id": "AMPTChild_506988c1",
+  "status": 0,
+  "rows": 15,
+  "sec": 6.3
+ },
+ "QuillAudits-Checkdot Smart Contract/CheckdotERC20Contract-8a47ef13ace93e0bd473fb1c3893790569a2adc8/contracts/erc20/ERC20.sol": {
+  "target": "QuillAudits-Checkdot Smart Contract/CheckdotERC20Contract-8a47ef13ace93e0bd473fb1c3893790569a2adc8/contracts/erc20/ERC20.sol",
+  "id": "ERC20_b90c8b47",
+  "status": 0,
+  "rows": 8,
+  "sec": 3.3
+ },
+ "QuillAudits-Amplify Smart Contract/contracts-d8af5f11f3b6ab59d09a56ebc229012900dc1cc8/protocol/contracts/Controller/Rewards.sol": {
+  "target": "QuillAudits-Amplify Smart Contract/contracts-d8af5f11f3b6ab59d09a56ebc229012900dc1cc8/protocol/contracts/Controller/Rewards.sol",
+  "id": "Rewards_a8c84e26",
+  "status": 0,
+  "rows": 11,
+  "sec": 23.1
+ },
+ "QuillAudits-DEFINE Token Smart Contract/definetics-023ddbd2182d96306fb020573a64b50eaed0a87a/contracts/libraries/IterableMapping.sol": {
+  "target": "QuillAudits-DEFINE Token Smart Contract/definetics-023ddbd2182d96306fb020573a64b50eaed0a87a/contracts/libraries/IterableMapping.sol",
+  "id": "IterableMapping_b5d725dc",
+  "status": 0,
+  "rows": 3,
+  "sec": 2.2
+ },
+ "QuillAudits-DEFINE Token Smart Contract/definetics-023ddbd2182d96306fb020573a64b50eaed0a87a/contracts/libraries/SafeMath.sol": {
+  "target": "QuillAudits-DEFINE Token Smart Contract/definetics-023ddbd2182d96306fb020573a64b50eaed0a87a/contracts/libraries/SafeMath.sol",
+  "id": "SafeMath_51cd4ff6",
+  "status": 0,
+  "rows": 5,
+  "sec": 2.2
+ },
+ "QuillAudits-DEFINE Token Smart Contract/definetics-023ddbd2182d96306fb020573a64b50eaed0a87a/contracts/libraries/SafeMathInt.sol": {
+  "target": "QuillAudits-DEFINE Token Smart Contract/definetics-023ddbd2182d96306fb020573a64b50eaed0a87a/contracts/libraries/SafeMathInt.sol",
+  "id": "SafeMathInt_d1ba7e3e",
+  "status": 0,
+  "rows": 5,
+  "sec": 2.3
+ },
+ "QuillAudits-CryptoGamez Smart Contract/CryptoGamez/CryptoGamez.sol": {
+  "target": "QuillAudits-CryptoGamez Smart Contract/CryptoGamez/CryptoGamez.sol",
+  "id": "CryptoGamez_1dd0acca",
+  "status": 0,
+  "rows": 6,
+  "sec": 2.9
+ },
+ "QuillAudits-Citrus Smart Contract/CitrusTechContract-e50a2a983928c10b76e6bc374ae6267f51af99b6/CitrusToken.sol": {
+  "target": "QuillAudits-Citrus Smart Contract/CitrusTechContract-e50a2a983928c10b76e6bc374ae6267f51af99b6/CitrusToken.sol",
+  "id": "CitrusToken_e3cca128",
+  "status": 0,
+  "rows": 9,
+  "sec": 4.2
+ },
+ "QuillAudits-Lido-Deposit Security Module/lido-dao-5b449b740cddfbef5c107505677e6a576e2c2b69/contracts/0.8.9/lib/ECDSA.sol": {
+  "target": "QuillAudits-Lido-Deposit Security Module/lido-dao-5b449b740cddfbef5c107505677e6a576e2c2b69/contracts/0.8.9/lib/ECDSA.sol",
+  "id": "ECDSA_7be0b8b0",
+  "status": 0,
+  "rows": 1,
+  "sec": 2.1
+ },
+ "QuillAudits-Lido-Lido KSM/lido-dot-ksm-76a10efa5f223c4c613f26794802b8fb9bb188e1/contracts/utils/LedgerUtils.sol": {
+  "target": "QuillAudits-Lido-Lido KSM/lido-dot-ksm-76a10efa5f223c4c613f26794802b8fb9bb188e1/contracts/utils/LedgerUtils.sol",
+  "id": "LedgerUtils_61b75ad2",
+  "status": 0,
+  "rows": 2,
+  "sec": 2.1
+ },
+ "QuillAudits-GameZilla Token Smart Contract/code/GameZilla.sol": {
+  "target": "QuillAudits-GameZilla Token Smart Contract/code/GameZilla.sol",
+  "id": "GameZilla_013b516f",
+  "status": 0,
+  "rows": 6,
+  "sec": 3.4
+ },
+ "QuillAudits-Lido-Lido Protocol/lido-dao-801d3e854efb33ff33a59fe51187e187047a6be2/contracts/0.8.9/CompositePostRebaseBeaconReceiver.sol": {
+  "target": "QuillAudits-Lido-Lido Protocol/lido-dao-801d3e854efb33ff33a59fe51187e187047a6be2/contracts/0.8.9/CompositePostRebaseBeaconReceiver.sol",
+  "id": "CompositePostRebaseBeaconReceiver_6141ae8b",
+  "status": 0,
+  "rows": 1,
+  "sec": 1.9
+ },
+ "QuillAudits-Lido-Lido KSM/lido-dot-ksm-76a10efa5f223c4c613f26794802b8fb9bb188e1/contracts/Oracle.sol": {
+  "target": "QuillAudits-Lido-Lido KSM/lido-dot-ksm-76a10efa5f223c4c613f26794802b8fb9bb188e1/contracts/Oracle.sol",
+  "id": "Oracle_dc3883e7",
+  "status": 0,
+  "rows": 5,
+  "sec": 4.2
+ },
+ "QuillAudits-Lido-Lido Protocol/lido-dao-801d3e854efb33ff33a59fe51187e187047a6be2/contracts/0.8.9/OrderedCallbacksArray.sol": {
+  "target": "QuillAudits-Lido-Lido Protocol/lido-dao-801d3e854efb33ff33a59fe51187e187047a6be2/contracts/0.8.9/OrderedCallbacksArray.sol",
+  "id": "OrderedCallbacksArray_f495c416",
+  "status": 0,
+  "rows": 4,
+  "sec": 2.3
+ },
+ "QuillAudits-MetaGameStarter Smart Contract/Tokenomics-Contracts-f3899d0a31dbb7386eacb7efefbff2ac32ce7cbb/contracts/IFO/ClaimAggregator.sol": {
+  "target": "QuillAudits-MetaGameStarter Smart Contract/Tokenomics-Contracts-f3899d0a31dbb7386eacb7efefbff2ac32ce7cbb/contracts/IFO/ClaimAggregator.sol",
+  "id": "ClaimAggregator_2d6dd50f",
+  "status": 0,
+  "rows": 2,
+  "sec": 2.1
+ },
+ "QuillAudits-MetaGameStarter Smart Contract/Tokenomics-Contracts-f3899d0a31dbb7386eacb7efefbff2ac32ce7cbb/contracts/ProxyClones/Proxy.sol": {
+  "target": "QuillAudits-MetaGameStarter Smart Contract/Tokenomics-Contracts-f3899d0a31dbb7386eacb7efefbff2ac32ce7cbb/contracts/ProxyClones/Proxy.sol",
+  "id": "Proxy_98471c77",
+  "status": 0,
+  "rows": 1,
+  "sec": 1.9
+ },
+ "QuillAudits-Yearn Finance-ySwaps/hardhat-monorepo-ecc0b5147992b34c315e08af170ceb4a5fe071ee/packages/contract-utils/contracts/utils/Governable.sol": {
+  "target": "QuillAudits-Yearn Finance-ySwaps/hardhat-monorepo-ecc0b5147992b34c315e08af170ceb4a5fe071ee/packages/contract-utils/contracts/utils/Governable.sol",
+  "id": "Governable_63f51f6d",
+  "status": 0,
+  "rows": 2,
+  "sec": 2.4
+ },
+ "QuillAudits-Yearn Finance-ySwaps/hardhat-monorepo-ecc0b5147992b34c315e08af170ceb4a5fe071ee/packages/stealth-txs/contracts/StealthTx.sol": {
+  "target": "QuillAudits-Yearn Finance-ySwaps/hardhat-monorepo-ecc0b5147992b34c315e08af170ceb4a5fe071ee/packages/stealth-txs/contracts/StealthTx.sol",
+  "id": "StealthTx_34702007",
+  "status": 0,
+  "rows": 2,
+  "sec": 2.2
+ },
+ "QuillAudits-MetaWaferse Smart Contract/code/MetaWaferse.sol": {
+  "target": "QuillAudits-MetaWaferse Smart Contract/code/MetaWaferse.sol",
+  "id": "MetaWaferse_607da14a",
+  "status": 0,
+  "rows": 5,
+  "sec": 3.2
+ },
+ "QuillAudits-Lido-Deposit Security Module/lido-dao-5b449b740cddfbef5c107505677e6a576e2c2b69/contracts/0.8.9/DepositSecurityModule.sol": {
+  "target": "QuillAudits-Lido-Deposit Security Module/lido-dao-5b449b740cddfbef5c107505677e6a576e2c2b69/contracts/0.8.9/DepositSecurityModule.sol",
+  "id": "DepositSecurityModule_c9615dee",
+  "status": 0,
+  "rows": 16,
+  "sec": 6.0
+ },
+ "Runtime_Vеrification-ElementFinance/elf-contracts-637c6f959315cbb11a164555e588520c7d89122b/contracts/InterestToken.sol": {
+  "target": "Runtime_Vеrification-ElementFinance/elf-contracts-637c6f959315cbb11a164555e588520c7d89122b/contracts/InterestToken.sol",
+  "id": "InterestToken_de71f8c1",
+  "status": 0,
+  "rows": 2,
+  "sec": 2.4
+ },
+ "QuillAudits-Yearn Finance-ySwaps/hardhat-monorepo-ecc0b5147992b34c315e08af170ceb4a5fe071ee/packages/strategies-keep3r/contracts-no-compile/keep3r/Keep3rV2OracleFactory.sol": {
+  "target": "QuillAudits-Yearn Finance-ySwaps/hardhat-monorepo-ecc0b5147992b34c315e08af170ceb4a5fe071ee/packages/strategies-keep3r/contracts-no-compile/keep3r/Keep3rV2OracleFactory.sol",
+  "id": "Keep3rV2OracleFactory_b597777e",
+  "status": 0,
+  "rows": 26,
+  "sec": 2.9
+ },
+ "Runtime_Vеrification-ElementFinance/elf-contracts-637c6f959315cbb11a164555e588520c7d89122b/contracts/Tranche.sol": {
+  "target": "Runtime_Vеrification-ElementFinance/elf-contracts-637c6f959315cbb11a164555e588520c7d89122b/contracts/Tranche.sol",
+  "id": "Tranche_873582d5",
+  "status": 0,
+  "rows": 4,
+  "sec": 3.1
+ },
+ "Runtime_Vеrification-ElementFinance/elf-contracts-637c6f959315cbb11a164555e588520c7d89122b/contracts/WrappedPosition.sol": {
+  "target": "Runtime_Vеrification-ElementFinance/elf-contracts-637c6f959315cbb11a164555e588520c7d89122b/contracts/WrappedPosition.sol",
+  "id": "WrappedPosition_d795226a",
+  "status": 0,
+  "rows": 7,
+  "sec": 2.5
+ },
+ "QuillAudits-Lido-Lido Protocol/lido-dao-801d3e854efb33ff33a59fe51187e187047a6be2/contracts/0.8.9/DepositSecurityModule.sol": {
+  "target": "QuillAudits-Lido-Lido Protocol/lido-dao-801d3e854efb33ff33a59fe51187e187047a6be2/contracts/0.8.9/DepositSecurityModule.sol",
+  "id": "DepositSecurityModule_22b6e88d",
+  "status": 0,
+  "rows": 16,
+  "sec": 6.0
+ },
+ "Runtime_Vеrification-ElementFinance/elf-contracts-637c6f959315cbb11a164555e588520c7d89122b/contracts/factories/InterestTokenFactory.sol": {
+  "target": "Runtime_Vеrification-ElementFinance/elf-contracts-637c6f959315cbb11a164555e588520c7d89122b/contracts/factories/InterestTokenFactory.sol",
+  "id": "InterestTokenFactory_b0704eda",
+  "status": 0,
+  "rows": 1,
+  "sec": 2.4
+ },
+ "Runtime_Vеrification-ElementFinance/elf-contracts-637c6f959315cbb11a164555e588520c7d89122b/contracts/YVaultAssetProxy.sol": {
+  "target": "Runtime_Vеrification-ElementFinance/elf-contracts-637c6f959315cbb11a164555e588520c7d89122b/contracts/YVaultAssetProxy.sol",
+  "id": "YVaultAssetProxy_9f459ee0",
+  "status": 0,
+  "rows": 7,
+  "sec": 3.2
+ },
+ "Runtime_Vеrification-ElementFinance/elf-contracts-637c6f959315cbb11a164555e588520c7d89122b/contracts/libraries/ERC20.sol": {
+  "target": "Runtime_Vеrification-ElementFinance/elf-contracts-637c6f959315cbb11a164555e588520c7d89122b/contracts/libraries/ERC20.sol",
+  "id": "ERC20_1fe10382",
+  "status": 0,
+  "rows": 3,
+  "sec": 2.8
+ },
+ "Runtime_Vеrification-ElementFinance/elf-contracts-637c6f959315cbb11a164555e588520c7d89122b/contracts/factories/TrancheFactory.sol": {
+  "target": "Runtime_Vеrification-ElementFinance/elf-contracts-637c6f959315cbb11a164555e588520c7d89122b/contracts/factories/TrancheFactory.sol",
+  "id": "TrancheFactory_80101efa",
+  "status": 0,
+  "rows": 1,
+  "sec": 2.9
+ },
+ "Runtime_Vеrification-ElementFinance/elf-contracts-b9ab6095a211ccb81941a5104c581e3564a97502/contracts/InterestToken.sol": {
+  "target": "Runtime_Vеrification-ElementFinance/elf-contracts-b9ab6095a211ccb81941a5104c581e3564a97502/contracts/InterestToken.sol",
+  "id": "InterestToken_598352bb",
+  "status": 0,
+  "rows": 3,
+  "sec": 2.7
+ },
+ "Runtime_Vеrification-ElementFinance/elf-contracts-637c6f959315cbb11a164555e588520c7d89122b/contracts/libraries/DateString.sol": {
+  "target": "Runtime_Vеrification-ElementFinance/elf-contracts-637c6f959315cbb11a164555e588520c7d89122b/contracts/libraries/DateString.sol",
+  "id": "DateString_150f9e88",
+  "status": 0,
+  "rows": 3,
+  "sec": 3.8
+ },
+ "Runtime_Vеrification-ElementFinance/elf-contracts-b9ab6095a211ccb81941a5104c581e3564a97502/contracts/Tranche.sol": {
+  "target": "Runtime_Vеrification-ElementFinance/elf-contracts-b9ab6095a211ccb81941a5104c581e3564a97502/contracts/Tranche.sol",
+  "id": "Tranche_64f59e3d",
+  "status": 0,
+  "rows": 4,
+  "sec": 3.1
+ },
+ "Runtime_Vеrification-ElementFinance/elf-contracts-b9ab6095a211ccb81941a5104c581e3564a97502/contracts/WrappedPosition.sol": {
+  "target": "Runtime_Vеrification-ElementFinance/elf-contracts-b9ab6095a211ccb81941a5104c581e3564a97502/contracts/WrappedPosition.sol",
+  "id": "WrappedPosition_55bf871f",
+  "status": 0,
+  "rows": 7,
+  "sec": 2.4
+ },
+ "Runtime_Vеrification-ElementFinance/elf-contracts-b9ab6095a211ccb81941a5104c581e3564a97502/contracts/factories/InterestTokenFactory.sol": {
+  "target": "Runtime_Vеrification-ElementFinance/elf-contracts-b9ab6095a211ccb81941a5104c581e3564a97502/contracts/factories/InterestTokenFactory.sol",
+  "id": "InterestTokenFactory_2f660cdf",
+  "status": 0,
+  "rows": 1,
+  "sec": 2.5
+ },
+ "Runtime_Vеrification-ElementFinance/elf-contracts-b9ab6095a211ccb81941a5104c581e3564a97502/contracts/YVaultAssetProxy.sol": {
+  "target": "Runtime_Vеrification-ElementFinance/elf-contracts-b9ab6095a211ccb81941a5104c581e3564a97502/contracts/YVaultAssetProxy.sol",
+  "id": "YVaultAssetProxy_ec4092e3",
+  "status": 0,
+  "rows": 7,
+  "sec": 3.2
+ },
+ "Runtime_Vеrification-ElementFinance/elf-contracts-b9ab6095a211ccb81941a5104c581e3564a97502/contracts/factories/TrancheFactory.sol": {
+  "target": "Runtime_Vеrification-ElementFinance/elf-contracts-b9ab6095a211ccb81941a5104c581e3564a97502/contracts/factories/TrancheFactory.sol",
+  "id": "TrancheFactory_4737042c",
+  "status": 0,
+  "rows": 1,
+  "sec": 3.0
+ },
+ "Runtime_Vеrification-ElementFinance/elf-contracts-eed369562ac50398c10fd0a56dc287a29002d3f8/contracts/InterestToken.sol": {
+  "target": "Runtime_Vеrification-ElementFinance/elf-contracts-eed369562ac50398c10fd0a56dc287a29002d3f8/contracts/InterestToken.sol",
+  "id": "InterestToken_1312961c",
+  "status": 0,
+  "rows": 2,
+  "sec": 2.3
+ },
+ "Runtime_Vеrification-ElementFinance/elf-contracts-b9ab6095a211ccb81941a5104c581e3564a97502/contracts/libraries/ERC20Permit.sol": {
+  "target": "Runtime_Vеrification-ElementFinance/elf-contracts-b9ab6095a211ccb81941a5104c581e3564a97502/contracts/libraries/ERC20Permit.sol",
+  "id": "ERC20Permit_bb4769f6",
+  "status": 0,
+  "rows": 3,
+  "sec": 2.9
+ },
+ "Runtime_Vеrification-ElementFinance/elf-contracts-b9ab6095a211ccb81941a5104c581e3564a97502/contracts/libraries/DateString.sol": {
+  "target": "Runtime_Vеrification-ElementFinance/elf-contracts-b9ab6095a211ccb81941a5104c581e3564a97502/contracts/libraries/DateString.sol",
+  "id": "DateString_1f259bcd",
+  "status": 0,
+  "rows": 3,
+  "sec": 4.3
+ },
+ "Runtime_Vеrification-ElementFinance/elf-contracts-eed369562ac50398c10fd0a56dc287a29002d3f8/contracts/Tranche.sol": {
+  "target": "Runtime_Vеrification-ElementFinance/elf-contracts-eed369562ac50398c10fd0a56dc287a29002d3f8/contracts/Tranche.sol",
+  "id": "Tranche_770e59e9",
+  "status": 0,
+  "rows": 4,
+  "sec": 3.1
+ },
+ "Runtime_Vеrification-ElementFinance/elf-contracts-eed369562ac50398c10fd0a56dc287a29002d3f8/contracts/WrappedPosition.sol": {
+  "target": "Runtime_Vеrification-ElementFinance/elf-contracts-eed369562ac50398c10fd0a56dc287a29002d3f8/contracts/WrappedPosition.sol",
+  "id": "WrappedPosition_d4493f3b",
+  "status": 0,
+  "rows": 7,
+  "sec": 2.6
+ },
+ "Runtime_Vеrification-ElementFinance/elf-contracts-eed369562ac50398c10fd0a56dc287a29002d3f8/contracts/factories/InterestTokenFactory.sol": {
+  "target": "Runtime_Vеrification-ElementFinance/elf-contracts-eed369562ac50398c10fd0a56dc287a29002d3f8/contracts/factories/InterestTokenFactory.sol",
+  "id": "InterestTokenFactory_964eb9fd",
+  "status": 0,
+  "rows": 1,
+  "sec": 2.5
+ },
+ "Runtime_Vеrification-ElementFinance/elf-contracts-eed369562ac50398c10fd0a56dc287a29002d3f8/contracts/YVaultAssetProxy.sol": {
+  "target": "Runtime_Vеrification-ElementFinance/elf-contracts-eed369562ac50398c10fd0a56dc287a29002d3f8/contracts/YVaultAssetProxy.sol",
+  "id": "YVaultAssetProxy_7249ec77",
+  "status": 0,
+  "rows": 7,
+  "sec": 3.4
+ },
+ "Runtime_Vеrification-ElementFinance/elf-contracts-eed369562ac50398c10fd0a56dc287a29002d3f8/contracts/factories/TrancheFactory.sol": {
+  "target": "Runtime_Vеrification-ElementFinance/elf-contracts-eed369562ac50398c10fd0a56dc287a29002d3f8/contracts/factories/TrancheFactory.sol",
+  "id": "TrancheFactory_670178de",
+  "status": 0,
+  "rows": 1,
+  "sec": 3.0
+ },
+ "Runtime_Vеrification-Element_Finance_Governance_Security_Audit_Report/council-3d751c959b42573c78ccd0bccbc80424bf6d9a90/contracts/features/OptimisticGrants.sol": {
+  "target": "Runtime_Vеrification-Element_Finance_Governance_Security_Audit_Report/council-3d751c959b42573c78ccd0bccbc80424bf6d9a90/contracts/features/OptimisticGrants.sol",
+  "id": "OptimisticGrants_78f7cc56",
+  "status": 0,
+  "rows": 4,
+  "sec": 2.3
+ },
+ "Runtime_Vеrification-ElementFinance/elf-contracts-eed369562ac50398c10fd0a56dc287a29002d3f8/contracts/libraries/ERC20Permit.sol": {
+  "target": "Runtime_Vеrification-ElementFinance/elf-contracts-eed369562ac50398c10fd0a56dc287a29002d3f8/contracts/libraries/ERC20Permit.sol",
+  "id": "ERC20Permit_f8bca6e0",
+  "status": 0,
+  "rows": 3,
+  "sec": 2.8
+ },
+ "Runtime_Vеrification-Element_Finance_Governance_Security_Audit_Report/council-3d751c959b42573c78ccd0bccbc80424bf6d9a90/contracts/features/Treasury.sol": {
+  "target": "Runtime_Vеrification-Element_Finance_Governance_Security_Audit_Report/council-3d751c959b42573c78ccd0bccbc80424bf6d9a90/contracts/features/Treasury.sol",
+  "id": "Treasury_d229e25a",
+  "status": 0,
+  "rows": 3,
+  "sec": 2.1
+ },
+ "Runtime_Vеrification-Element_Finance_Governance_Security_Audit_Report/council-3d751c959b42573c78ccd0bccbc80424bf6d9a90/contracts/vaults/LockingVault.sol": {
+  "target": "Runtime_Vеrification-Element_Finance_Governance_Security_Audit_Report/council-3d751c959b42573c78ccd0bccbc80424bf6d9a90/contracts/vaults/LockingVault.sol",
+  "id": "LockingVault_320db71b",
+  "status": 0,
+  "rows": 6,
+  "sec": 2.0
+ },
+ "Runtime_Vеrification-Element_Finance_Governance_Security_Audit_Report/council-3d751c959b42573c78ccd0bccbc80424bf6d9a90/contracts/vaults/VestingVault.sol": {
+  "target": "Runtime_Vеrification-Element_Finance_Governance_Security_Audit_Report/council-3d751c959b42573c78ccd0bccbc80424bf6d9a90/contracts/vaults/VestingVault.sol",
+  "id": "VestingVault_02b48c03",
+  "status": 0,
+  "rows": 14,
+  "sec": 2.0
+ },
+ "Runtime_Vеrification-stakefish_ethereum_staking_audit_report/eth2-validation-services-contract-d91928f3a270f6115831fe3a21a69eb98bf57b26/contracts/StakefishERC20Wrapper.sol": {
+  "target": "Runtime_Vеrification-stakefish_ethereum_staking_audit_report/eth2-validation-services-contract-d91928f3a270f6115831fe3a21a69eb98bf57b26/contracts/StakefishERC20Wrapper.sol",
+  "id": "StakefishERC20Wrapper_132a7e40",
+  "status": 0,
+  "rows": 12,
+  "sec": 2.0
+ },
+ "Runtime_Vеrification-stakefish_ethereum_staking_audit_report/eth2-validation-services-contract-d91928f3a270f6115831fe3a21a69eb98bf57b26/contracts/StakefishERC721Wrapper.sol": {
+  "target": "Runtime_Vеrification-stakefish_ethereum_staking_audit_report/eth2-validation-services-contract-d91928f3a270f6115831fe3a21a69eb98bf57b26/contracts/StakefishERC721Wrapper.sol",
+  "id": "StakefishERC721Wrapper_a67f9b57",
+  "status": 0,
+  "rows": 13,
+  "sec": 2.2
+ },
+ "Runtime_Vеrification-stakefish_ethereum_staking_audit_report/eth2-validation-services-contract-d91928f3a270f6115831fe3a21a69eb98bf57b26/contracts/StakefishServicesContract.sol": {
+  "target": "Runtime_Vеrification-stakefish_ethereum_staking_audit_report/eth2-validation-services-contract-d91928f3a270f6115831fe3a21a69eb98bf57b26/contracts/StakefishServicesContract.sol",
+  "id": "StakefishServicesContract_9be8f9a0",
+  "status": 0,
+  "rows": 14,
+  "sec": 2.2
+ },
+ "Runtime_Vеrification-stakefish_ethereum_staking_audit_report/eth2-validation-services-contract-d91928f3a270f6115831fe3a21a69eb98bf57b26/contracts/StakefishServicesContractFactory.sol": {
+  "target": "Runtime_Vеrification-stakefish_ethereum_staking_audit_report/eth2-validation-services-contract-d91928f3a270f6115831fe3a21a69eb98bf57b26/contracts/StakefishServicesContractFactory.sol",
+  "id": "StakefishServicesContractFactory_cb19091f",
+  "status": 0,
+  "rows": 4,
+  "sec": 2.4
+ },
+ "Runtime_Vеrification-Element_Finance_Governance_Security_Audit_Report/council-3d751c959b42573c78ccd0bccbc80424bf6d9a90/contracts/libraries/History.sol": {
+  "target": "Runtime_Vеrification-Element_Finance_Governance_Security_Audit_Report/council-3d751c959b42573c78ccd0bccbc80424bf6d9a90/contracts/libraries/History.sol",
+  "id": "History_920c9ccf",
+  "status": 0,
+  "rows": 7,
+  "sec": 5.0
+ },
+ "Runtime_Vеrification-stakefish_ethereum_staking_audit_report/eth2-validation-services-contract-d91928f3a270f6115831fe3a21a69eb98bf57b26/contracts/libraries/Address.sol": {
+  "target": "Runtime_Vеrification-stakefish_ethereum_staking_audit_report/eth2-validation-services-contract-d91928f3a270f6115831fe3a21a69eb98bf57b26/contracts/libraries/Address.sol",
+  "id": "Address_1a2a96fd",
+  "status": 0,
+  "rows": 5,
+  "sec": 2.3
+ },
+ "Runtime_Vеrification-stakefish_ethereum_staking_audit_report/eth2-validation-services-contract-d91928f3a270f6115831fe3a21a69eb98bf57b26/contracts/libraries/ProxyFactory.sol": {
+  "target": "Runtime_Vеrification-stakefish_ethereum_staking_audit_report/eth2-validation-services-contract-d91928f3a270f6115831fe3a21a69eb98bf57b26/contracts/libraries/ProxyFactory.sol",
+  "id": "ProxyFactory_b695b491",
+  "status": 0,
+  "rows": 1,
+  "sec": 2.1
+ },
+ "SlowMist-eden-network Smart Contract Security Audit Report/governance-e7b55f6e3f9c0d3ede7fd8bb39ae4fa7a4f4e79e/contracts/DistributorGovernance.sol": {
+  "target": "SlowMist-eden-network Smart Contract Security Audit Report/governance-e7b55f6e3f9c0d3ede7fd8bb39ae4fa7a4f4e79e/contracts/DistributorGovernance.sol",
+  "id": "DistributorGovernance_ece1bb4d",
+  "status": 0,
+  "rows": 4,
+  "sec": 2.4
+ },
+ "SlowMist-eden-network Smart Contract Security Audit Report/governance-e7b55f6e3f9c0d3ede7fd8bb39ae4fa7a4f4e79e/contracts/EdenNetworkManager.sol": {
+  "target": "SlowMist-eden-network Smart Contract Security Audit Report/governance-e7b55f6e3f9c0d3ede7fd8bb39ae4fa7a4f4e79e/contracts/EdenNetworkManager.sol",
+  "id": "EdenNetworkManager_4c2f5b68",
+  "status": 0,
+  "rows": 5,
+  "sec": 2.7
+ },
+ "SlowMist-eden-network Smart Contract Security Audit Report/governance-e7b55f6e3f9c0d3ede7fd8bb39ae4fa7a4f4e79e/contracts/EdenNetworkProxy.sol": {
+  "target": "SlowMist-eden-network Smart Contract Security Audit Report/governance-e7b55f6e3f9c0d3ede7fd8bb39ae4fa7a4f4e79e/contracts/EdenNetworkProxy.sol",
+  "id": "EdenNetworkProxy_d7d982e3",
+  "status": 0,
+  "rows": 5,
+  "sec": 4.6
+ },
+ "SlowMist-eden-network Smart Contract Security Audit Report/governance-e7b55f6e3f9c0d3ede7fd8bb39ae4fa7a4f4e79e/contracts/EdenToken.sol": {
+  "target": "SlowMist-eden-network Smart Contract Security Audit Report/governance-e7b55f6e3f9c0d3ede7fd8bb39ae4fa7a4f4e79e/contracts/EdenToken.sol",
+  "id": "EdenToken_3ee14fc3",
+  "status": 0,
+  "rows": 12,
+  "sec": 7.7
+ },
+ "SlowMist-eden-network Smart Contract Security Audit Report/governance-e7b55f6e3f9c0d3ede7fd8bb39ae4fa7a4f4e79e/contracts/LockManager.sol": {
+  "target": "SlowMist-eden-network Smart Contract Security Audit Report/governance-e7b55f6e3f9c0d3ede7fd8bb39ae4fa7a4f4e79e/contracts/LockManager.sol",
+  "id": "LockManager_fcd0e931",
+  "status": 0,
+  "rows": 4,
+  "sec": 6.4
+ },
+ "SlowMist-eden-network Smart Contract Security Audit Report/governance-e7b55f6e3f9c0d3ede7fd8bb39ae4fa7a4f4e79e/contracts/Migrator.sol": {
+  "target": "SlowMist-eden-network Smart Contract Security Audit Report/governance-e7b55f6e3f9c0d3ede7fd8bb39ae4fa7a4f4e79e/contracts/Migrator.sol",
+  "id": "Migrator_3a260aae",
+  "status": 0,
+  "rows": 5,
+  "sec": 5.8
+ },
+ "SlowMist-eden-network Smart Contract Security Audit Report/governance-e7b55f6e3f9c0d3ede7fd8bb39ae4fa7a4f4e79e/contracts/EdenNetwork.sol": {
+  "target": "SlowMist-eden-network Smart Contract Security Audit Report/governance-e7b55f6e3f9c0d3ede7fd8bb39ae4fa7a4f4e79e/contracts/EdenNetwork.sol",
+  "id": "EdenNetwork_88104f3e",
+  "status": 0,
+  "rows": 14,
+  "sec": 13.2
+ },
+ "SlowMist-eden-network Smart Contract Security Audit Report/governance-e7b55f6e3f9c0d3ede7fd8bb39ae4fa7a4f4e79e/contracts/MerkleDistributor.sol": {
+  "target": "SlowMist-eden-network Smart Contract Security Audit Report/governance-e7b55f6e3f9c0d3ede7fd8bb39ae4fa7a4f4e79e/contracts/MerkleDistributor.sol",
+  "id": "MerkleDistributor_549ef288",
+  "status": 0,
+  "rows": 11,
+  "sec": 19.1
+ },
+ "SlowMist-eden-network Smart Contract Security Audit Report/governance-e7b55f6e3f9c0d3ede7fd8bb39ae4fa7a4f4e79e/contracts/formulas/SushiLPFormula.sol": {
+  "target": "SlowMist-eden-network Smart Contract Security Audit Report/governance-e7b55f6e3f9c0d3ede7fd8bb39ae4fa7a4f4e79e/contracts/formulas/SushiLPFormula.sol",
+  "id": "SushiLPFormula_b49f5d7e",
+  "status": 0,
+  "rows": 1,
+  "sec": 8.0
+ },
+ "SlowMist-eden-network Smart Contract Security Audit Report/governance-e7b55f6e3f9c0d3ede7fd8bb39ae4fa7a4f4e79e/contracts/lib/AccessControl.sol": {
+  "target": "SlowMist-eden-network Smart Contract Security Audit Report/governance-e7b55f6e3f9c0d3ede7fd8bb39ae4fa7a4f4e79e/contracts/lib/AccessControl.sol",
+  "id": "AccessControl_0d23b5eb",
+  "status": 0,
+  "rows": 7,
+  "sec": 7.0
+ },
+ "SlowMist-eden-network Smart Contract Security Audit Report/governance-e7b55f6e3f9c0d3ede7fd8bb39ae4fa7a4f4e79e/contracts/lib/AccessControlEnumerable.sol": {
+  "target": "SlowMist-eden-network Smart Contract Security Audit Report/governance-e7b55f6e3f9c0d3ede7fd8bb39ae4fa7a4f4e79e/contracts/lib/AccessControlEnumerable.sol",
+  "id": "AccessControlEnumerable_a9f1e7cc",
+  "status": 0,
+  "rows": 6,
+  "sec": 6.5
+ },
+ "SlowMist-eden-network Smart Contract Security Audit Report/governance-e7b55f6e3f9c0d3ede7fd8bb39ae4fa7a4f4e79e/contracts/lib/BytesLib.sol": {
+  "target": "SlowMist-eden-network Smart Contract Security Audit Report/governance-e7b55f6e3f9c0d3ede7fd8bb39ae4fa7a4f4e79e/contracts/lib/BytesLib.sol",
+  "id": "BytesLib_dfa52cbc",
+  "status": 0,
+  "rows": 14,
+  "sec": 9.6
+ },
+ "SlowMist-eden-network Smart Contract Security Audit Report/governance-e7b55f6e3f9c0d3ede7fd8bb39ae4fa7a4f4e79e/contracts/Payments.sol": {
+  "target": "SlowMist-eden-network Smart Contract Security Audit Report/governance-e7b55f6e3f9c0d3ede7fd8bb39ae4fa7a4f4e79e/contracts/Payments.sol",
+  "id": "Payments_cdfa9f0b",
+  "status": 0,
+  "rows": 18,
+  "sec": 45.2
+ },
+ "SlowMist-eden-network Smart Contract Security Audit Report/governance-e7b55f6e3f9c0d3ede7fd8bb39ae4fa7a4f4e79e/contracts/lib/ERC1967Proxy.sol": {
+  "target": "SlowMist-eden-network Smart Contract Security Audit Report/governance-e7b55f6e3f9c0d3ede7fd8bb39ae4fa7a4f4e79e/contracts/lib/ERC1967Proxy.sol",
+  "id": "ERC1967Proxy_ec203367",
+  "status": 0,
+  "rows": 1,
+  "sec": 7.1
+ },
+ "SlowMist-eden-network Smart Contract Security Audit Report/governance-e7b55f6e3f9c0d3ede7fd8bb39ae4fa7a4f4e79e/contracts/lib/ERC721Enumerable.sol": {
+  "target": "SlowMist-eden-network Smart Contract Security Audit Report/governance-e7b55f6e3f9c0d3ede7fd8bb39ae4fa7a4f4e79e/contracts/lib/ERC721Enumerable.sol",
+  "id": "ERC721Enumerable_981f93fe",
+  "status": 0,
+  "rows": 7,
+  "sec": 11.0
+ },
+ "SlowMist-eden-network Smart Contract Security Audit Report/governance-e7b55f6e3f9c0d3ede7fd8bb39ae4fa7a4f4e79e/contracts/VotingPower.sol": {
+  "target": "SlowMist-eden-network Smart Contract Security Audit Report/governance-e7b55f6e3f9c0d3ede7fd8bb39ae4fa7a4f4e79e/contracts/VotingPower.sol",
+  "id": "VotingPower_075486e9",
+  "status": 0,
+  "rows": 26,
+  "sec": 48.8
+ },
+ "SlowMist-eden-network Smart Contract Security Audit Report/governance-e7b55f6e3f9c0d3ede7fd8bb39ae4fa7a4f4e79e/contracts/RewardsManager.sol": {
+  "target": "SlowMist-eden-network Smart Contract Security Audit Report/governance-e7b55f6e3f9c0d3ede7fd8bb39ae4fa7a4f4e79e/contracts/RewardsManager.sol",
+  "id": "RewardsManager_5daae4e9",
+  "status": 0,
+  "rows": 18,
+  "sec": 48.1
+ },
+ "SlowMist-eden-network Smart Contract Security Audit Report/governance-e7b55f6e3f9c0d3ede7fd8bb39ae4fa7a4f4e79e/contracts/lib/EnumerableSet.sol": {
+  "target": "SlowMist-eden-network Smart Contract Security Audit Report/governance-e7b55f6e3f9c0d3ede7fd8bb39ae4fa7a4f4e79e/contracts/lib/EnumerableSet.sol",
+  "id": "EnumerableSet_58f012c6",
+  "status": 0,
+  "rows": 2,
+  "sec": 9.0
+ },
+ "SlowMist-eden-network Smart Contract Security Audit Report/governance-e7b55f6e3f9c0d3ede7fd8bb39ae4fa7a4f4e79e/contracts/lib/ERC721.sol": {
+  "target": "SlowMist-eden-network Smart Contract Security Audit Report/governance-e7b55f6e3f9c0d3ede7fd8bb39ae4fa7a4f4e79e/contracts/lib/ERC721.sol",
+  "id": "ERC721_60ccc710",
+  "status": 0,
+  "rows": 13,
+  "sec": 22.5
+ },
+ "SlowMist-eden-network Smart Contract Security Audit Report/governance-e7b55f6e3f9c0d3ede7fd8bb39ae4fa7a4f4e79e/contracts/lib/PrismProxy.sol": {
+  "target": "SlowMist-eden-network Smart Contract Security Audit Report/governance-e7b55f6e3f9c0d3ede7fd8bb39ae4fa7a4f4e79e/contracts/lib/PrismProxy.sol",
+  "id": "PrismProxy_d6d2540b",
+  "status": 0,
+  "rows": 10,
+  "sec": 9.9
+ },
+ "SlowMist-eden-network Smart Contract Security Audit Report/governance-e7b55f6e3f9c0d3ede7fd8bb39ae4fa7a4f4e79e/contracts/lib/PrismProxyImplementation.sol": {
+  "target": "SlowMist-eden-network Smart Contract Security Audit Report/governance-e7b55f6e3f9c0d3ede7fd8bb39ae4fa7a4f4e79e/contracts/lib/PrismProxyImplementation.sol",
+  "id": "PrismProxyImplementation_0f7b9eb2",
+  "status": 0,
+  "rows": 1,
+  "sec": 5.7
+ },
+ "SlowMist-eden-network Smart Contract Security Audit Report/governance-e7b55f6e3f9c0d3ede7fd8bb39ae4fa7a4f4e79e/contracts/lib/Proxy.sol": {
+  "target": "SlowMist-eden-network Smart Contract Security Audit Report/governance-e7b55f6e3f9c0d3ede7fd8bb39ae4fa7a4f4e79e/contracts/lib/Proxy.sol",
+  "id": "Proxy_18b579b0",
+  "status": 0,
+  "rows": 1,
+  "sec": 4.1
+ },
+ "SlowMist-eden-network Smart Contract Security Audit Report/governance-e7b55f6e3f9c0d3ede7fd8bb39ae4fa7a4f4e79e/contracts/lib/SafeERC20.sol": {
+  "target": "SlowMist-eden-network Smart Contract Security Audit Report/governance-e7b55f6e3f9c0d3ede7fd8bb39ae4fa7a4f4e79e/contracts/lib/SafeERC20.sol",
+  "id": "SafeERC20_a8051e93",
+  "status": 0,
+  "rows": 4,
+  "sec": 4.6
+ },
+ "Solidified-Aztec Element Bridge/aztec-connect-bridges-ac2e7194b5887ea11a607b4cf8de0547b3d7fdd0/src/bridges/element/MinHeap.sol": {
+  "target": "Solidified-Aztec Element Bridge/aztec-connect-bridges-ac2e7194b5887ea11a607b4cf8de0547b3d7fdd0/src/bridges/element/MinHeap.sol",
+  "id": "MinHeap_a68afdba",
+  "status": 0,
+  "rows": 6,
+  "sec": 7.1
+ },
+ "Solidified-Aztec Element Bridge/aztec-connect-bridges-ac2e7194b5887ea11a607b4cf8de0547b3d7fdd0/src/libraries/TokenTransfers.sol": {
+  "target": "Solidified-Aztec Element Bridge/aztec-connect-bridges-ac2e7194b5887ea11a607b4cf8de0547b3d7fdd0/src/libraries/TokenTransfers.sol",
+  "id": "TokenTransfers_0bd3e052",
+  "status": 0,
+  "rows": 4,
+  "sec": 4.4
+ },
+ "Solidified-Origin Governance/origin-dollar-30564e25d640749af447fb9e5d7c4fb00c37779f/contracts/contracts/governance/Governable.sol": {
+  "target": "Solidified-Origin Governance/origin-dollar-30564e25d640749af447fb9e5d7c4fb00c37779f/contracts/contracts/governance/Governable.sol",
+  "id": "Governable_62faa128",
+  "status": 0,
+  "rows": 4,
+  "sec": 4.9
+ },
+ "Solidified-Origin Governance/origin-dollar-30564e25d640749af447fb9e5d7c4fb00c37779f/contracts/contracts/token/OUSDResolutionUpgrade.sol": {
+  "target": "Solidified-Origin Governance/origin-dollar-30564e25d640749af447fb9e5d7c4fb00c37779f/contracts/contracts/token/OUSDResolutionUpgrade.sol",
+  "id": "OUSDResolutionUpgrade_f4fee278",
+  "status": 0,
+  "rows": 4,
+  "sec": 3.6
+ },
+ "Solidified-Origin Governance/origin-dollar-30564e25d640749af447fb9e5d7c4fb00c37779f/contracts/contracts/utils/Helpers.sol": {
+  "target": "Solidified-Origin Governance/origin-dollar-30564e25d640749af447fb9e5d7c4fb00c37779f/contracts/contracts/utils/Helpers.sol",
+  "id": "Helpers_ebf939b9",
+  "status": 0,
+  "rows": 2,
+  "sec": 7.0
+ },
+ "Solidified-Origin Governance/origin-dollar-30564e25d640749af447fb9e5d7c4fb00c37779f/contracts/contracts/oracle/OracleRouter.sol": {
+  "target": "Solidified-Origin Governance/origin-dollar-30564e25d640749af447fb9e5d7c4fb00c37779f/contracts/contracts/oracle/OracleRouter.sol",
+  "id": "OracleRouter_306ae123",
+  "status": 0,
+  "rows": 3,
+  "sec": 5.2
+ },
+ "Solidified-Origin Governance/origin-dollar-30564e25d640749af447fb9e5d7c4fb00c37779f/contracts/contracts/oracle/MixOracle.sol": {
+  "target": "Solidified-Origin Governance/origin-dollar-30564e25d640749af447fb9e5d7c4fb00c37779f/contracts/contracts/oracle/MixOracle.sol",
+  "id": "MixOracle_78f0475a",
+  "status": 0,
+  "rows": 4,
+  "sec": 8.8
+ },
+ "Solidity_Finance-OKLG - Smart Contract/contracts-e167d0d742d21bcc62d7a5b770a1f0ed1cf31eca/contracts/utils/Counters.sol": {
+  "target": "Solidity_Finance-OKLG - Smart Contract/contracts-e167d0d742d21bcc62d7a5b770a1f0ed1cf31eca/contracts/utils/Counters.sol",
+  "id": "Counters_e3aad770",
+  "status": 0,
+  "rows": 2,
+  "sec": 7.0
+ },
+ "Trail_of_Bits-88mph/88mph-contracts-76cd9d1fc45e65f5d0f686621fe6af85c40aa140/contracts/libs/DecMath.sol": {
+  "target": "Trail_of_Bits-88mph/88mph-contracts-76cd9d1fc45e65f5d0f686621fe6af85c40aa140/contracts/libs/DecMath.sol",
+  "id": "DecMath_8cc00a9e",
+  "status": 0,
+  "rows": 2,
+  "sec": 10.8
+ },
+ "Trail_of_Bits-88mph/88mph-contracts-76cd9d1fc45e65f5d0f686621fe6af85c40aa140/contracts/models/interest/LinearDecayInterestModel.sol": {
+  "target": "Trail_of_Bits-88mph/88mph-contracts-76cd9d1fc45e65f5d0f686621fe6af85c40aa140/contracts/models/interest/LinearDecayInterestModel.sol",
+  "id": "LinearDecayInterestModel_3283ce0b",
+  "status": 0,
+  "rows": 2,
+  "sec": 9.2
+ },
+ "Trail_of_Bits-88mph/88mph-contracts-76cd9d1fc45e65f5d0f686621fe6af85c40aa140/contracts/models/interest/LinearInterestModel.sol": {
+  "target": "Trail_of_Bits-88mph/88mph-contracts-76cd9d1fc45e65f5d0f686621fe6af85c40aa140/contracts/models/interest/LinearInterestModel.sol",
+  "id": "LinearInterestModel_3c93eae0",
+  "status": 0,
+  "rows": 1,
+  "sec": 9.2
+ },
+ "Trail_of_Bits-API3/airnode-991af4d69e82c1954a5c6c8e247cde8eb76101de/packages/airnode-protocol-v1/contracts/dapis/Median.sol": {
+  "target": "Trail_of_Bits-API3/airnode-991af4d69e82c1954a5c6c8e247cde8eb76101de/packages/airnode-protocol-v1/contracts/dapis/Median.sol",
+  "id": "Median_6e0fce24",
+  "status": 0,
+  "rows": 1,
+  "sec": 10.9
+ },
+ "Trail_of_Bits-API3/airnode-991af4d69e82c1954a5c6c8e247cde8eb76101de/packages/airnode-protocol-v1/contracts/dapis/QuickSelect.sol": {
+  "target": "Trail_of_Bits-API3/airnode-991af4d69e82c1954a5c6c8e247cde8eb76101de/packages/airnode-protocol-v1/contracts/dapis/QuickSelect.sol",
+  "id": "QuickSelect_a7951b46",
+  "status": 0,
+  "rows": 4,
+  "sec": 9.1
+ },
+ "Trail_of_Bits-API3/airnode-991af4d69e82c1954a5c6c8e247cde8eb76101de/packages/airnode-protocol-v1/contracts/protocol/AirnodeRequester.sol": {
+  "target": "Trail_of_Bits-API3/airnode-991af4d69e82c1954a5c6c8e247cde8eb76101de/packages/airnode-protocol-v1/contracts/protocol/AirnodeRequester.sol",
+  "id": "AirnodeRequester_11c877d3",
+  "status": 0,
+  "rows": 1,
+  "sec": 7.4
+ },
+ "Trail_of_Bits-API3/airnode-991af4d69e82c1954a5c6c8e247cde8eb76101de/packages/airnode-protocol-v1/contracts/dapis/Sort.sol": {
+  "target": "Trail_of_Bits-API3/airnode-991af4d69e82c1954a5c6c8e247cde8eb76101de/packages/airnode-protocol-v1/contracts/dapis/Sort.sol",
+  "id": "Sort_ed4cddd3",
+  "status": 0,
+  "rows": 2,
+  "sec": 10.9
+ },
+ "Trail_of_Bits-API3/airnode-991af4d69e82c1954a5c6c8e247cde8eb76101de/packages/airnode-protocol-v1/contracts/whitelist/Whitelist.sol": {
+  "target": "Trail_of_Bits-API3/airnode-991af4d69e82c1954a5c6c8e247cde8eb76101de/packages/airnode-protocol-v1/contracts/whitelist/Whitelist.sol",
+  "id": "Whitelist_1ee5d561",
+  "status": 0,
+  "rows": 2,
+  "sec": 6.9
+ },
+ "Trail_of_Bits-API3/airnode-991af4d69e82c1954a5c6c8e247cde8eb76101de/packages/airnode-protocol/contracts/rrp/AuthorizationUtils.sol": {
+  "target": "Trail_of_Bits-API3/airnode-991af4d69e82c1954a5c6c8e247cde8eb76101de/packages/airnode-protocol/contracts/rrp/AuthorizationUtils.sol",
+  "id": "AuthorizationUtils_886f09cd",
+  "status": 0,
+  "rows": 2,
+  "sec": 7.9
+ },
+ "Trail_of_Bits-API3/airnode-991af4d69e82c1954a5c6c8e247cde8eb76101de/packages/airnode-protocol/contracts/rrp/TemplateUtils.sol": {
+  "target": "Trail_of_Bits-API3/airnode-991af4d69e82c1954a5c6c8e247cde8eb76101de/packages/airnode-protocol/contracts/rrp/TemplateUtils.sol",
+  "id": "TemplateUtils_09daa2b8",
+  "status": 0,
+  "rows": 1,
+  "sec": 7.4
+ },
+ "Trail_of_Bits-API3/airnode-991af4d69e82c1954a5c6c8e247cde8eb76101de/packages/airnode-protocol/contracts/authorizers/RequesterAuthorizer.sol": {
+  "target": "Trail_of_Bits-API3/airnode-991af4d69e82c1954a5c6c8e247cde8eb76101de/packages/airnode-protocol/contracts/authorizers/RequesterAuthorizer.sol",
+  "id": "RequesterAuthorizer_f67ce8c8",
+  "status": 0,
+  "rows": 5,
+  "sec": 9.8
+ },
+ "Trail_of_Bits-API3/airnode-991af4d69e82c1954a5c6c8e247cde8eb76101de/packages/airnode-protocol/contracts/rrp/WithdrawalUtils.sol": {
+  "target": "Trail_of_Bits-API3/airnode-991af4d69e82c1954a5c6c8e247cde8eb76101de/packages/airnode-protocol/contracts/rrp/WithdrawalUtils.sol",
+  "id": "WithdrawalUtils_f92f23e9",
+  "status": 0,
+  "rows": 1,
+  "sec": 7.9
+ },
+ "Trail_of_Bits-FraxFinance/frax-solidity-3f0993a70e3496fd27887db7754d68709c84015e/contracts/ERC721/V8_0_0/Utils/Strings.sol": {
+  "target": "Trail_of_Bits-FraxFinance/frax-solidity-3f0993a70e3496fd27887db7754d68709c84015e/contracts/ERC721/V8_0_0/Utils/Strings.sol",
+  "id": "Strings_ebad397c",
+  "status": 0,
+  "rows": 3,
+  "sec": 9.3
+ },
+ "Trail_of_Bits-FraxFinance/frax-solidity-3f0993a70e3496fd27887db7754d68709c84015e/contracts/ERC721/V8_0_0/Governance/AccessControl.sol": {
+  "target": "Trail_of_Bits-FraxFinance/frax-solidity-3f0993a70e3496fd27887db7754d68709c84015e/contracts/ERC721/V8_0_0/Governance/AccessControl.sol",
+  "id": "AccessControl_6fc33656",
+  "status": 0,
+  "rows": 8,
+  "sec": 13.2
+ },
+ "Trail_of_Bits-FraxFinance/frax-solidity-3f0993a70e3496fd27887db7754d68709c84015e/contracts/ERC721/V8_0_0/Utils/EnumerableMap.sol": {
+  "target": "Trail_of_Bits-FraxFinance/frax-solidity-3f0993a70e3496fd27887db7754d68709c84015e/contracts/ERC721/V8_0_0/Utils/EnumerableMap.sol",
+  "id": "EnumerableMap_0fe8f604",
+  "status": 0,
+  "rows": 5,
+  "sec": 11.7
+ },
+ "Trail_of_Bits-FraxFinance/frax-solidity-3f0993a70e3496fd27887db7754d68709c84015e/contracts/__BSC/Access/Ownable.sol": {
+  "target": "Trail_of_Bits-FraxFinance/frax-solidity-3f0993a70e3496fd27887db7754d68709c84015e/contracts/__BSC/Access/Ownable.sol",
+  "id": "Ownable_67fa6ed3",
+  "status": 0,
+  "rows": 1,
+  "sec": 7.0
+ },
+ "Trail_of_Bits-FraxFinance/frax-solidity-3f0993a70e3496fd27887db7754d68709c84015e/contracts/FXB/NFT/FraxBond_NFT_Library.sol": {
+  "target": "Trail_of_Bits-FraxFinance/frax-solidity-3f0993a70e3496fd27887db7754d68709c84015e/contracts/FXB/NFT/FraxBond_NFT_Library.sol",
+  "id": "FraxBond_NFT_Library_5d33cc81",
+  "status": 0,
+  "rows": 1,
+  "sec": 8.9
+ },
+ "Trail_of_Bits-FraxFinance/frax-solidity-3f0993a70e3496fd27887db7754d68709c84015e/contracts/__BSC/BEP20/BEP20.sol": {
+  "target": "Trail_of_Bits-FraxFinance/frax-solidity-3f0993a70e3496fd27887db7754d68709c84015e/contracts/__BSC/BEP20/BEP20.sol",
+  "id": "BEP20_868727ca",
+  "status": 0,
+  "rows": 10,
+  "sec": 6.9
+ },
+ "Trail_of_Bits-FraxFinance/frax-solidity-3f0993a70e3496fd27887db7754d68709c84015e/contracts/FXB/NFT/FraxBond_NFT.sol": {
+  "target": "Trail_of_Bits-FraxFinance/frax-solidity-3f0993a70e3496fd27887db7754d68709c84015e/contracts/FXB/NFT/FraxBond_NFT.sol",
+  "id": "FraxBond_NFT_9b295916",
+  "status": 0,
+  "rows": 7,
+  "sec": 14.8
+ },
+ "Trail_of_Bits-FraxFinance/frax-solidity-3f0993a70e3496fd27887db7754d68709c84015e/contracts/__BSC/BEP20/SafeBEP20.sol": {
+  "target": "Trail_of_Bits-FraxFinance/frax-solidity-3f0993a70e3496fd27887db7754d68709c84015e/contracts/__BSC/BEP20/SafeBEP20.sol",
+  "id": "SafeBEP20_3331a770",
+  "status": 0,
+  "rows": 4,
+  "sec": 4.9
+ },
+ "Trail_of_Bits-FraxFinance/frax-solidity-3f0993a70e3496fd27887db7754d68709c84015e/contracts/__BSC/Math/Math.sol": {
+  "target": "Trail_of_Bits-FraxFinance/frax-solidity-3f0993a70e3496fd27887db7754d68709c84015e/contracts/__BSC/Math/Math.sol",
+  "id": "Math_cec30782",
+  "status": 0,
+  "rows": 4,
+  "sec": 4.0
+ },
+ "Trail_of_Bits-FraxFinance/frax-solidity-3f0993a70e3496fd27887db7754d68709c84015e/contracts/__BSC/Math/SafeMath.sol": {
+  "target": "Trail_of_Bits-FraxFinance/frax-solidity-3f0993a70e3496fd27887db7754d68709c84015e/contracts/__BSC/Math/SafeMath.sol",
+  "id": "SafeMath_30cfa255",
+  "status": 0,
+  "rows": 5,
+  "sec": 4.0
+ },
+ "Trail_of_Bits-FraxFinance/frax-solidity-3f0993a70e3496fd27887db7754d68709c84015e/contracts/__BSC/Staking/MigratableFarmBSC.sol": {
+  "target": "Trail_of_Bits-FraxFinance/frax-solidity-3f0993a70e3496fd27887db7754d68709c84015e/contracts/__BSC/Staking/MigratableFarmBSC.sol",
+  "id": "MigratableFarmBSC_fe919443",
+  "status": 0,
+  "rows": 30,
+  "sec": 7.1
+ },
+ "Trail_of_Bits-FraxFinance/frax-solidity-3f0993a70e3496fd27887db7754d68709c84015e/contracts/__BSC/Staking/Pausable.sol": {
+  "target": "Trail_of_Bits-FraxFinance/frax-solidity-3f0993a70e3496fd27887db7754d68709c84015e/contracts/__BSC/Staking/Pausable.sol",
+  "id": "Pausable_7bfdcb49",
+  "status": 0,
+  "rows": 1,
+  "sec": 5.8
+ },
+ "Trail_of_Bits-FraxFinance/frax-solidity-3f0993a70e3496fd27887db7754d68709c84015e/contracts/__BSC/Utils/Address.sol": {
+  "target": "Trail_of_Bits-FraxFinance/frax-solidity-3f0993a70e3496fd27887db7754d68709c84015e/contracts/__BSC/Utils/Address.sol",
+  "id": "Address_0190b642",
+  "status": 0,
+  "rows": 2,
+  "sec": 5.4
+ },
+ "Trail_of_Bits-FujiProtocol/fuji-protocol-933ea57b11889d87744efa23e95c90b7bf589402/contracts/flashloans/DyDxFlashLoans.sol": {
+  "target": "Trail_of_Bits-FujiProtocol/fuji-protocol-933ea57b11889d87744efa23e95c90b7bf589402/contracts/flashloans/DyDxFlashLoans.sol",
+  "id": "DyDxFlashLoans_acfe1334",
+  "status": 0,
+  "rows": 1,
+  "sec": 6.0
+ },
+ "Trail_of_Bits-FujiProtocol/fuji-protocol-933ea57b11889d87744efa23e95c90b7bf589402/contracts/Harvester.sol": {
+  "target": "Trail_of_Bits-FujiProtocol/fuji-protocol-933ea57b11889d87744efa23e95c90b7bf589402/contracts/Harvester.sol",
+  "id": "Harvester_eccaaf3f",
+  "status": 0,
+  "rows": 1,
+  "sec": 7.1
+ },
+ "Trail_of_Bits-FujiProtocol/fuji-protocol-933ea57b11889d87744efa23e95c90b7bf589402/contracts/libraries/WadRayMath.sol": {
+  "target": "Trail_of_Bits-FujiProtocol/fuji-protocol-933ea57b11889d87744efa23e95c90b7bf589402/contracts/libraries/WadRayMath.sol",
+  "id": "WadRayMath_53d63c2f",
+  "status": 0,
+  "rows": 6,
+  "sec": 7.1
+ },
+ "Trail_of_Bits-MapleFinance/proxy-factory-0b5968b9d7def2426b4f84cc08e9c77b79e26f1c/contracts/Proxied.sol": {
+  "target": "Trail_of_Bits-MapleFinance/proxy-factory-0b5968b9d7def2426b4f84cc08e9c77b79e26f1c/contracts/Proxied.sol",
+  "id": "Proxied_d5e89b2a",
+  "status": 0,
+  "rows": 1,
+  "sec": 7.3
+ },
+ "Trail_of_Bits-MapleFinance/proxy-factory-0b5968b9d7def2426b4f84cc08e9c77b79e26f1c/contracts/Proxy.sol": {
+  "target": "Trail_of_Bits-MapleFinance/proxy-factory-0b5968b9d7def2426b4f84cc08e9c77b79e26f1c/contracts/Proxy.sol",
+  "id": "Proxy_697e52fb",
+  "status": 0,
+  "rows": 1,
+  "sec": 6.6
+ },
+ "Trail_of_Bits-FraxFinance/frax-solidity-3f0993a70e3496fd27887db7754d68709c84015e/contracts/ERC721/ERC721.sol": {
+  "target": "Trail_of_Bits-FraxFinance/frax-solidity-3f0993a70e3496fd27887db7754d68709c84015e/contracts/ERC721/ERC721.sol",
+  "id": "ERC721_fefff26c",
+  "status": 0,
+  "rows": 17,
+  "sec": 38.9
+ },
+ "Trail_of_Bits-MapleFinance/proxy-factory-0b5968b9d7def2426b4f84cc08e9c77b79e26f1c/contracts/ProxyFactory.sol": {
+  "target": "Trail_of_Bits-MapleFinance/proxy-factory-0b5968b9d7def2426b4f84cc08e9c77b79e26f1c/contracts/ProxyFactory.sol",
+  "id": "ProxyFactory_eeefebd5",
+  "status": 0,
+  "rows": 5,
+  "sec": 10.4
+ },
+ "Trail_of_Bits-Primitive/rmm-core-5dcf4306fc32fb9a4e3c154deb86f6b9d513c344/contracts/libraries/Units.sol": {
+  "target": "Trail_of_Bits-Primitive/rmm-core-5dcf4306fc32fb9a4e3c154deb86f6b9d513c344/contracts/libraries/Units.sol",
+  "id": "Units_c789c362",
+  "status": 0,
+  "rows": 4,
+  "sec": 10.0
+ },
+ "Trail_of_Bits-SeaportProtocol/seaport-f17082fca3e99b409f53040d8858e84b0246aa22/contracts/Consideration.sol": {
+  "target": "Trail_of_Bits-SeaportProtocol/seaport-f17082fca3e99b409f53040d8858e84b0246aa22/contracts/Consideration.sol",
+  "id": "Consideration_5c49ff12",
+  "status": 0,
+  "rows": 11,
+  "sec": 17.1
+ },
+ "Trail_of_Bits-Primitive/rmm-core-5dcf4306fc32fb9a4e3c154deb86f6b9d513c344/contracts/libraries/ReplicationMath.sol": {
+  "target": "Trail_of_Bits-Primitive/rmm-core-5dcf4306fc32fb9a4e3c154deb86f6b9d513c344/contracts/libraries/ReplicationMath.sol",
+  "id": "ReplicationMath_a4f3f880",
+  "status": 0,
+  "rows": 4,
+  "sec": 15.2
+ },
+ "Trail_of_Bits-SeaportProtocol/seaport-f17082fca3e99b409f53040d8858e84b0246aa22/contracts/lib/ConsiderationInternal.sol": {
+  "target": "Trail_of_Bits-SeaportProtocol/seaport-f17082fca3e99b409f53040d8858e84b0246aa22/contracts/lib/ConsiderationInternal.sol",
+  "id": "ConsiderationInternal_1aec7f11",
+  "status": 0,
+  "rows": 19,
+  "sec": 15.6
+ },
+ "Trail_of_Bits-SeaportProtocol/seaport-f17082fca3e99b409f53040d8858e84b0246aa22/contracts/lib/ConsiderationInternalView.sol": {
+  "target": "Trail_of_Bits-SeaportProtocol/seaport-f17082fca3e99b409f53040d8858e84b0246aa22/contracts/lib/ConsiderationInternalView.sol",
+  "id": "ConsiderationInternalView_2843b878",
+  "status": 0,
+  "rows": 14,
+  "sec": 8.5
+ },
+ "Trail_of_Bits-SeaportProtocol/seaport-f17082fca3e99b409f53040d8858e84b0246aa22/contracts/lib/ConsiderationPure.sol": {
+  "target": "Trail_of_Bits-SeaportProtocol/seaport-f17082fca3e99b409f53040d8858e84b0246aa22/contracts/lib/ConsiderationPure.sol",
+  "id": "ConsiderationPure_ff30358e",
+  "status": 0,
+  "rows": 16,
+  "sec": 7.5
+ },
+ "consensys-Connext NXTP — Noncustodial Xchain Transfer Protocol/nxtp-0656436d654cfe0313fa3c2bbc81aa86232ade16/packages/contracts/contracts/ProposedOwnable.sol": {
+  "target": "consensys-Connext NXTP — Noncustodial Xchain Transfer Protocol/nxtp-0656436d654cfe0313fa3c2bbc81aa86232ade16/packages/contracts/contracts/ProposedOwnable.sol",
+  "id": "ProposedOwnable_16f1d00c",
+  "status": 0,
+  "rows": 7,
+  "sec": 11.3
+ },
+ "QuillAudits-Amplify Smart Contract/contracts-d8af5f11f3b6ab59d09a56ebc229012900dc1cc8/protocol/contracts/utils/ExponentialDouble.sol": {
+  "target": "QuillAudits-Amplify Smart Contract/contracts-d8af5f11f3b6ab59d09a56ebc229012900dc1cc8/protocol/contracts/utils/ExponentialDouble.sol",
+  "id": "ExponentialDouble_98ebea95",
+  "status": 0,
+  "rows": 7,
+  "sec": 162.0
+ },
+ "consensys-Fei_Protocol_v2_Phase_1/fei-protocol-core-5e3e2ab889f06831f4fe2e8460066ded40ccf0a8/contracts/dao/GovernorAlpha.sol": {
+  "target": "consensys-Fei_Protocol_v2_Phase_1/fei-protocol-core-5e3e2ab889f06831f4fe2e8460066ded40ccf0a8/contracts/dao/GovernorAlpha.sol",
+  "id": "GovernorAlpha_ee535697",
+  "status": 0,
+  "rows": 13,
+  "sec": 8.7
+ },
+ "consensys-Fei_Protocol_v2_Phase_1/fei-protocol-core-5e3e2ab889f06831f4fe2e8460066ded40ccf0a8/contracts/pcv/utils/PCVDepositWrapper.sol": {
+  "target": "consensys-Fei_Protocol_v2_Phase_1/fei-protocol-core-5e3e2ab889f06831f4fe2e8460066ded40ccf0a8/contracts/pcv/utils/PCVDepositWrapper.sol",
+  "id": "PCVDepositWrapper_7553cab6",
+  "status": 0,
+  "rows": 2,
+  "sec": 8.0
+ },
+ "consensys-Fei_Protocol_v2_Phase_1/fei-protocol-core-5e3e2ab889f06831f4fe2e8460066ded40ccf0a8/contracts/utils/Timed.sol": {
+  "target": "consensys-Fei_Protocol_v2_Phase_1/fei-protocol-core-5e3e2ab889f06831f4fe2e8460066ded40ccf0a8/contracts/utils/Timed.sol",
+  "id": "Timed_561673a6",
+  "status": 0,
+  "rows": 3,
+  "sec": 8.0
+ },
+ "consensys-Zer0_zAuction/zAuction-50d3b6ce6d7ee00e7181d5b2a9a2eedcdd3fdb72/contracts/ERC721TestToken.sol": {
+  "target": "consensys-Zer0_zAuction/zAuction-50d3b6ce6d7ee00e7181d5b2a9a2eedcdd3fdb72/contracts/ERC721TestToken.sol",
+  "id": "ERC721TestToken_9cf5c1a4",
+  "status": 0,
+  "rows": 4,
+  "sec": 12.3
+ },
+ "Trail_of_Bits-Primitive/rmm-core-5dcf4306fc32fb9a4e3c154deb86f6b9d513c344/contracts/libraries/CumulativeNormalDistribution.sol": {
+  "target": "Trail_of_Bits-Primitive/rmm-core-5dcf4306fc32fb9a4e3c154deb86f6b9d513c344/contracts/libraries/CumulativeNormalDistribution.sol",
+  "id": "CumulativeNormalDistribution_4665c0e7",
+  "status": 0,
+  "rows": 5,
+  "sec": 35.7
+ },
+ "consensys-Zer0_zAuction/zAuction-50d3b6ce6d7ee00e7181d5b2a9a2eedcdd3fdb72/contracts/oz/erc1155/ERC1155Burnable.sol": {
+  "target": "consensys-Zer0_zAuction/zAuction-50d3b6ce6d7ee00e7181d5b2a9a2eedcdd3fdb72/contracts/oz/erc1155/ERC1155Burnable.sol",
+  "id": "ERC1155Burnable_548a1c81",
+  "status": 0,
+  "rows": 2,
+  "sec": 6.9
+ },
+ "consensys-Zer0_zAuction/zAuction-50d3b6ce6d7ee00e7181d5b2a9a2eedcdd3fdb72/contracts/oz/erc1155/ERC1155PresetMinterPauser.sol": {
+  "target": "consensys-Zer0_zAuction/zAuction-50d3b6ce6d7ee00e7181d5b2a9a2eedcdd3fdb72/contracts/oz/erc1155/ERC1155PresetMinterPauser.sol",
+  "id": "ERC1155PresetMinterPauser_20c1fd34",
+  "status": 0,
+  "rows": 4,
+  "sec": 11.4
+ },
+ "consensys-Zer0_zAuction/zAuction-50d3b6ce6d7ee00e7181d5b2a9a2eedcdd3fdb72/contracts/oz/erc20/ERC20.sol": {
+  "target": "consensys-Zer0_zAuction/zAuction-50d3b6ce6d7ee00e7181d5b2a9a2eedcdd3fdb72/contracts/oz/erc20/ERC20.sol",
+  "id": "ERC20_0550ad3d",
+  "status": 0,
+  "rows": 8,
+  "sec": 11.2
+ },
+ "consensys-Fei_Protocol_v2_Phase_1/fei-protocol-core-5e3e2ab889f06831f4fe2e8460066ded40ccf0a8/contracts/dao/Tribe.sol": {
+  "target": "consensys-Fei_Protocol_v2_Phase_1/fei-protocol-core-5e3e2ab889f06831f4fe2e8460066ded40ccf0a8/contracts/dao/Tribe.sol",
+  "id": "Tribe_8282a333",
+  "status": 0,
+  "rows": 14,
+  "sec": 30.3
+ },
+ "consensys-Zer0_zAuction/zAuction-50d3b6ce6d7ee00e7181d5b2a9a2eedcdd3fdb72/contracts/oz/erc1155/ERC1155.sol": {
+  "target": "consensys-Zer0_zAuction/zAuction-50d3b6ce6d7ee00e7181d5b2a9a2eedcdd3fdb72/contracts/oz/erc1155/ERC1155.sol",
+  "id": "ERC1155_04877cd1",
+  "status": 0,
+  "rows": 11,
+  "sec": 20.7
+ },
+ "consensys-Zer0_zAuction/zAuction-50d3b6ce6d7ee00e7181d5b2a9a2eedcdd3fdb72/contracts/oz/erc721/ERC721Burnable.sol": {
+  "target": "consensys-Zer0_zAuction/zAuction-50d3b6ce6d7ee00e7181d5b2a9a2eedcdd3fdb72/contracts/oz/erc721/ERC721Burnable.sol",
+  "id": "ERC721Burnable_e5787b1d",
+  "status": 0,
+  "rows": 1,
+  "sec": 8.2
+ },
+ "consensys-Zer0_zAuction/zAuction-50d3b6ce6d7ee00e7181d5b2a9a2eedcdd3fdb72/contracts/oz/erc721/ERC721Enumerable.sol": {
+  "target": "consensys-Zer0_zAuction/zAuction-50d3b6ce6d7ee00e7181d5b2a9a2eedcdd3fdb72/contracts/oz/erc721/ERC721Enumerable.sol",
+  "id": "ERC721Enumerable_60ece1e3",
+  "status": 0,
+  "rows": 7,
+  "sec": 9.7
+ },
+ "consensys-Zer0_zAuction/zAuction-50d3b6ce6d7ee00e7181d5b2a9a2eedcdd3fdb72/contracts/oz/util/AccessControlEnumerable.sol": {
+  "target": "consensys-Zer0_zAuction/zAuction-50d3b6ce6d7ee00e7181d5b2a9a2eedcdd3fdb72/contracts/oz/util/AccessControlEnumerable.sol",
+  "id": "AccessControlEnumerable_25235206",
+  "status": 0,
+  "rows": 4,
+  "sec": 6.8
+ },
+ "consensys-Zer0_zAuction/zAuction-50d3b6ce6d7ee00e7181d5b2a9a2eedcdd3fdb72/contracts/oz/util/AccessControl.sol": {
+  "target": "consensys-Zer0_zAuction/zAuction-50d3b6ce6d7ee00e7181d5b2a9a2eedcdd3fdb72/contracts/oz/util/AccessControl.sol",
+  "id": "AccessControl_1777da33",
+  "status": 0,
+  "rows": 5,
+  "sec": 7.9
+ },
+ "consensys-Zer0_zAuction/zAuction-50d3b6ce6d7ee00e7181d5b2a9a2eedcdd3fdb72/contracts/oz/util/Counters.sol": {
+  "target": "consensys-Zer0_zAuction/zAuction-50d3b6ce6d7ee00e7181d5b2a9a2eedcdd3fdb72/contracts/oz/util/Counters.sol",
+  "id": "Counters_c820bf9b",
+  "status": 0,
+  "rows": 1,
+  "sec": 5.3
+ },
+ "consensys-Zer0_zAuction/zAuction-50d3b6ce6d7ee00e7181d5b2a9a2eedcdd3fdb72/contracts/oz/erc721/ERC721.sol": {
+  "target": "consensys-Zer0_zAuction/zAuction-50d3b6ce6d7ee00e7181d5b2a9a2eedcdd3fdb72/contracts/oz/erc721/ERC721.sol",
+  "id": "ERC721_311ca4b3",
+  "status": 0,
+  "rows": 13,
+  "sec": 19.6
+ },
+ "consensys-Zer0_zAuction/zAuction-50d3b6ce6d7ee00e7181d5b2a9a2eedcdd3fdb72/contracts/zAuction.sol": {
+  "target": "consensys-Zer0_zAuction/zAuction-50d3b6ce6d7ee00e7181d5b2a9a2eedcdd3fdb72/contracts/zAuction.sol",
+  "id": "zAuction_f7c4d091",
+  "status": 0,
+  "rows": 4,
+  "sec": 6.5
+ },
+ "consensys-Zer0_zAuction/zAuction-50d3b6ce6d7ee00e7181d5b2a9a2eedcdd3fdb72/contracts/zAuctionAccountant.sol": {
+  "target": "consensys-Zer0_zAuction/zAuction-50d3b6ce6d7ee00e7181d5b2a9a2eedcdd3fdb72/contracts/zAuctionAccountant.sol",
+  "id": "zAuctionAccountant_72b76f9b",
+  "status": 0,
+  "rows": 5,
+  "sec": 10.2
+ },
+ "Runtime_Vеrification-stakefish_ethereum_staking_audit_report/eth2-validation-services-contract-d91928f3a270f6115831fe3a21a69eb98bf57b26/contracts/interfaces/deposit_contract.sol": {
+  "target": "Runtime_Vеrification-stakefish_ethereum_staking_audit_report/eth2-validation-services-contract-d91928f3a270f6115831fe3a21a69eb98bf57b26/contracts/interfaces/deposit_contract.sol",
+  "id": "deposit_contract_bf910ab7",
+  "status": 0,
+  "rows": 3,
+  "sec": 383.4
+ }
+}

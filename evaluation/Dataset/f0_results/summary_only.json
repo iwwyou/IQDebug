@@ -1,0 +1,70 @@
+{
+ "functions": 21,
+ "stage": {
+  "ok": 21
+ },
+ "stage_by_tier": {
+  "T1": {
+   "ok": 18
+  },
+  "T2": {
+   "ok": 3
+  }
+ },
+ "stage_by_deps": {
+  "complete": {
+   "ok": 21
+  },
+  "deps_only_incomplete": {},
+  "target_unit_incomplete": {},
+  "build_error": {}
+ },
+ "fail_reasons_top": [],
+ "abstract": {
+  "functions": 21,
+  "reaches_unimplemented": 21,
+  "stage_reaching_unimpl": {
+   "ok": 21
+  },
+  "stage_not_reaching": {}
+ },
+ "nav_violations": {
+  "S1": 0,
+  "S2": 0,
+  "S3": 0,
+  "S4": 0
+ },
+ "slots": {
+  "functions_with_slots": 21,
+  "total": 83,
+  "by_kind": {
+   "Param": 45,
+   "StateVar": 25,
+   "GlobalVar": 13
+  },
+  "functions_with_IReturn": 0,
+  "functions_with_requires_index": 0,
+  "functions_with_value_errors": 0,
+  "functions_with_immutable_slot": 3,
+  "functions_reading_immutable_ast": 3
+ },
+ "states": {
+  "ok_functions": 21,
+  "with_partial_bottom": 0,
+  "with_empty_in_state": 0,
+  "with_exit_top": 21,
+  "with_opaque_call": 3,
+  "with_lowlevel_call": 0
+ },
+ "time": {
+  "evaluate_median": 0.021,
+  "evaluate_p95": 0.038,
+  "evaluate_max": 0.039
+ },
+ "workers": {
+  "timeout": 0,
+  "crash": 0
+ },
+ "generated": "2026-11-20T17:28:06",
+ "scope": "WrappedPosition"
+}

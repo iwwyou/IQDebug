@@ -1,0 +1,34 @@
+{
+  "case_id": "s0_vault_withdraw",
+  "note": "S0 용 손 작성 케이스. 정본 케이스 형식(EXPERIMENT_PLAN §0.6-3) 확정 전 임시 형식이다.",
+  "source_dir": "playground/forge/src",
+  "file": "Vault.sol",
+  "contract": "Vault",
+  "function": "withdraw(uint256)",
+  "returns": "(uint256)",
+  "mutability": "nonpayable",
+  "tier": "T1",
+  "solc": "0.8.38",
+  "access": "direct",
+  "sender": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+  "value": 0,
+  "ctor_args": [],
+  "params": [{"name": "amt", "type": "uint256", "value": 1000}],
+  "state": [
+    {"path": "shares[sender]", "value": 1000},
+    {"path": "totalShares", "value": 1000},
+    {"path": "feeBps", "value": 30}
+  ],
+  "externals": [],
+  "expected_termination": "return",
+  "observe": {
+    "exit": ["ret0", "shares[sender]", "totalShares"],
+    "points": [{"line": 25, "phase": "before", "iterations": [0, 1, 2], "vars": ["r", "i"]}]
+  },
+  "expected_manual": {
+    "source": "playground/WALKTHROUGH.md §0.2 손계산·손 실행 결과",
+    "ret0": 993,
+    "post": {"shares[sender]": 0, "totalShares": 0},
+    "points": {"25": [{"r": 1000, "i": 0}, {"r": 997, "i": 1}, {"r": 995, "i": 2}]}
+  }
+}

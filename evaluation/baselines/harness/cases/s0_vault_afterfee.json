@@ -1,0 +1,32 @@
+{
+  "case_id": "s0_vault_afterfee",
+  "note": "S0 internal 타깃 케이스. 상속 하네스(노출 함수)로 부른다 (EXPERIMENT_PLAN §0.4-2). 손 작성 임시 형식.",
+  "source_dir": "playground/forge/src",
+  "file": "Vault.sol",
+  "contract": "Vault",
+  "function": "_afterFee(uint256)",
+  "returns": "(uint256)",
+  "mutability": "view",
+  "tier": "T2",
+  "solc": "0.8.38",
+  "access": "internal",
+  "sender": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+  "value": 0,
+  "ctor_args": [],
+  "params": [{"name": "amt", "type": "uint256", "value": 10000}],
+  "state": [
+    {"path": "feeBps", "value": 30}
+  ],
+  "externals": [],
+  "expected_termination": "return",
+  "observe": {
+    "exit": ["ret0"],
+    "points": [{"line": 25, "phase": "before", "iterations": [0, 1, 2], "vars": ["r", "i"]}]
+  },
+  "expected_manual": {
+    "source": "playground/WALKTHROUGH.md §2.5 (r = 10000 → 9970 → 9941) + 손계산 9941 - 9941*30/10000 = 9912",
+    "ret0": 9912,
+    "post": {},
+    "points": {"25": [{"r": 10000, "i": 0}, {"r": 9970, "i": 1}, {"r": 9941, "i": 2}]}
+  }
+}

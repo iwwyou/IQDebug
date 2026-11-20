@@ -1,0 +1,1203 @@
+{
+ "pass": true,
+ "cases": {
+  "s0_vault_afterfee": true,
+  "s0_vault_withdraw": true,
+  "s0_vault_withdraw_revert": true
+ },
+ "checks": [
+  {
+   "case": "s0_vault_afterfee",
+   "workflow": "truth",
+   "check": "termination",
+   "ok": true,
+   "got": "return",
+   "want": "return"
+  },
+  {
+   "case": "s0_vault_afterfee",
+   "workflow": "truth",
+   "check": "ret0",
+   "ok": true,
+   "got": 9912,
+   "want": 9912
+  },
+  {
+   "case": "s0_vault_afterfee",
+   "workflow": "truth",
+   "check": "post",
+   "ok": true,
+   "got": {},
+   "want": {}
+  },
+  {
+   "case": "s0_vault_afterfee",
+   "workflow": "W1",
+   "check": "termination",
+   "ok": true,
+   "got": "return",
+   "want": "return"
+  },
+  {
+   "case": "s0_vault_afterfee",
+   "workflow": "W1",
+   "check": "ret0",
+   "ok": true,
+   "got": 9912,
+   "want": 9912
+  },
+  {
+   "case": "s0_vault_afterfee",
+   "workflow": "W1",
+   "check": "post",
+   "ok": true,
+   "got": {},
+   "want": {}
+  },
+  {
+   "case": "s0_vault_afterfee",
+   "workflow": "W1",
+   "check": "line 25 before-values",
+   "ok": true,
+   "got": [
+    {
+     "r": 10000,
+     "i": 0
+    },
+    {
+     "r": 9970,
+     "i": 1
+    },
+    {
+     "r": 9941,
+     "i": 2
+    }
+   ],
+   "want": [
+    {
+     "r": 10000,
+     "i": 0
+    },
+    {
+     "r": 9970,
+     "i": 1
+    },
+    {
+     "r": 9941,
+     "i": 2
+    }
+   ]
+  },
+  {
+   "case": "s0_vault_afterfee",
+   "workflow": "W1s",
+   "check": "termination",
+   "ok": true,
+   "got": "return",
+   "want": "return"
+  },
+  {
+   "case": "s0_vault_afterfee",
+   "workflow": "W1s",
+   "check": "ret0",
+   "ok": true,
+   "got": 9912,
+   "want": 9912
+  },
+  {
+   "case": "s0_vault_afterfee",
+   "workflow": "W1s",
+   "check": "post",
+   "ok": true,
+   "got": {},
+   "want": {}
+  },
+  {
+   "case": "s0_vault_afterfee",
+   "workflow": "W1s",
+   "check": "line 25 before-values",
+   "ok": true,
+   "got": [
+    {
+     "r": 10000,
+     "i": 0
+    },
+    {
+     "r": 9970,
+     "i": 1
+    },
+    {
+     "r": 9941,
+     "i": 2
+    }
+   ],
+   "want": [
+    {
+     "r": 10000,
+     "i": 0
+    },
+    {
+     "r": 9970,
+     "i": 1
+    },
+    {
+     "r": 9941,
+     "i": 2
+    }
+   ]
+  },
+  {
+   "case": "s0_vault_afterfee",
+   "workflow": "W2",
+   "check": "termination",
+   "ok": true,
+   "got": "return",
+   "want": "return"
+  },
+  {
+   "case": "s0_vault_afterfee",
+   "workflow": "W2",
+   "check": "ret0",
+   "ok": true,
+   "got": 9912,
+   "want": 9912
+  },
+  {
+   "case": "s0_vault_afterfee",
+   "workflow": "W2",
+   "check": "line 25 before-values",
+   "ok": true,
+   "got": [
+    {
+     "r": 10000,
+     "i": 0
+    },
+    {
+     "r": 9970,
+     "i": 1
+    },
+    {
+     "r": 9941,
+     "i": 2
+    }
+   ],
+   "want": [
+    {
+     "r": 10000,
+     "i": 0
+    },
+    {
+     "r": 9970,
+     "i": 1
+    },
+    {
+     "r": 9941,
+     "i": 2
+    }
+   ]
+  },
+  {
+   "case": "s0_vault_afterfee",
+   "workflow": "W3",
+   "check": "termination",
+   "ok": true,
+   "got": "return",
+   "want": "return"
+  },
+  {
+   "case": "s0_vault_afterfee",
+   "workflow": "W3",
+   "check": "ret0",
+   "ok": true,
+   "got": 9912,
+   "want": 9912
+  },
+  {
+   "case": "s0_vault_afterfee",
+   "workflow": "W3",
+   "check": "post",
+   "ok": true,
+   "got": {},
+   "want": {}
+  },
+  {
+   "case": "s0_vault_afterfee",
+   "workflow": "W3",
+   "check": "line 25 before-values",
+   "ok": true,
+   "got": [
+    {
+     "r": 10000,
+     "i": 0
+    },
+    {
+     "r": 9970,
+     "i": 1
+    },
+    {
+     "r": 9941,
+     "i": 2
+    }
+   ],
+   "want": [
+    {
+     "r": 10000,
+     "i": 0
+    },
+    {
+     "r": 9970,
+     "i": 1
+    },
+    {
+     "r": 9941,
+     "i": 2
+    }
+   ]
+  },
+  {
+   "case": "s0_vault_withdraw",
+   "workflow": "truth",
+   "check": "termination",
+   "ok": true,
+   "got": "return",
+   "want": "return"
+  },
+  {
+   "case": "s0_vault_withdraw",
+   "workflow": "truth",
+   "check": "ret0",
+   "ok": true,
+   "got": 993,
+   "want": 993
+  },
+  {
+   "case": "s0_vault_withdraw",
+   "workflow": "truth",
+   "check": "post",
+   "ok": true,
+   "got": {
+    "shares[sender]": 0,
+    "totalShares": 0
+   },
+   "want": {
+    "shares[sender]": 0,
+    "totalShares": 0
+   }
+  },
+  {
+   "case": "s0_vault_withdraw",
+   "workflow": "W1",
+   "check": "termination",
+   "ok": true,
+   "got": "return",
+   "want": "return"
+  },
+  {
+   "case": "s0_vault_withdraw",
+   "workflow": "W1",
+   "check": "ret0",
+   "ok": true,
+   "got": 993,
+   "want": 993
+  },
+  {
+   "case": "s0_vault_withdraw",
+   "workflow": "W1",
+   "check": "post",
+   "ok": true,
+   "got": {
+    "shares[sender]": 0,
+    "totalShares": 0
+   },
+   "want": {
+    "shares[sender]": 0,
+    "totalShares": 0
+   }
+  },
+  {
+   "case": "s0_vault_withdraw",
+   "workflow": "W1",
+   "check": "line 25 before-values",
+   "ok": true,
+   "got": [
+    {
+     "r": 1000,
+     "i": 0
+    },
+    {
+     "r": 997,
+     "i": 1
+    },
+    {
+     "r": 995,
+     "i": 2
+    }
+   ],
+   "want": [
+    {
+     "r": 1000,
+     "i": 0
+    },
+    {
+     "r": 997,
+     "i": 1
+    },
+    {
+     "r": 995,
+     "i": 2
+    }
+   ]
+  },
+  {
+   "case": "s0_vault_withdraw",
+   "workflow": "W1s",
+   "check": "termination",
+   "ok": true,
+   "got": "return",
+   "want": "return"
+  },
+  {
+   "case": "s0_vault_withdraw",
+   "workflow": "W1s",
+   "check": "ret0",
+   "ok": true,
+   "got": 993,
+   "want": 993
+  },
+  {
+   "case": "s0_vault_withdraw",
+   "workflow": "W1s",
+   "check": "post",
+   "ok": true,
+   "got": {
+    "shares[sender]": 0,
+    "totalShares": 0
+   },
+   "want": {
+    "shares[sender]": 0,
+    "totalShares": 0
+   }
+  },
+  {
+   "case": "s0_vault_withdraw",
+   "workflow": "W1s",
+   "check": "line 25 before-values",
+   "ok": true,
+   "got": [
+    {
+     "r": 1000,
+     "i": 0
+    },
+    {
+     "r": 997,
+     "i": 1
+    },
+    {
+     "r": 995,
+     "i": 2
+    }
+   ],
+   "want": [
+    {
+     "r": 1000,
+     "i": 0
+    },
+    {
+     "r": 997,
+     "i": 1
+    },
+    {
+     "r": 995,
+     "i": 2
+    }
+   ]
+  },
+  {
+   "case": "s0_vault_withdraw",
+   "workflow": "W2",
+   "check": "termination",
+   "ok": true,
+   "got": "return",
+   "want": "return"
+  },
+  {
+   "case": "s0_vault_withdraw",
+   "workflow": "W2",
+   "check": "ret0",
+   "ok": true,
+   "got": 993,
+   "want": 993
+  },
+  {
+   "case": "s0_vault_withdraw",
+   "workflow": "W2",
+   "check": "line 25 before-values",
+   "ok": true,
+   "got": [
+    {
+     "r": 1000,
+     "i": 0
+    },
+    {
+     "r": 997,
+     "i": 1
+    },
+    {
+     "r": 995,
+     "i": 2
+    }
+   ],
+   "want": [
+    {
+     "r": 1000,
+     "i": 0
+    },
+    {
+     "r": 997,
+     "i": 1
+    },
+    {
+     "r": 995,
+     "i": 2
+    }
+   ]
+  },
+  {
+   "case": "s0_vault_withdraw",
+   "workflow": "W3",
+   "check": "termination",
+   "ok": true,
+   "got": "return",
+   "want": "return"
+  },
+  {
+   "case": "s0_vault_withdraw",
+   "workflow": "W3",
+   "check": "ret0",
+   "ok": true,
+   "got": 993,
+   "want": 993
+  },
+  {
+   "case": "s0_vault_withdraw",
+   "workflow": "W3",
+   "check": "post",
+   "ok": true,
+   "got": {
+    "shares[sender]": 0,
+    "totalShares": 0
+   },
+   "want": {
+    "shares[sender]": 0,
+    "totalShares": 0
+   }
+  },
+  {
+   "case": "s0_vault_withdraw",
+   "workflow": "W3",
+   "check": "line 25 before-values",
+   "ok": true,
+   "got": [
+    {
+     "r": 1000,
+     "i": 0
+    },
+    {
+     "r": 997,
+     "i": 1
+    },
+    {
+     "r": 995,
+     "i": 2
+    }
+   ],
+   "want": [
+    {
+     "r": 1000,
+     "i": 0
+    },
+    {
+     "r": 997,
+     "i": 1
+    },
+    {
+     "r": 995,
+     "i": 2
+    }
+   ]
+  },
+  {
+   "case": "s0_vault_withdraw_revert",
+   "workflow": "truth",
+   "check": "termination",
+   "ok": true,
+   "got": "revert",
+   "want": "revert"
+  },
+  {
+   "case": "s0_vault_withdraw_revert",
+   "workflow": "truth",
+   "check": "ret0",
+   "ok": true,
+   "got": null,
+   "want": null
+  },
+  {
+   "case": "s0_vault_withdraw_revert",
+   "workflow": "truth",
+   "check": "post",
+   "ok": true,
+   "got": {
+    "shares[sender]": 1000,
+    "totalShares": 1000
+   },
+   "want": {
+    "shares[sender]": 1000,
+    "totalShares": 1000
+   }
+  },
+  {
+   "case": "s0_vault_withdraw_revert",
+   "workflow": "truth",
+   "check": "revert → diff post empty",
+   "ok": true,
+   "got": true,
+   "want": true
+  },
+  {
+   "case": "s0_vault_withdraw_revert",
+   "workflow": "W1",
+   "check": "termination",
+   "ok": true,
+   "got": "revert",
+   "want": "revert"
+  },
+  {
+   "case": "s0_vault_withdraw_revert",
+   "workflow": "W1",
+   "check": "ret0",
+   "ok": true,
+   "got": null,
+   "want": null
+  },
+  {
+   "case": "s0_vault_withdraw_revert",
+   "workflow": "W1",
+   "check": "post",
+   "ok": true,
+   "got": {
+    "shares[sender]": 1000,
+    "totalShares": 1000
+   },
+   "want": {
+    "shares[sender]": 1000,
+    "totalShares": 1000
+   }
+  },
+  {
+   "case": "s0_vault_withdraw_revert",
+   "workflow": "W1",
+   "check": "line 16 before-values",
+   "ok": true,
+   "got": [
+    {
+     "amt": 2000,
+     "bal": 1000
+    }
+   ],
+   "want": [
+    {
+     "amt": 2000,
+     "bal": 1000
+    }
+   ]
+  },
+  {
+   "case": "s0_vault_withdraw_revert",
+   "workflow": "W1s",
+   "check": "termination",
+   "ok": true,
+   "got": "revert",
+   "want": "revert"
+  },
+  {
+   "case": "s0_vault_withdraw_revert",
+   "workflow": "W1s",
+   "check": "ret0",
+   "ok": true,
+   "got": null,
+   "want": null
+  },
+  {
+   "case": "s0_vault_withdraw_revert",
+   "workflow": "W1s",
+   "check": "post",
+   "ok": true,
+   "got": {
+    "shares[sender]": 1000,
+    "totalShares": 1000
+   },
+   "want": {
+    "shares[sender]": 1000,
+    "totalShares": 1000
+   }
+  },
+  {
+   "case": "s0_vault_withdraw_revert",
+   "workflow": "W1s",
+   "check": "line 16 before-values",
+   "ok": true,
+   "got": [
+    {
+     "amt": 2000,
+     "bal": 1000
+    }
+   ],
+   "want": [
+    {
+     "amt": 2000,
+     "bal": 1000
+    }
+   ]
+  },
+  {
+   "case": "s0_vault_withdraw_revert",
+   "workflow": "W2",
+   "check": "termination",
+   "ok": true,
+   "got": "revert",
+   "want": "revert"
+  },
+  {
+   "case": "s0_vault_withdraw_revert",
+   "workflow": "W2",
+   "check": "ret0",
+   "ok": true,
+   "got": null,
+   "want": null
+  },
+  {
+   "case": "s0_vault_withdraw_revert",
+   "workflow": "W2",
+   "check": "line 16 before-values",
+   "ok": true,
+   "got": [
+    {
+     "amt": 2000,
+     "bal": 1000
+    }
+   ],
+   "want": [
+    {
+     "amt": 2000,
+     "bal": 1000
+    }
+   ]
+  },
+  {
+   "case": "s0_vault_withdraw_revert",
+   "workflow": "W3",
+   "check": "termination",
+   "ok": true,
+   "got": "revert",
+   "want": "revert"
+  },
+  {
+   "case": "s0_vault_withdraw_revert",
+   "workflow": "W3",
+   "check": "ret0",
+   "ok": true,
+   "got": null,
+   "want": null
+  },
+  {
+   "case": "s0_vault_withdraw_revert",
+   "workflow": "W3",
+   "check": "post",
+   "ok": true,
+   "got": {
+    "shares[sender]": 1000,
+    "totalShares": 1000
+   },
+   "want": {
+    "shares[sender]": 1000,
+    "totalShares": 1000
+   }
+  },
+  {
+   "case": "s0_vault_withdraw_revert",
+   "workflow": "W3",
+   "check": "line 16 before-values",
+   "ok": true,
+   "got": [
+    {
+     "amt": 2000,
+     "bal": 1000
+    }
+   ],
+   "want": [
+    {
+     "amt": 2000,
+     "bal": 1000
+    }
+   ]
+  }
+ ],
+ "results": {
+  "s0_vault_afterfee": {
+   "W2": {
+    "workflow": "W2",
+    "setup": "OK",
+    "termination": "return",
+    "ret0": 9912,
+    "post": null,
+    "points": {
+     "25": [
+      {
+       "r": 10000,
+       "i": 0
+      },
+      {
+       "r": 9970,
+       "i": 1
+      },
+      {
+       "r": 9941,
+       "i": 2
+      }
+     ]
+    },
+    "steps": 843,
+    "warn_inferred": true,
+    "sec": {
+     "compile": 1.831,
+     "deploy": 1.881,
+     "execute": 0.301,
+     "debug_session": 0.387
+    },
+    "artifacts": {
+     "address": "0x5FbDB2315678afecb367f032d93F642f64180aa3",
+     "override_state_diff": "0x5FbDB2315678afecb367f032d93F642f64180aa3:0x2:30",
+     "n_slots": 1,
+     "harness_file": "__harness__/VaultHarness.sol"
+    },
+    "dir": "C:\\Users\\isjeon\\PycharmProjects\\pythonProject\\IQDebug\\evaluation\\baselines\\harness\\work\\s0_vault_afterfee\\w2"
+   },
+   "truth": {
+    "termination": "return",
+    "ret0": 9912,
+    "post": {},
+    "revert_diff_empty": null
+   },
+   "W1": {
+    "workflow": "W1",
+    "setup": "OK",
+    "termination": "return",
+    "ret0": 9912,
+    "post": {},
+    "points": {
+     "25": [
+      {
+       "r": 10000,
+       "i": 0
+      },
+      {
+       "r": 9970,
+       "i": 1
+      },
+      {
+       "r": 9941,
+       "i": 2
+      }
+     ]
+    },
+    "steps": 1693,
+    "warn_inferred": true,
+    "sec": {
+     "compile": 4.342,
+     "execute": 3.945,
+     "debug_session": 6.128
+    },
+    "artifacts": {
+     "test_file": "test/S0.t.sol",
+     "harness_file": "__harness__/VaultHarness.sol",
+     "A_slot_tool": 0,
+     "A_slot_harness": 1
+    },
+    "dir": "C:\\Users\\isjeon\\PycharmProjects\\pythonProject\\IQDebug\\evaluation\\baselines\\harness\\work\\s0_vault_afterfee\\w1"
+   },
+   "W1s": {
+    "workflow": "W1s",
+    "setup": "OK",
+    "termination": "return",
+    "ret0": 9912,
+    "post": {},
+    "points": {
+     "25": [
+      {
+       "r": 10000,
+       "i": 0
+      },
+      {
+       "r": 9970,
+       "i": 1
+      },
+      {
+       "r": 9941,
+       "i": 2
+      }
+     ]
+    },
+    "steps": 1693,
+    "warn_inferred": true,
+    "sec": {
+     "compile": 3.87,
+     "execute": 3.477,
+     "debug_session": 6.133
+    },
+    "artifacts": {
+     "test_file": "test/S0.t.sol",
+     "harness_file": "__harness__/VaultHarness.sol",
+     "A_slot_tool": 0,
+     "A_slot_harness": 1
+    },
+    "dir": "C:\\Users\\isjeon\\PycharmProjects\\pythonProject\\IQDebug\\evaluation\\baselines\\harness\\work\\s0_vault_afterfee\\w1s"
+   },
+   "W3": {
+    "workflow": "W3",
+    "setup": "OK",
+    "termination": "return",
+    "ret0": 9912,
+    "post": {},
+    "points": {
+     "25": [
+      {
+       "r": 10000,
+       "i": 0
+      },
+      {
+       "r": 9970,
+       "i": 1
+      },
+      {
+       "r": 9941,
+       "i": 2
+      }
+     ]
+    },
+    "steps": null,
+    "sec": {
+     "compile": 3.612,
+     "execute_script": 4.287
+    },
+    "artifacts": {
+     "E_src_stmts": 3,
+     "instrumented": "contracts/Vault.sol",
+     "harness_file": "__harness__/VaultHarness.sol"
+    },
+    "dir": "C:\\Users\\isjeon\\PycharmProjects\\pythonProject\\IQDebug\\evaluation\\baselines\\harness\\work\\s0_vault_afterfee\\w3"
+   }
+  },
+  "s0_vault_withdraw": {
+   "W2": {
+    "workflow": "W2",
+    "setup": "OK",
+    "termination": "return",
+    "ret0": 993,
+    "post": null,
+    "points": {
+     "25": [
+      {
+       "r": 1000,
+       "i": 0
+      },
+      {
+       "r": 997,
+       "i": 1
+      },
+      {
+       "r": 995,
+       "i": 2
+      }
+     ]
+    },
+    "steps": 1014,
+    "warn_inferred": true,
+    "sec": {
+     "compile": 1.821,
+     "deploy": 1.811,
+     "execute": 0.095,
+     "debug_session": 0.282
+    },
+    "artifacts": {
+     "address": "0x5FbDB2315678afecb367f032d93F642f64180aa3",
+     "override_state_diff": "0x5FbDB2315678afecb367f032d93F642f64180aa3:0x723077b8a1b173adc35e5f0e7e3662fd1208212cb629f9c128551ea7168da722:1000,0x5FbDB2315678afecb367f032d93F642f64180aa3:0x1:1000,0x5FbDB2315678afecb367f032d93F642f64180aa3:0x2:30",
+     "n_slots": 3,
+     "harness_file": null
+    },
+    "dir": "C:\\Users\\isjeon\\PycharmProjects\\pythonProject\\IQDebug\\evaluation\\baselines\\harness\\work\\s0_vault_withdraw\\w2"
+   },
+   "truth": {
+    "termination": "return",
+    "ret0": 993,
+    "post": {
+     "shares[sender]": 0,
+     "totalShares": 0
+    },
+    "revert_diff_empty": null
+   },
+   "W1": {
+    "workflow": "W1",
+    "setup": "OK",
+    "termination": "return",
+    "ret0": 993,
+    "post": {
+     "shares[sender]": 0,
+     "totalShares": 0
+    },
+    "points": {
+     "25": [
+      {
+       "r": 1000,
+       "i": 0
+      },
+      {
+       "r": 997,
+       "i": 1
+      },
+      {
+       "r": 995,
+       "i": 2
+      }
+     ]
+    },
+    "steps": 3180,
+    "warn_inferred": true,
+    "sec": {
+     "compile": 4.3,
+     "execute": 4.353,
+     "debug_session": 6.718
+    },
+    "artifacts": {
+     "test_file": "test/S0.t.sol",
+     "harness_file": null,
+     "A_slot_tool": 0,
+     "A_slot_harness": 3
+    },
+    "dir": "C:\\Users\\isjeon\\PycharmProjects\\pythonProject\\IQDebug\\evaluation\\baselines\\harness\\work\\s0_vault_withdraw\\w1"
+   },
+   "W1s": {
+    "workflow": "W1s",
+    "setup": "OK",
+    "termination": "return",
+    "ret0": 993,
+    "post": {
+     "shares[sender]": 0,
+     "totalShares": 0
+    },
+    "points": {
+     "25": [
+      {
+       "r": 1000,
+       "i": 0
+      },
+      {
+       "r": 997,
+       "i": 1
+      },
+      {
+       "r": 995,
+       "i": 2
+      }
+     ]
+    },
+    "steps": 67928,
+    "warn_inferred": true,
+    "sec": {
+     "compile": 4.171,
+     "execute": 3.37,
+     "debug_session": 6.249
+    },
+    "artifacts": {
+     "test_file": "test/S0.t.sol",
+     "harness_file": null,
+     "A_slot_tool": 2,
+     "A_slot_harness": 1
+    },
+    "dir": "C:\\Users\\isjeon\\PycharmProjects\\pythonProject\\IQDebug\\evaluation\\baselines\\harness\\work\\s0_vault_withdraw\\w1s"
+   },
+   "W3": {
+    "workflow": "W3",
+    "setup": "OK",
+    "termination": "return",
+    "ret0": 993,
+    "post": {
+     "shares[sender]": 0,
+     "totalShares": 0
+    },
+    "points": {
+     "25": [
+      {
+       "r": 1000,
+       "i": 0
+      },
+      {
+       "r": 997,
+       "i": 1
+      },
+      {
+       "r": 995,
+       "i": 2
+      }
+     ]
+    },
+    "steps": null,
+    "sec": {
+     "compile": 3.471,
+     "execute_script": 4.701
+    },
+    "artifacts": {
+     "E_src_stmts": 3,
+     "instrumented": "contracts/Vault.sol",
+     "harness_file": null
+    },
+    "dir": "C:\\Users\\isjeon\\PycharmProjects\\pythonProject\\IQDebug\\evaluation\\baselines\\harness\\work\\s0_vault_withdraw\\w3"
+   }
+  },
+  "s0_vault_withdraw_revert": {
+   "W2": {
+    "workflow": "W2",
+    "setup": "OK",
+    "termination": "revert",
+    "ret0": null,
+    "post": null,
+    "points": {
+     "16": [
+      {
+       "amt": 2000,
+       "bal": 1000
+      }
+     ]
+    },
+    "steps": 228,
+    "warn_inferred": true,
+    "sec": {
+     "compile": 1.734,
+     "deploy": 1.844,
+     "execute": 0.131,
+     "debug_session": 0.273
+    },
+    "artifacts": {
+     "address": "0x5FbDB2315678afecb367f032d93F642f64180aa3",
+     "override_state_diff": "0x5FbDB2315678afecb367f032d93F642f64180aa3:0x723077b8a1b173adc35e5f0e7e3662fd1208212cb629f9c128551ea7168da722:1000,0x5FbDB2315678afecb367f032d93F642f64180aa3:0x1:1000,0x5FbDB2315678afecb367f032d93F642f64180aa3:0x2:30",
+     "n_slots": 3,
+     "harness_file": null
+    },
+    "dir": "C:\\Users\\isjeon\\PycharmProjects\\pythonProject\\IQDebug\\evaluation\\baselines\\harness\\work\\s0_vault_withdraw_revert\\w2"
+   },
+   "truth": {
+    "termination": "revert",
+    "ret0": null,
+    "error": "eth_call: {'code': 3, 'message': 'execution reverted: insufficient', 'data': '0x08c379a00000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000",
+    "post": {
+     "shares[sender]": 1000,
+     "totalShares": 1000
+    },
+    "revert_diff_empty": true
+   },
+   "W1": {
+    "workflow": "W1",
+    "setup": "OK",
+    "termination": "revert",
+    "ret0": null,
+    "post": {
+     "shares[sender]": 1000,
+     "totalShares": 1000
+    },
+    "points": {
+     "16": [
+      {
+       "amt": 2000,
+       "bal": 1000
+      }
+     ]
+    },
+    "steps": 2301,
+    "warn_inferred": true,
+    "sec": {
+     "compile": 4.326,
+     "execute": 3.955,
+     "debug_session": 6.415
+    },
+    "artifacts": {
+     "test_file": "test/S0.t.sol",
+     "harness_file": null,
+     "A_slot_tool": 0,
+     "A_slot_harness": 3
+    },
+    "dir": "C:\\Users\\isjeon\\PycharmProjects\\pythonProject\\IQDebug\\evaluation\\baselines\\harness\\work\\s0_vault_withdraw_revert\\w1"
+   },
+   "W1s": {
+    "workflow": "W1s",
+    "setup": "OK",
+    "termination": "revert",
+    "ret0": null,
+    "post": {
+     "shares[sender]": 1000,
+     "totalShares": 1000
+    },
+    "points": {
+     "16": [
+      {
+       "amt": 2000,
+       "bal": 1000
+      }
+     ]
+    },
+    "steps": 67049,
+    "warn_inferred": true,
+    "sec": {
+     "compile": 3.869,
+     "execute": 4.035,
+     "debug_session": 6.82
+    },
+    "artifacts": {
+     "test_file": "test/S0.t.sol",
+     "harness_file": null,
+     "A_slot_tool": 2,
+     "A_slot_harness": 1
+    },
+    "dir": "C:\\Users\\isjeon\\PycharmProjects\\pythonProject\\IQDebug\\evaluation\\baselines\\harness\\work\\s0_vault_withdraw_revert\\w1s"
+   },
+   "W3": {
+    "workflow": "W3",
+    "setup": "OK",
+    "termination": "revert",
+    "ret0": null,
+    "post": {
+     "shares[sender]": 1000,
+     "totalShares": 1000
+    },
+    "points": {
+     "16": [
+      {
+       "amt": 2000,
+       "bal": 1000
+      }
+     ]
+    },
+    "steps": null,
+    "sec": {
+     "compile": 3.35,
+     "execute_script": 4.486
+    },
+    "artifacts": {
+     "E_src_stmts": 3,
+     "instrumented": "contracts/Vault.sol",
+     "harness_file": null
+    },
+    "dir": "C:\\Users\\isjeon\\PycharmProjects\\pythonProject\\IQDebug\\evaluation\\baselines\\harness\\work\\s0_vault_withdraw_revert\\w3"
+   }
+  }
+ }
+}
