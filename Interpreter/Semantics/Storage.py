@@ -128,6 +128,11 @@ class Storage:
     # ───────────────────────────── 키 해석 ─────────────────────────────
     def resolve(self, c, index_expr: Expression, variables, *, debug=False) -> KeyRes:
         expr = _program_expr(index_expr) if debug else index_expr
+        # (2026-11-20) 디버그 입력: 대입·증감·delete 가 든 선택자(`heap[--heapSize]`)는 진입 시점 값이 정의되지 않는다 →
+        #   **평가하기 전에** Range 로 거부한다(예전엔 먼저 평가해 그 부수효과가 진입 상태에 적용된 뒤에 거부했다).
+        #   함수 호출은 여기서 거르지 않는다 — `_msgSender()` 처럼 평가해 구체 키가 되는 경우를 지금 지원하고 있다.
+        if debug and _has_mutation(expr):
+            return KeyRes("range")
         v = self.ev.evaluate_expression(expr, variables, None, None)
         if isinstance(v, Variables) and not is_composite(v):
             v = v.value
@@ -412,6 +417,22 @@ def _program_expr(e):
     if e.elements:
         n.elements = [_program_expr(a) for a in e.elements]
     return n
+
+
+def _has_mutation(e, _seen=None) -> bool:
+    """식 안에 대입·증감·delete 연산이 있는가 (평가 없이 구문만 본다)."""
+    if _seen is None:
+        _seen = set()
+    if isinstance(e, (list, tuple)):
+        return any(_has_mutation(x, _seen) for x in e)
+    if isinstance(e, dict):
+        return any(_has_mutation(x, _seen) for x in e.values())
+    if not isinstance(e, Expression) or id(e) in _seen:
+        return False
+    _seen.add(id(e))
+    if e.operator in _IMPURE_OPS:
+        return True
+    return any(_has_mutation(v, _seen) for v in vars(e).values() if isinstance(v, (Expression, list, tuple, dict)))
 
 
 def _pure_deps(e):

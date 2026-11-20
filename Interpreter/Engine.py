@@ -1389,6 +1389,9 @@ class Engine:
                 if ln is not None and ln in an.analysis_per_line:
                     an.analysis_per_line[ln].clear()
 
+        # (2026-11-20) 타깃 = 바닥 프레임 — 호출 지점이 없다. worklist 가 노드마다 덮어쓰는 `_call_site_node` 가
+        #   해석이 끝난 뒤에도 남아, 다음 회차의 프레임 밖 호출이 이전 회차의 노드를 호출 지점으로 잡았다.
+        self._call_site_node = None
         try:
             an.current_target_function = run.function_name
             an.current_target_function_cfg = run
@@ -1430,6 +1433,7 @@ class Engine:
             if getattr(an, "_capture_debug_fcfg", False):
                 an._frozen_debug_fcfg = run
         finally:
+            self._call_site_node = None
             an.current_target_function = _old_func
             an.current_target_function_cfg = _old_fcfg
             self._record_enabled = _old_record_enabled

@@ -37,9 +37,14 @@ class DebugBatchManager:
         snap = self.snapman.snapshot()
         self.analyzer.debug_initializer.begin_batch()
         try:
-            for code in self._lines:
-                tree = ParserHelpers.generate_parse_tree(code, "intentUnit")
-                EnhancedSolidityVisitor(self.analyzer).visit(tree)
+            # (2026-11-20) 입력 적용은 실행 단계가 아니다 — 슬롯 키의 인덱스 식(`_allowances[_msgSender()]`)을
+            #   풀려고 함수를 해석해도 그것은 사용자가 Step Into 할 호출이 아니므로 callee 상태를 캡처하지 않는다.
+            #   (예전엔 캡처가 직전 evaluate 의 마지막 노드를 호출 지점으로 잡아 두 번째 evaluate 가
+            #   `callee capture: call expression not found` 로 실패했다.)
+            with self.analyzer.engine._no_callee_capture():
+                for code in self._lines:
+                    tree = ParserHelpers.generate_parse_tree(code, "intentUnit")
+                    EnhancedSolidityVisitor(self.analyzer).visit(tree)
 
             # 선택된 한 함수만 재-해석
             self.analyzer.flush_reinterpret_target()
