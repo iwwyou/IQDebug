@@ -115,6 +115,27 @@ solc 컴파일 게이트로는 막을 수 없다. 이 소스는 합법이기 때
 
 ---
 
+## I18. storage 참조를 통한 쓰기가 원래 상태변수에 반영되지 않는다 — unsound, 2026-11-24 재현
+
+**증상.** 진입 `s[x].v = [2,2]` 일 때 아래는 모두 마지막 `w` 가 `[1,1]` 이어야 하는데 `[2,2]` 다.
+
+- 지역 storage 포인터: `D storage d = s[x]; d.v = 1; w = s[x].v;` (`d.v` 로 읽으면 `[1,1]` 로 맞다)
+- 일반 상태 struct: `D storage d = g; d.v = 1; w = g.v;`
+- callee 의 storage 파라미터: `function h(D storage p) internal { p.v = 1; }` 뒤 `h(s[x])`·`h(g)`
+- 선택자 무효화도 빠진다: `m[s[x].v]` 를 읽고 `d.v = 1` 뒤 다시 읽으면 이전 칸의 값이 그대로 나온다.
+
+직접 쓰기(`s[x].v = 1`)와 memory 파라미터(`h(D memory p)`)는 정상이다. 커밋 `0699ac7` 에서도 같다(2026-11-20 수정 이전).
+
+**원인 (추정, 미확정).** 지역 포인터는 노드 env 복사에서 별도 사본이 되는 것으로, callee 는 `param_sources` 되쓰기 뒤에
+exit env 의 상태변수 사본이 caller 를 다시 덮는 것으로 보인다(`Engine._interpret_callee_body`).
+
+**규모.** 텍스트 집계로 선정 타깃 파일 중 지역 storage 포인터 선언이 있는 파일 41, 그 이름에 쓰기도 있는 파일 25.
+callee storage 파라미터(EnumerableSet 류)는 세지 않았다. 실제 선정 함수에서 틀린 상태가 나오는지는 확인 전.
+
+**상태.** 기록만(2026-11-24 사용자). 수정 전.
+
+---
+
 ## 해결됨
 
 ### I17. `this.f()` 의 callee 가 호출자의 `msg.sender` 를 쓴다 — ✅ 2026-11-16

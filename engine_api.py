@@ -264,14 +264,13 @@ class Scope:
 
 @dataclass
 class Diagnostic:
-    """누적 코드 syntax gate 결과. analyze 가 delta 적용 후 *합쳐진 전체 코드*를
-    ANTLR(Parser/Solidity.g4) 파스해 실패하면 채워진다. (solc 컴파일 게이트는 보류:
-    런타임 무겁고 의미검사는 분석 선결조건 아님 — 필요 시 별도 deep-validate 액션으로 분리.)"""
+    """누적 코드 게이트 결과 — ANTLR 문법(update) · solc 컴파일(analyze_source·update, `solc_gate`) · 분석 중 소스 오류."""
     line: int
     message: str
     severity: Literal["error", "warning"] = "error"
     # (2026-10-22) syntax = 문법(SyntaxValid 게이트), semantic = 사용자 소스 의미 오류(SourceError)
-    category: Literal["syntax", "semantic"] = "syntax"
+    # (2026-11-24) compile = solc 오류
+    category: Literal["syntax", "compile", "semantic"] = "syntax"
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -1664,6 +1663,7 @@ class EngineSession:
         #   deps_root 가 없으면 의존성 없이 동작(타깃이 의존성을 참조하면 분석 시점에 명시적 오류).
         self._deps_root = deps_root
         self._deps_exclude = tuple(exclude)
+        self._solc_project = None            # solc 게이트용 의존성 원본 (첫 검사 때 읽는다)
         # (2026-10-22) 에디터의 **현재** 소스 오류. 비어 있지 않으면 엔진 CFG 는 마지막 정상(committed) 버전이고
         #   현재 소스와 다르다 → evaluate/verify 거부. 성공한 업데이트에서 비운다.
         self._editor_errors: list[Diagnostic] = []
@@ -1902,9 +1902,7 @@ class EngineSession:
           * 통일 경로: slice_solidity(Dependencies/main.py:53) record 형식과 동일 → update_code 증분 적용.
             = SolQDebug 증분("quick") 강점 유지. full-slice-per-change 는 그 강점을 버리므로 안 함.
 
-        syntax gate (누적 전체 기준):
-          * delta 적용 후 *합쳐진 전체 코드*를 ANTLR(Parser/Solidity.g4) 파스. 실패 시
-            Structure.diagnostics 채우고 이전 valid 구조 유지(표시만). solc 게이트는 보류(Diagnostic 참고).
+        게이트: 이 진입점에는 없다(전체 소스가 아니라 records 를 받는다) — `analyze_source`·`update` 가 검사한다.
 
         실배선:
           * records 를 update_code(SolidityAnalyzer.py:40) 경로로 적용해 visitor 가 CFG 구성.
@@ -1944,6 +1942,10 @@ class EngineSession:
         from Dependencies.main import slice_solidity
         if param_types is not None:
             self.set_target_param_types(param_types)
+        errs = self._compile_errors(source)
+        if errs:
+            self._editor_errors = errs
+            return self.structure(contract, func, errs)
         try:
             records = slice_solidity(source)
         except SourceError as ex:
@@ -2101,6 +2103,10 @@ class EngineSession:
         if not ok:
             self._editor_errors = [Diagnostic(line=d["line"], message=d["message"]) for d in diags]
             return {"ok": False, "diagnostics": diags}
+        errs = self._compile_errors(new_source)
+        if errs:
+            self._editor_errors = errs
+            return {"ok": False, "diagnostics": [asdict(d) for d in errs]}
 
         try:
             new_records = slice_solidity(new_source)
@@ -2207,6 +2213,15 @@ class EngineSession:
                 f"증분 분석 실패: {_op_where(cur['op'])}: {type(ex).__name__}: {ex} "
                 f"— 이 변경은 반영되지 않았다(직전 정상 상태 유지)") from ex
         return []
+
+    def _compile_errors(self, source: str) -> list:
+        """(2026-11-24) solc 게이트 — 컴파일되지 않는 소스는 해석하지 않는다(세션은 직전 정상 상태 그대로)."""
+        import solc_gate
+        if self._solc_project is None:
+            self._solc_project = (solc_gate.Project.load(self._deps_root, self._deps_exclude)
+                                  if self._deps_root is not None else solc_gate.Project())
+        return [Diagnostic(line=e["line"], message=e["message"], category="compile")
+                for e in solc_gate.check(source, self._solc_project)]
 
     def _load_deps(self) -> None:
         if self._deps_root is not None:

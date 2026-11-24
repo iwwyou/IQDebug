@@ -274,24 +274,6 @@ class SolidityAnalyzer:
     def get_full_code(self):
         return self.full_code
 
-    def compile_check(self) -> None:
-        from solcx import (install_solc, set_solc_version, compile_source,
-                           get_installed_solc_versions)
-        from solcx.exceptions import SolcError
-
-        wanted = '0.8.0'
-        if wanted not in get_installed_solc_versions():
-            print(f"[info] installing solc {wanted} …")
-            install_solc(wanted)
-        set_solc_version(wanted)
-        try:
-            compile_source(self.full_code)
-            print("[ok] solidity compiled successfully")
-        except SolcError as e:
-            print("[err] Solidity compiler reported:\n", e)
-        except Exception as e:
-            print("[err] unexpected:", e)
-
     # =================================================================
     #  Context analysis dispatcher
     # =================================================================
