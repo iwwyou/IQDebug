@@ -3,7 +3,7 @@
 구현 세션 소유. 재현이 확인됐지만 아직 고치지 않은 오류를 적는다. 지원 범위 밖으로 **결정한** 구문은 여기가
 아니라 `evaluation/reviews/round9_operations.md` §9 에 있다. 할 일 순서는 `evaluation/ROADMAP.md`.
 
-수치 기준: 타깃 486(`evaluation/Dataset/targets_final.json`, 2026-11-19 폐기 · `temp/dataset_legacy/` 로 옮김), 2026-11-13 빌드·파일럿.
+수치 기준(I3~I16): 타깃 486(`evaluation/Dataset/targets_final.json`, 2026-11-19 폐기 · `temp/dataset_legacy/` 로 옮김), 2026-11-13 빌드·파일럿.
 새 데이터셋(415 파일, `evaluation/Dataset/target_functions.json`) 기준 재측정은 `deps/` 재빌드 뒤에 한다.
 번호는 바꾸지 않는다. 해결된 항목은 맨 아래 "해결됨" 으로 옮기고 번호를 남긴다.
 
@@ -36,20 +36,6 @@
 
 ---
 
-## I5. 빌드·분석 실패 — 원인 미분류
-
-2026-11-13 빌드에서 남은 항목. 개별 조사 전이다.
-
-- 파일 수준 struct 미해석: `ReserveConfigurationMap` 24 단위, `AdditionalRecipient` 5.
-- `numeric literal "0.95" does not evaluate to an integer` 10 단위. 상수 식 평가.
-- `Unhandled expression context` 약 10 단위. 예: `if` 줄, 단순 문장.
-- `Type '…' is not defined as struct, enum, or contract` (`PotLike`, `Node`, `PoolInfo`, `RiskItem`, `BondData` …).
-  부모 컨트랙트의 struct 로 보인다.
-- `Function context not found` / `Contract context not found` 중 I7 이 아닌 것 51 단위(35 타깃). 예:
-  `ErrorReporter` 의 여러 줄 enum 뒤 `event Failure(uint error, …);`.
-
----
-
 ## I6. 여러 줄 문장 안의 라인 주석이 뒤를 삼킨다 — 에디터 경로
 
 **증상.** 슬라이서가 줄을 공백으로 잇는데 `//` 를 지우지 않아 `g(n, // first` ⏎ `1, 2);` 가 `function(⊤)` 이 된다. 예외가
@@ -61,19 +47,6 @@ solc 컴파일 게이트로는 막을 수 없다. 이 소스는 합법이기 때
 **더 넓은 증상 (2026-11-16 관찰).** 여러 줄 문장만이 아니다. 문장 **뒤에 붙은** 줄 주석도 같다. `total = 2; // c` 는
 줄이 `;` 로 끝나지 않아 다음 줄들과 합쳐져, `total = 2; // c } g(1, 2);` 한 레코드(9–12행)가 됐다 — 닫는 `}` 와
 다음 문장까지 삼켰다. 에디터 입력에서는 흔한 형태다. 미수정.
-
----
-
-## I7. 본문이 빈 한 줄 함수 뒤의 선언이 실패한다 — 24 단위 (24 타깃)
-
-**증상.** `function g() external {}` / `constructor() {}` / `receive() external payable {}` 처럼 `{}` 가 한 줄에 있는
-함수 **뒤에** 다른 함수가 오면 그 함수가 `Contract context not found for line N` 으로 실패한다. 같은 줄을
-`{` ⏎ `}` 로 펼치면 정상이다. 함수가 마지막이면 정상이다.
-
-**원인(추정).** 슬라이서가 `{}` 한 줄을 **1줄짜리 레코드**(startLine = endLine)로 내고, 나머지 블록 헤더는
-`헤더 ⏎ }` 2줄 레코드로 낸다. 1줄 레코드 경로에서 컨트랙트 범위·괄호 집계가 어긋나는 것으로 보인다. 미검증.
-
-**대응 선택지(미결정).** 정규화가 빈 블록도 펼치면 데이터셋은 해결되지만 에디터 경로의 엔진 버그는 남는다.
 
 ---
 
@@ -115,6 +88,38 @@ solc 컴파일 게이트로는 막을 수 없다. 이 소스는 합법이기 때
 
 ---
 
+## I19. evaluate 실패 — 의존성이 풀린 뒤 드러난 것 (2026-11-25 표본, 함수 521 중 196)
+
+표본 = 5 번째 파일마다(파일 83). 많은 순. 원인 조사 전이다.
+
+1. `@IReturn: 'aclManager' is not an interface-typed variable` — 30 (Aave).
+2. `using-for lookup: static type of receiver of '.mul(...)' is unknown` — 15.
+3. `Cannot join intervals of different type lengths` — 12.
+4. `This 'ERC721' is may be array or struct but may not be declared` — 9. 컨트랙트 이름을 식에 쓴 경우로 보인다.
+5. `@IReturn: function 'balanceOf' not found in interface 'IERC20Metadata'` — 9. 부모 인터페이스의 함수를 찾지 않는다.
+6. `states 없음 (입력 0개 또는 전부 입력 오류)` — 9. 입력이 하나도 없으면 해석하지 않는 구조(`evaluate({})` = 빈 상태) 때문일 수 있다.
+7. `unresolved member '.sub' on UnsignedIntegerInterval` — 6, `Cannot resolve overload for 'mul_'` — 6.
+8. 그 밖: Yul `if`·`for` 미지원(명시적 거부), `unsupported 'new' type`, `tuple assignment: right-hand side is not a tuple value`,
+   `return join ... BytesSet with UnsignedIntegerInterval`, `'int' object has no attribute 'is_bottom'` 등 각 1~5.
+
+시간 초과: `PeckShield-AaveV3 .../Pool.sol` 은 파일당 540 초 안에 7 함수가 끝나지 않는다(어느 함수인지 미확인).
+
+---
+
+## I20. 해석 결과가 부정확하거나 틀린 곳 — 2026-11-24~25 재현, 미수정
+
+1. **빈 동적 배열 접근이 revert 하지 않는다.** `arr.length = [0,0]` 에서 `r = arr[0]` 이 ⊤. 3단계(배열 = 원소 목록)에서 고친다.
+2. **루프 정밀도.** 길이 3·원소 1,2,3 을 넣은 합 루프가 6 이 아니라 ⊤(widening). mapping 칸 `m[0..2]` 도 같다. sound 하지만 부정확하다.
+3. **memory 별칭.** `b = a; b[0] = 3; r = m[a[0]]` 이 m[3] 이 아니라 m[0] 을 읽는다 — unsound. 4단계.
+4. **조건부 포인터.** `D storage d = a; if (c) d = b; d.v = 1;` 이 a.v·b.v 를 바꾸지 않는다(c 와 무관) — unsound. I18 과 같은 원인, 2단계.
+5. `new L.Inner[](2)` 의 원소가 0 이 아니라 ⊤. return 변수를 거친 struct 값(`z = s; return`)이 ⊤.
+6. `abi.decode(d, (L.Inner))`·`abi.decode(d, (uint256[], uint256))` 가 예외("unrecognised type-list element").
+7. **편집 중 struct 멤버 추가.** 기존 struct 에 멤버를 더하고 바로 쓰면 `Member 'w' not in struct 's'`. 선언 추가는 증분으로 적용하는데
+   이미 만든 상태변수 객체가 옛 멤버를 가진다. 1단계 이전부터 같다.
+8. **S2(한 줄에 착지 노드 둘)** — 새로 해석까지 간 `StakefishERC20Wrapper.mintTo`, `VariableDebtToken.initialize`.
+
+---
+
 ## I18. storage 참조를 통한 쓰기가 원래 상태변수에 반영되지 않는다 — unsound, 2026-11-24 재현
 
 **증상.** 진입 `s[x].v = [2,2]` 일 때 아래는 모두 마지막 `w` 가 `[1,1]` 이어야 하는데 `[2,2]` 다.
@@ -126,8 +131,12 @@ solc 컴파일 게이트로는 막을 수 없다. 이 소스는 합법이기 때
 
 직접 쓰기(`s[x].v = 1`)와 memory 파라미터(`h(D memory p)`)는 정상이다. 커밋 `0699ac7` 에서도 같다(2026-11-20 수정 이전).
 
-**원인 (추정, 미확정).** 지역 포인터는 노드 env 복사에서 별도 사본이 되는 것으로, callee 는 `param_sources` 되쓰기 뒤에
-exit env 의 상태변수 사본이 caller 를 다시 덮는 것으로 보인다(`Engine._interpret_callee_body`).
+**원인 (2026-11-24 확인).** (1) 노드 env 복사(`VariableEnv.copy_variables`)가 별칭을 끊는다 — 포인터와 상태변수가 서로 다른 사본이 된다.
+(2) callee 는 `param_sources` 되쓰기 뒤에 exit env 의 상태변수 사본이 caller 를 다시 덮는다(`Engine._interpret_callee_body`).
+(3) 선언의 데이터 위치가 기록되지 않았다(1단계에서 기록하게 했다). 2단계(storage 참조 = 위치)에서 고친다.
+
+**진행 (2026-11-26).** 지역 포인터는 고쳤다 — `StorageRef`(Domain/Variable.py)가 묶을 때 고정한 경로를 갖고, 읽기·쓰기·선택자 해석에서
+그 경로로 펼친다(`Storage.bind_ref`·`expand_refs`). 위 첫째·둘째·넷째 증상은 해결, callee storage 파라미터(셋째)는 남았다.
 
 **규모.** 텍스트 집계로 선정 타깃 파일 중 지역 storage 포인터 선언이 있는 파일 41, 그 이름에 쓰기도 있는 파일 25.
 callee storage 파라미터(EnumerableSet 류)는 세지 않았다. 실제 선정 함수에서 틀린 상태가 나오는지는 확인 전.
@@ -137,6 +146,25 @@ callee storage 파라미터(EnumerableSet 류)는 세지 않았다. 실제 선�
 ---
 
 ## 해결됨
+
+### I5·I7. 의존성 빌드·분석 실패 — ✅ 2026-11-25
+
+새 데이터셋 빌드에서 미완 83 타깃(선정 함수 913)이었다. 단위마다 첫 오류로 나누고 최소 예제로 재현해 고쳤다. 지금 415 / 415 Complete.
+
+- **A. 본문이 빈 한 줄 함수**(`constructor() {}` 뒤의 선언, I7). `find_contract_context` 가 줄 안의 `{`·`}` 순서를 보지 않고 개수로 세어
+  `contract C {` 를 닫힌 것으로 봤다 → 괄호 순서를 보는 `_enclosing_open_brace_line` 을 쓴다.
+- **B. 여러 줄 enum.** 슬라이서가 멤버를 한 줄로 합치면서 레코드 끝 줄을 첫 줄로 적어 뒤의 선언이 한 줄씩 밀렸다(ErrorReporter 의 `event Failure`).
+- **C. 소수 상수**(`0.95 * 1e27`). 리터럴만으로 된 식을 Solidity 처럼 유리수로 계산한다(`_fold_literals`). `1 / 2 * 4` = 2.
+- **D. 뒤에 선언된 타입**(struct·enum·interface·contract, Aave `DataTypes`). 줄 분석 전에 소스 전체의 선언을 먼저 등록한다
+  (`Analyzer/Declarations.py`, `analyze_source`·`update`·레지스트리). 서로를 쓰는 인터페이스처럼 순서로 풀 수 없는 경우도 된다.
+- **E. 여러 줄 Yul `for`**(`} lt(i, n) {` · `} {`). 그 줄을 새 블록으로만 세어 assembly 가 끝나지 않았고, 뒤의 함수가 Yul 로 읽혔다
+  (`else: target join not found` 도 이것). 오류 없이 Complete 로 판정되는 경우도 있었다.
+- **F. 파일 수준 상수**(`uint256 constant OneWord = 0x20;`). 파일 수준에 등록하고 값은 읽을 때 계산한다(`ContractAnalyzer.file_constant`).
+- **G. 컨트랙트 뒤의 `pragma`·`import`.** 앞 줄의 함수 컨텍스트가 남아 문장으로 읽혔다.
+- **H. 배열 초기화**(`uint256[2] a = [1, 10000]`). 상태변수 초기화식은 진입값이 아니라는 원칙(⊤)을 모든 타입에 적용한다.
+
+함께 고친 것: 1단계에서 struct 선언을 세션 사본에서 공유하게 해 **실패한 편집이 원래 세션의 선언을 바꿀 수 있었다** — 선언도 사본에서 함께 복사한다.
+
 
 ### I17. `this.f()` 의 callee 가 호출자의 `msg.sender` 를 쓴다 — ✅ 2026-11-16
 

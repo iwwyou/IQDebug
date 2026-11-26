@@ -26,6 +26,7 @@ class SolidityAnalyzer:
 
         # ── File-level definitions ─────────────────────────────
         self.file_level_structs = {}    # {"StructName": {field_name: SolType, ...}}
+        self.file_level_constants = {}  # {이름: (Variables, 초기화식)} — 값은 읽을 때 계산(ContractAnalyzer.file_constant)
         self.file_level_enums = {}      # {"EnumName": ["Member0", "Member1", ...]} — contract/
                                         # interface 밖 파일 최상위 enum.
                                         # ★ 배치 경로(Dependencies/main.py Phase 0)는 regex 로
@@ -284,6 +285,10 @@ class SolidityAnalyzer:
         if not stripped or stripped == "}":
             return
         if stripped.startswith("pragma ") or stripped.startswith("import "):
+            # 앞 줄의 컨텍스트(함수 본문 등)가 남지 않게 — 파일 수준 구문으로 파싱된다
+            ca = self.contract_analyzer
+            ca.current_context_type = ca.current_target_contract = None
+            ca.current_target_function = ca.current_target_struct = None
             return
 
         # debug annotations → 항상 CA
@@ -335,6 +340,14 @@ class SolidityAnalyzer:
         #   (PRBMath.sol 의 file-level error 21개). 선언 자체는 해석에 쓰는 정보가 없다(contract 안의 error 정의와 같다).
         if re.match(r"(?:error|event)\s+[A-Za-z_]\w*\s*\(", stripped) and stripped.endswith(";"):
             ca.current_context_type = "error" if stripped.startswith("error") else "event"
+            ca.current_target_contract = None
+            ca.current_target_function = None
+            ca.current_target_struct = None
+            return True
+
+        # 파일 수준 상수: uint256 constant X = 1;
+        if re.match(r"[\w$.]+\s+constant\s+[\w$]+\s*=", stripped) and stripped.endswith(";"):
+            ca.current_context_type = "fileLevelConstant"
             ca.current_target_contract = None
             ca.current_target_function = None
             ca.current_target_struct = None
@@ -392,12 +405,18 @@ class SolidityAnalyzer:
         """file-level struct 정의 시작 (contract level과 동일하게 StructDefinition 사용)"""
         from Domain.Variable import StructDefinition
         self._current_file_struct = struct_name
-        self.file_level_structs[struct_name] = StructDefinition(struct_name)
+        d = self.file_level_structs.get(struct_name)
+        if d is None or not d.predeclared:
+            self.file_level_structs[struct_name] = StructDefinition(struct_name)
+        elif d.predeclared == "partial":                 # 멤버를 미리 정하지 못했다 — 지금부터 줄 분석이 채운다
+            d.predeclared = None
 
     def process_file_level_struct_member(self, var_name: str, type_obj):
         """file-level struct member 추가"""
         if self._current_file_struct and self._current_file_struct in self.file_level_structs:
-            self.file_level_structs[self._current_file_struct].add_member(var_name, type_obj)
+            d = self.file_level_structs[self._current_file_struct]
+            if not (d.predeclared and var_name in d.members):      # 줄 분석 전에 이미 등록됨
+                d.add_member(var_name, type_obj)
 
     def end_file_level_struct(self):
         """file-level struct 정의 종료"""

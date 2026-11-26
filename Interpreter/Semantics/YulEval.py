@@ -115,7 +115,7 @@ class YulEvaluator:
                 return word(v.min_value, v.max_value)
             raise ValueError(f"Yul literal {expr.literal!r} is not a number word (string literal 미지원)")
         if ctx == "IdentifierExpContext":
-            var = variables.get(expr.identifier)
+            var = variables.get(expr.identifier) or self.ev.an.file_constant(expr.identifier)
             if var is None:
                 raise ValueError(f"Yul identifier '{expr.identifier}' is not declared")
             return self._var_word(var)

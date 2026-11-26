@@ -23,6 +23,15 @@ class SolType:
         #   struct 를 반환하는 외부 호출(`vg.internalParams().protocolGovernance`)의 멤버 타입을 못 찾는다.
         self.structOwner = None
         self.enumOwner = None
+        # (2026-11-25) struct·enum 의 **선언 객체**(StructDefinition / EnumDefinition). 타입 이름을 해석할 때 한 번 정하고,
+        #   그 뒤로는 이름으로 다시 찾지 않는다 — library struct 의 멤버 타입(`Inner`)을 사용하는 컨트랙트에서 이름으로 찾으면
+        #   못 찾거나 같은 이름의 다른 struct 를 찾는다.
+        self.structDef = None
+        self.enumDef = None
+
+        # (2026-11-25) 선언에 적힌 데이터 위치: 'storage' | 'memory' | 'calldata' (참조 타입 선언의 맨 바깥 타입에만 있다.
+        #   상태변수는 'storage', 값 타입·원소·멤버 타입은 None)
+        self.dataLocation = None
 
         # user-defined value type alias (type UFixed18 is uint256;)
         self.aliasName = None  # resolve 전 원래 타입 이름 (library function lookup용)

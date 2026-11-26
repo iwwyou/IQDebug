@@ -236,7 +236,7 @@ def slice_solidity(source: str) -> List[Dict]:
                 cur_line += 1; i += 1
             in_enum = False
             if collected:
-                inputs.append({"code": ", ".join(collected), "startLine": enum_start, "endLine": enum_start, "event": "add"})
+                inputs.append({"code": ", ".join(collected), "startLine": enum_start, "endLine": enum_end, "event": "add"})
             continue
 
         # 0) assembly 내부: 줄 단위로 처리 (Yul은 ; 없으므로)
@@ -286,7 +286,7 @@ def slice_solidity(source: str) -> List[Dict]:
                     acc.append(nxt)
                     depth += nxt.count("(") - nxt.count(")")
                 merged = " ".join(acc)
-                if _open_blk.search(merged):          # `if and(` ⏎ `…) {` — 여러 줄 헤더
+                if _open_blk.search(merged) and not merged.startswith("}"):      # `if and(` ⏎ `…) {` — 여러 줄 헤더
                     in_assembly += 1
                     inputs.append({"code": f"{merged}\n}}", "startLine": start_line,
                                    "endLine": cur_line, "event": "add"})
@@ -295,7 +295,9 @@ def slice_solidity(source: str) -> List[Dict]:
                     inputs.append({"code": merged, "startLine": start_line,
                                    "endLine": cur_line - 1, "event": "add"})
                 continue
-            if _open_blk.search(txt):
+            # (2026-11-25) `} lt(i, n) {` · `} {` 는 앞 블록을 닫고 새 블록을 연다 — 앞 블록의 가짜 `}` 가 새 블록의 닫는 줄이
+            #   되므로 한 줄 레코드로 낸다(깊이 변화 0). 예전엔 새 블록으로만 세어 assembly 가 끝나지 않았다.
+            if _open_blk.search(txt) and not txt.startswith("}"):
                 in_assembly += 1
                 inputs.append({"code": f"{txt}\n}}", "startLine": cur_line,
                                "endLine": cur_line + 1, "event": "add"})

@@ -161,9 +161,9 @@ try:
     check("IA·IA2 Invalid", reg.units["IA"].status == reg.units["IA2"].status == "Invalid",
           f"{reg.units['IA'].status} {reg.units['IA2'].status}")
 
-    print("\n=== T9. 같은 파일 안 뒤쪽 최상위 선언 (재배치 없이 — F1 (b) 전까지 Pending 이 정상) ===")
+    print("\n=== T9. 같은 파일 안 뒤쪽 최상위 선언 → Complete (2026-11-25 선언 선등록, Analyzer/Declarations.py) ===")
     reg = R.ProjectRegistry([R.SourceUnit(uid="F", text=FWD)]); reg.build(log=quiet)
-    check("F = Pending (Kind)", reg.units["F"].status == "Pending" and "Kind" in reg.units["F"].unresolved,
+    check("F = Complete", reg.units["F"].status == "Complete",
           f"{reg.units['F'].status} {sorted(reg.units['F'].unresolved)}")
 finally:
     shutil.rmtree(tmp, ignore_errors=True)

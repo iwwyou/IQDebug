@@ -112,7 +112,7 @@ def outline(r: OutlineReq) -> dict:
     hit = _outline_cache.get(h)
     if hit is None:
         sess = EngineSession()
-        sess.analyze(slice_solidity(r.source))
+        sess.analyze(slice_solidity(r.source), source=r.source)
         hit = [asdict(f) for f in sess.outline()]
         if len(_outline_cache) > 32:        # dev 도구: 단순 상한
             _outline_cache.clear()

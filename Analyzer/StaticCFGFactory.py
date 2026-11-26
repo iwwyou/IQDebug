@@ -9,7 +9,7 @@ from Utils.CFG import ContractCFG, FunctionCFG
 from Utils.Helper import VariableEnv
 from Utils.Errors import UnsupportedShadowing
 from Domain.Interval import UnsignedIntegerInterval, IntegerInterval, BoolInterval
-from Domain.Variable import GlobalVariable, Variables, ArrayVariable, StructVariable, EnumVariable, MappingVariable
+from Domain.Variable import StorageRef, GlobalVariable, Variables, ArrayVariable, StructVariable, EnumVariable, MappingVariable
 from Domain.AddressSet import AddressSet
 from Domain.FunctionRef import FunctionRef
 from Domain.Type import SolType
@@ -368,6 +368,7 @@ class StaticCFGFactory:
                 array_length=sol_type.arrayLength,
                 is_dynamic=sol_type.isDynamicArray,
                 scope=scope,
+                data_location=sol_type.dataLocation,
             )
 
             arr.initialize_default_by_base_type(is_return_param=is_return_param)
@@ -375,25 +376,17 @@ class StaticCFGFactory:
             an.register_var(arr)
             return arr
 
+        # (2026-11-26) named storage 반환 `returns (D storage d)` = 묶이지 않은 참조 — 함수 안에서 `d = 경로` 로 묶는다
+        if is_return_param and getattr(sol_type, "dataLocation", None) == "storage" \
+                and sol_type.typeCategory in ("struct", "array", "mapping"):
+            ref = StorageRef(identifier=ident, typeInfo=sol_type, scope=scope)
+            an.register_var(ref)
+            return ref
+
         # ──────────────────────────── ② struct ───────────────────────────
         if sol_type.typeCategory == "struct":
-            sname = sol_type.structTypeName
-            struct_def = ccf.structDefs.get(sname) or an.sa.file_level_structs.get(sname)
-            # parent chain 검색
-            if struct_def is None:
-                def _search_parent_structs(cfg, name):
-                    for pcfg in getattr(cfg, 'parent_cfgs', {}).values():
-                        if name in pcfg.structDefs:
-                            return pcfg.structDefs[name]
-                        found = _search_parent_structs(pcfg, name)
-                        if found:
-                            return found
-                    return None
-                struct_def = _search_parent_structs(ccf, sname)
-            if struct_def is None:
-                raise ValueError(f"Undefined struct '{sname}' used as parameter/return.")
-            sv = StructVariable(identifier=ident, struct_type=sname, scope=scope)
-            sv.initialize_struct(struct_def, struct_defs=ccf.structDefs, enum_defs=ccf.enumDefs)
+            sv = StructVariable(identifier=ident, struct_type=sol_type, scope=scope)
+            sv.initialize_struct()
 
             an.register_var(sv)
             return sv
@@ -401,7 +394,7 @@ class StaticCFGFactory:
         # ──────────────────────────── ③ enum ────────────────────────────
         if sol_type.typeCategory == "enum":
             ev = EnumVariable(identifier=ident,
-                              enum_type=sol_type.enumTypeName,
+                              enum_type=sol_type,
                               scope=scope)
             ev.valueIndex = 0  # 기본값 : 첫 멤버
             return ev
@@ -432,14 +425,12 @@ class StaticCFGFactory:
         # (MappingVariable.get_or_create/_make_value)가 실제 접근 시점에
         # 알아서 채운다.
         if sol_type.typeCategory == "mapping":
-            all_structs, all_enums = an.get_full_struct_enum_defs()
             mv = MappingVariable(
                 identifier=ident,
                 key_type=sol_type.mappingKeyType,
                 value_type=sol_type.mappingValueType,
                 scope=scope,
-                struct_defs=all_structs,
-                enum_defs=all_enums,
+                data_location=sol_type.dataLocation,
             )
             an.register_var(mv)
             return mv

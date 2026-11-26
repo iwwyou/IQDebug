@@ -29,7 +29,7 @@ if TYPE_CHECKING:
 from Domain.Interval import IntegerInterval, UnsignedIntegerInterval, BoolInterval
 from Domain.AddressSet import AddressSet
 from Domain.BytesSet import BytesSet
-from Domain.Variable import Variables, ArrayVariable, MappingVariable, StructVariable, rename_tree
+from Domain.Variable import Variables, ArrayVariable, MappingVariable, StructVariable, StorageRef, rename_tree
 from Domain.IR import Expression
 from Utils.Helper import VariableEnv
 
@@ -93,11 +93,12 @@ class Storage:
             return None                         # 대응을 이어 받을 수 없는 혼합식 — 대응 없음(sound, 비정밀)
         return (str(arg), self._scope(), deps)
 
-    def callee_aliases(self, fcfg, call_expr, kind):
-        """invoke_callee 가 부른다(호출자 프레임에서) — 파라미터마다 호출자 선택자 대응."""
+    @staticmethod
+    def arg_exprs(fcfg, call_expr, kind):
+        """파라미터 순서대로 호출 인자 식(모르면 None). using-for 수신자 `x.f(...)` 는 첫 파라미터."""
         params = list(getattr(fcfg, "parameters", []) or [])
         if call_expr is None or not params:
-            return {}
+            return [None] * len(params)
         args = list(getattr(call_expr, "arguments", None) or [])
         named = dict(getattr(call_expr, "named_arguments", None) or {})
         exprs = [None] * len(params)
@@ -112,8 +113,15 @@ class Storage:
         for name, a in named.items():
             if name in params:
                 exprs[params.index(name)] = a
+        return exprs
+
+    def callee_aliases(self, fcfg, call_expr, kind):
+        """invoke_callee 가 부른다(호출자 프레임에서) — 파라미터마다 호출자 선택자 대응."""
+        params = list(getattr(fcfg, "parameters", []) or [])
+        if call_expr is None or not params:
+            return {}
         out = {}
-        for p, a in zip(params, exprs):
+        for p, a in zip(params, self.arg_exprs(fcfg, call_expr, kind)):
             t = self._alias_of(a)
             if t is not None:
                 out[p] = t
@@ -125,9 +133,101 @@ class Storage:
     def pop_frame(self):
         self.frames.pop()
 
+    # ───────────────────────────── storage 참조 (2026-11-26) ─────────────────────────────
+    REF_SEP = "\x1e"        # 숨은 index 변수 이름 구분자 (`d␞k0`). Engine.SHADOW_SEP(\x1f) 와 다르다 — 그쪽은 블록 종료 때 복원된다.
+
+    def bind_ref(self, variables, name, init_expr):
+        """storage 참조 name 을 init_expr 가 가리키는 위치에 묶는다. index 는 지금 값으로 고정한다(숨은 변수).
+        다시 묶을 때(`d = s[y]`)도 같은 경로로 — 숨은 변수에 새 값을 넣고, 그 변수를 읽던 선택자 셀을 버린다."""
+        ref, hidden = self.freeze_ref(name, getattr(variables.get(name), "typeInfo", None), init_expr, variables)
+        for hk, hv in hidden.items():
+            variables[hk] = hv
+            self.on_assign(variables, hk)
+        variables[name] = ref
+        self.on_assign(variables, name)
+
+    def returned_ref(self, expr, type_info, variables):
+        """`return 경로;` (storage 반환) — 위치와 그 숨은 index 값을 함께 내보낸다."""
+        ref, hidden = self.freeze_ref("@ret", type_info, expr, variables)
+        ref.hidden = hidden
+        return ref
+
+    def export_ref(self, ref, variables):
+        """환경의 참조(named return 등)를 함수 밖으로 — 숨은 index 값을 함께 담은 사본."""
+        if not isinstance(ref, StorageRef) or ref.target is None:
+            raise ValueError(f"storage 반환 '{getattr(ref, 'identifier', '?')}' 가 묶이지 않았다")
+        out = StorageRef(identifier=ref.identifier, typeInfo=ref.typeInfo, target=ref.target)
+        out.hidden = {k: VariableEnv.copy_single_variable(v) for k, v in variables.items()
+                      if k.startswith(ref.identifier + self.REF_SEP)}
+        return out
+
+    def join_refs(self, a, b):
+        """두 경로가 반환한 참조의 join — 같은 경로면 숨은 index 값을 join, 다르면 아직 미지원(후보 모음)."""
+        if str(a.target) != str(b.target):
+            raise ValueError(f"storage 반환이 경로마다 다른 위치다 ({a.target} / {b.target}) — 후보 모음 join 은 2단계 뒤쪽에서")
+        out = StorageRef(identifier=a.identifier, typeInfo=a.typeInfo, target=a.target)
+        out.hidden = {k: VariableEnv._merge_values(a.hidden[k], b.hidden[k], "join") for k in a.hidden}
+        return out
+
+    def ref_root(self, expr, variables):
+        """식이 가리키는 위치의 뿌리 변수 이름(참조를 펼친 뒤). 위치 식(이름·멤버·index)이 아니면 None."""
+        e = expand_refs(expr, variables)
+        while e is not None and getattr(e, "context", None) in ("MemberAccessContext", "IndexAccessContext",
+                                                                 "TupleExpressionContext"):
+            e = e.elements[0] if e.context == "TupleExpressionContext" and len(e.elements or []) == 1 else e.base
+        return e.identifier if getattr(e, "context", None) == "IdentifierExpContext" else None
+
+    def freeze_ref(self, name, type_info, init_expr, variables):
+        """(StorageRef, {숨은 변수 이름: 값 칸}) — 경로의 index 를 variables 에서 지금 값으로 고정한다. 환경은 바꾸지 않는다
+        (callee 파라미터는 호출자 환경에서 고정하고 callee 환경에 넣는다)."""
+        counter = [0]
+        hidden = {}
+
+        def hidden_key(container, value):
+            hk = f"{name}{self.REF_SEP}k{counter[0]}"
+            counter[0] += 1
+            kt = (container.typeInfo.mappingKeyType if isinstance(container, MappingVariable)
+                  else _UINT256)
+            hidden[hk] = Variables(identifier=hk, value=VariableEnv._copy_value(value), scope="local", typeInfo=kt)
+            return Expression(identifier=hk, context="IdentifierExpContext")
+
+        def freeze(e, variables=variables):
+            ctx = getattr(e, "context", None)
+            if ctx == "TupleExpressionContext" and len(e.elements or []) == 1:
+                return freeze(e.elements[0], variables)
+            if ctx == "FunctionCallContext":
+                # storage 를 반환하는 호출 — callee 가 반환한 경로를 이 이름의 숨은 변수로 다시 고정한다
+                v = self.ev.evaluate_ref_call(e, variables)
+                if not isinstance(v, StorageRef) or v.target is None:
+                    raise ValueError(f"storage 참조 '{name}' = `{e}`: 호출이 storage 위치를 반환하지 않았다")
+                return freeze(v.target, {**variables, **v.hidden})
+            if ctx == "IdentifierExpContext":
+                if e.identifier not in variables:
+                    raise ValueError(f"storage 참조 '{name}': '{e.identifier}' 를 찾지 못했다")
+                return e
+            if ctx == "MemberAccessContext" and e.base is not None:
+                return Expression(base=freeze(e.base, variables), member=e.member, context="MemberAccessContext")
+            if ctx == "IndexAccessContext" and e.base is not None and e.index is not None:
+                base = freeze(e.base, variables)
+                container = self.ev.evaluate_expression(base, variables, None, None)
+                if not isinstance(container, (MappingVariable, ArrayVariable)):
+                    raise ValueError(f"storage 참조 '{name}': `{base}` 는 mapping·배열이 아니다")
+                key = self.ev.evaluate_expression(e.index, variables, None, None)
+                if isinstance(key, Variables) and not is_composite(key):
+                    key = key.value
+                return Expression(base=base, index=hidden_key(container, self._coerce_key(container, key)),
+                                  context="IndexAccessContext")
+            raise ValueError(f"storage 참조 '{name}' = `{e}`: 이 형태의 위치는 아직 지원하지 않는다 "
+                             f"(조건식 등 — 후보 모음 join 은 2단계 뒤쪽에서)")
+
+        target = freeze(expand_refs(init_expr, variables))
+        return StorageRef(identifier=name, typeInfo=type_info, target=target), hidden
+
     # ───────────────────────────── 키 해석 ─────────────────────────────
     def resolve(self, c, index_expr: Expression, variables, *, debug=False) -> KeyRes:
         expr = _program_expr(index_expr) if debug else index_expr
+        # storage 참조는 그 위치로 펼친다 — `m[d.v]` 와 `m[g.v]` 는 같은 선택자, 의존 변수도 g 다
+        expr = index_expr = expand_refs(expr, variables)
         # (2026-11-20) 디버그 입력: 대입·증감·delete 가 든 선택자(`heap[--heapSize]`)는 진입 시점 값이 정의되지 않는다 →
         #   **평가하기 전에** Range 로 거부한다(예전엔 먼저 평가해 그 부수효과가 진입 상태에 적용된 뒤에 거부했다).
         #   함수 호출은 여기서 거르지 않는다 — `_msgSender()` 처럼 평가해 구체 키가 되는 경우를 지금 지원하고 있다.
@@ -353,6 +453,48 @@ class Storage:
 
 
 # ═════════════════════════════ 헬퍼 ═════════════════════════════
+def _uint256():
+    from Domain.Type import SolType
+    t = SolType()
+    t.typeCategory, t.elementaryTypeName, t.intTypeLength = "elementary", "uint256", 256
+    return t
+
+
+_UINT256 = _uint256()
+
+
+def expand_refs(e, variables):
+    """식 안의 storage 참조 식별자를 그 고정 경로로 바꾼 사본. 참조가 없으면 e 그대로(복사하지 않는다)."""
+    if not isinstance(e, Expression) or not variables:
+        return e
+    if e.context == "IdentifierExpContext" and e.base is None:
+        v = variables.get(e.identifier)
+        if isinstance(v, StorageRef):
+            if v.target is None:
+                raise ValueError(f"storage 참조 '{e.identifier}' 를 묶기 전에 썼다")
+            return v.target
+        return e
+    out = None
+    for f in ("left", "right", "base", "index", "expression", "function", "condition", "true_expr", "false_expr"):
+        x = getattr(e, f)
+        y = expand_refs(x, variables)
+        if y is not x:
+            if out is None:
+                import copy
+                out = copy.copy(e)
+            setattr(out, f, y)
+    for f in ("arguments", "elements"):
+        xs = getattr(e, f)
+        if xs:
+            ys = [expand_refs(x, variables) for x in xs]
+            if any(y is not x for x, y in zip(xs, ys)):
+                if out is None:
+                    import copy
+                    out = copy.copy(e)
+                setattr(out, f, ys)
+    return e if out is None else out
+
+
 def _drop_cell(c, k):
     c.sym.pop(k, None)
     if isinstance(c, MappingVariable):

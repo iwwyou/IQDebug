@@ -7,7 +7,7 @@ from Parser.SolidityParser import SolidityParser
 from antlr4.error.ErrorListener import ErrorListener, ConsoleErrorListener
 from Utils.Errors import AnnotationSyntaxError
 
-from Domain.Variable import (Variables, ArrayVariable, GlobalVariable,
+from Domain.Variable import (StorageRef, Variables, ArrayVariable, GlobalVariable,
                              StructVariable, MappingVariable, EnumVariable)
 from Domain.Interval import *   # ← 딱 이 정도만 있으면 됨
 from Domain.AddressSet import AddressSet
@@ -34,6 +34,7 @@ class ParserHelpers:
         'fileLevelEnum':'interactiveSourceUnit',
         'fileLevelEnumMember':'interactiveEnumUnit',
         'fileLevelTypeAlias':'interactiveSourceUnit',
+        'fileLevelConstant':'interactiveSourceUnit',
 
         'simpleStatement':'interactiveBlockUnit', 'if':'interactiveBlockUnit',
         'for':'interactiveBlockUnit',     'while':'interactiveBlockUnit',
@@ -157,8 +158,7 @@ class VariableEnv:
                 array_length=v.typeInfo.arrayLength,
                 is_dynamic=v.typeInfo.isDynamicArray,
                 scope=v.scope,
-                struct_defs=v.struct_defs,
-                enum_defs=v.enum_defs
+                data_location=v.typeInfo.dataLocation
             )
             new_arr.elements = {i: VariableEnv.copy_single_variable(e) for i, e in v.elements.items()}
             VariableEnv._copy_indexed_state(new_arr, v)
@@ -169,7 +169,7 @@ class VariableEnv:
         if isinstance(v, StructVariable):
             new_st = StructVariable(
                 identifier=v.identifier,
-                struct_type=v.typeInfo.structTypeName,
+                struct_type=v.typeInfo,                        # 타입 메타데이터는 공유(불변)
                 scope=v.scope
             )
             new_st.members = VariableEnv.copy_variables(v.members)
@@ -181,8 +181,7 @@ class VariableEnv:
                 key_type=v.typeInfo.mappingKeyType,            # 타입 메타데이터는 공유(불변)
                 value_type=v.typeInfo.mappingValueType,
                 scope=v.scope,
-                struct_defs=v.struct_defs,
-                enum_defs=v.enum_defs
+                data_location=v.typeInfo.dataLocation
             )
             new_mp.mapping = VariableEnv.copy_variables(v.mapping)
             VariableEnv._copy_indexed_state(new_mp, v)
@@ -192,7 +191,7 @@ class VariableEnv:
         #   elementary 변수의 typeInfo 를 제자리에서 바꾸는 코드는 없다(배열/구조체/매핑·생성자만 자기 객체를 바꾼다).
         #   예전 `copy.deepcopy(v)` 는 SolType 까지 매번 깊은 복사해 fixpoint 비용의 대부분을 차지했다
         #   (web3bugs_3_H_05 프로파일: 전체 1138s 중 deepcopy 1046s).
-        if type(v) in (Variables, GlobalVariable, EnumVariable):
+        if type(v) in (Variables, GlobalVariable, EnumVariable, StorageRef):
             nv = type(v).__new__(type(v))
             nv.__dict__ = dict(v.__dict__)
             nv.value = VariableEnv._copy_value(v.value)
@@ -383,6 +382,13 @@ class VariableEnv:
         if type(v1) is not type(v2):
             return f"symbolic{mode.capitalize()}({v1},{v2})"
 
+        # ②-b storage 참조 — 같은 경로(숨은 index 변수는 따로 join 된다)면 그대로, 다른 위치의 join 은 아직 미지원
+        if isinstance(v1, StorageRef):
+            if str(v1.target) == str(v2.target):
+                return copy.copy(v1)
+            raise ValueError(f"storage 참조 '{v1.identifier}' 가 경로마다 다른 위치를 가리킨다 ({v1.target} / {v2.target}) "
+                             f"— 후보 모음 join 은 2단계 뒤쪽에서 구현한다")
+
         # ③ leaf Variables / EnumVariable
         if isinstance(v1, (Variables, EnumVariable)) and \
            not isinstance(v1, (ArrayVariable, StructVariable, MappingVariable)):
@@ -523,23 +529,16 @@ class VariableEnv:
         return isinstance(x, (IntegerInterval, UnsignedIntegerInterval))
 
     @staticmethod
-    def top_from_soltype(sol_t: SolType, struct_defs: dict = None, enum_defs: dict = None,
-                         identifier: str = ""):
+    def top_from_soltype(sol_t: SolType, identifier: str = ""):
         """SolType → top-valued domain object 생성 (모든 타입 지원)"""
         from Domain.BytesSet import BytesSet
-        if struct_defs is None:
-            struct_defs = {}
-        if enum_defs is None:
-            enum_defs = {}
-
         if sol_t.typeCategory == "array":
             arr = ArrayVariable(
                 identifier=identifier,
                 base_type=sol_t.arrayBaseType,
                 array_length=sol_t.arrayLength,
                 is_dynamic=sol_t.isDynamicArray,
-                struct_defs=struct_defs,
-                enum_defs=enum_defs,
+                data_location=sol_t.dataLocation,
             )
             arr.initialize_default_by_base_type()
             return arr
@@ -549,30 +548,17 @@ class VariableEnv:
                 identifier=identifier,
                 key_type=sol_t.mappingKeyType,
                 value_type=sol_t.mappingValueType,
-                struct_defs=struct_defs,
-                enum_defs=enum_defs,
+                data_location=sol_t.dataLocation,
             )
 
         if sol_t.typeCategory == "struct":
-            sv = StructVariable(
-                identifier=identifier,
-                struct_type=sol_t.structTypeName,
-            )
-            if sol_t.structTypeName in struct_defs:
-                sv.initialize_struct(struct_defs[sol_t.structTypeName],
-                                     struct_defs=struct_defs, enum_defs=enum_defs)
+            sv = StructVariable(identifier=identifier, struct_type=sol_t)
+            sv.initialize_struct()
             return sv
 
         if sol_t.typeCategory == "enum":
-            ev = EnumVariable(
-                identifier=identifier,
-                enum_type=sol_t.enumTypeName,
-            )
-            if sol_t.enumTypeName in enum_defs:
-                defn = enum_defs[sol_t.enumTypeName]
-                ev.members = {m: i for i, m in enumerate(defn.members)}
-                ev.valueIndex = 0
-                ev.value = defn.members[0]
+            ev = EnumVariable(identifier=identifier, enum_type=sol_t)
+            ev.initialize_enum()
             return ev
 
         if sol_t.typeCategory == "function":          # (2026-10-23) 함수 포인터 = ⊤ (Domain/FunctionRef.py)

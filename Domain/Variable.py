@@ -20,6 +20,8 @@ class Variables:
 class StructDefinition:
     def __init__(self, struct_name):
         self.struct_name = struct_name
+        self.owner = None                 # 선언한 컨트랙트/라이브러리 이름 (파일 수준 = None)
+        self.predeclared = None           # 줄 분석 전에 등록됨(Analyzer/Declarations.py): "partial" = 멤버 미정 · "complete"
         # (2026-10-23) 멤버 이름 → SolType. 선언 순서(위치 인자 생성자 `S(a, b)`)는 dict 삽입 순서가 보존한다.
         #   예전 형식은 [{'member_name', 'member_type'}] list 였고, dict 로 읽는 쪽(정적 타입 계산)이 조용히 늘 실패했다.
         self.members: dict = {}
@@ -29,9 +31,19 @@ class StructDefinition:
             raise ValueError(f"struct '{self.struct_name}': duplicate member '{var_name}'")
         self.members[var_name] = type_obj
 
+    def type(self, name=None) -> SolType:
+        """이 struct 의 타입. name = 소스에 적힌 이름(`Lib.S`), 없으면 선언 이름."""
+        t = SolType()
+        t.typeCategory = "struct"
+        t.structTypeName = name or self.struct_name
+        t.structOwner, t.structDef = self.owner, self
+        return t
+
 class EnumDefinition:
     def __init__(self, enum_name):
         self.enum_name = enum_name
+        self.owner = None                 # 선언한 컨트랙트/라이브러리 이름 (파일 수준 = None)
+        self.predeclared = None           # 줄 분석 전에 등록됨(Analyzer/Declarations.py): "complete"
         self.members = []  # 멤버들의 리스트
 
     def add_member(self, member_name):
@@ -61,6 +73,22 @@ class GlobalVariable(Variables):
     def current(self):
         return self.debug_override if self.debug_override is not None else self.value
 
+class StorageRef(Variables):
+    """(2026-11-26) storage 참조 지역변수 `D storage d = s[x].inner;` — 값이 아니라 **위치**를 갖는다.
+
+    target = 묶을 때 고정한 접근 경로 식. 경로 안의 index 는 묶은 시점의 값을 담은 숨은 변수(`d␞k0`)로 바뀌어 있어,
+    뒤에 x 가 바뀌어도 d 는 같은 칸이다. d 를 읽고 쓰는 식은 해석 때 target 으로 펼쳐지므로(Storage.expand_refs)
+    포인터를 통한 쓰기가 원래 상태변수에 그대로 반영되고, 선택자 무효화·alias 전파도 원래 경로 기준으로 일어난다.
+    target = None 은 아직 묶이지 않은 선언(`D storage d;`).
+    hidden = 함수가 반환한 참조일 때 숨은 index 변수의 값(그 함수의 환경은 사라지므로 값을 들고 나온다)."""
+
+    def __init__(self, identifier=None, typeInfo=None, target=None, scope="local", hidden=None):
+        super().__init__(identifier, value=None, scope=scope, typeInfo=typeInfo)
+        self.target = target
+        self.hidden = hidden or {}
+        self.value = "→ " + str(target) if target is not None else "→ (unbound)"
+
+
 class ArrayVariable(Variables):
     """
     ▸ 정적/동적 배열 래퍼
@@ -81,7 +109,7 @@ class ArrayVariable(Variables):
                  array_length=None,
                  value=None, isConstant=False, scope=None,
                  is_dynamic=False,
-                 struct_defs=None, enum_defs=None):
+                 data_location=None):
         super().__init__(identifier, value, isConstant, scope)
 
         self.typeInfo = SolType()
@@ -89,9 +117,8 @@ class ArrayVariable(Variables):
         self.typeInfo.arrayBaseType = base_type
         self.typeInfo.arrayLength = array_length  # None → 동적
         self.typeInfo.isDynamicArray = is_dynamic
+        self.typeInfo.dataLocation = data_location
         self.elements: dict[int, Variables] = {}          # 구체화된 원소만 (index → 셀)
-        self.struct_defs = struct_defs or {}
-        self.enum_defs = enum_defs or {}
         _init_indexed_storage(self)
         self.sym_cells: dict[str, Variables] = {}   # 선택자 셀(arr[i]) — 메타는 self.sym
         # (2026-10-23) 추상 길이. None = 선언에서 유도(array_length) — 구체화한 원소 수와는 별개다.
@@ -193,28 +220,20 @@ class ArrayVariable(Variables):
 
         # ─ struct ───────────────────────────────────────────────────
         if isinstance(btype, SolType) and btype.typeCategory == "struct":
-            sv = StructVariable(eid, btype.structTypeName, scope=self.scope)
-            # (2026-10-23) 정의 조회 = 전체 이름, 없으면 마지막 이름(`ObservationLib.Observation` → `Observation`) —
-            #   예전엔 전체 이름만 봐서 qualified struct 원소가 **조용히 멤버 없는 struct** 로 만들어졌다. 못 찾으면 오류.
-            sdef = self.struct_defs.get(btype.structTypeName) \
-                or self.struct_defs.get(btype.structTypeName.rsplit(".", 1)[-1])
-            if sdef is None:
-                raise ValueError(f"array element {eid}: struct '{btype.structTypeName}' 의 정의가 없다")
-            sv.initialize_struct(sdef, struct_defs=self.struct_defs, enum_defs=self.enum_defs)
+            sv = StructVariable(eid, btype, scope=self.scope)
+            sv.initialize_struct()
             return sv
 
         # ─ enum ─────────────────────────────────────────────────────
         if isinstance(btype, SolType) and btype.typeCategory == "enum":
-            return EnumVariable(eid, btype.enumTypeName, scope=self.scope)
+            return EnumVariable(eid, btype, scope=self.scope)
 
         # ─ mapping ──────────────────────────────────────────────────
         if isinstance(btype, SolType) and btype.typeCategory == "mapping":
             return MappingVariable(eid,
                                    btype.mappingKeyType,
                                    btype.mappingValueType,
-                                   scope=self.scope,
-                                   struct_defs=self.struct_defs,
-                                   enum_defs=self.enum_defs)
+                                   scope=self.scope)
 
         # ─ 중첩 배열 ────────────────────────────────────────────────
         if isinstance(btype, SolType) and btype.typeCategory == "array":
@@ -222,9 +241,7 @@ class ArrayVariable(Variables):
                                  btype.arrayBaseType,
                                  btype.arrayLength,
                                  scope=self.scope,
-                                 is_dynamic=btype.isDynamicArray,
-                                 struct_defs=self.struct_defs,
-                                 enum_defs=self.enum_defs)
+                                 is_dynamic=btype.isDynamicArray)
 
         # ─ interface ────────────────────────────────────────────────
         if isinstance(btype, SolType) and btype.typeCategory == "interface":
@@ -249,7 +266,8 @@ class ArrayVariable(Variables):
         남긴 효과를 새 원소가 잃지 않게. summary 가 없으면 선언 기본값(⊤, D5)."""
         if self.summary is None:
             return self._create_new_array_element(idx)
-        v = copy.deepcopy(self.summary)
+        from Utils.Helper import VariableEnv
+        v = VariableEnv.copy_single_variable(self.summary)
         rename_tree(v, f"{self.identifier}[{idx}]")
         return v
 
@@ -279,8 +297,7 @@ class ArrayVariable(Variables):
         eid = f"{self.identifier}[{idx}]"
         if isinstance(baseT, SolType) and baseT.typeCategory == "array":
             sub = ArrayVariable(identifier=eid, base_type=baseT.arrayBaseType, array_length=baseT.arrayLength,
-                                scope=self.scope, is_dynamic=baseT.isDynamicArray,
-                                struct_defs=self.struct_defs, enum_defs=self.enum_defs)
+                                scope=self.scope, is_dynamic=baseT.isDynamicArray)
             if self._is_abstractable(baseT.arrayBaseType):
                 sub.initialize_elements(init_iv)
             return sub
@@ -334,8 +351,7 @@ class MappingVariable(Variables):
         value_type: SolType | None = None,
         *,
         scope: str | None = None,
-        struct_defs: dict[str, StructDefinition] | None = None,
-        enum_defs: dict[str, EnumDefinition] | None = None,          # ⭐️ enum 목록 전달
+        data_location: str | None = None,
     ):
         super().__init__(identifier, value=None, isConstant=False, scope=scope)
 
@@ -343,11 +359,10 @@ class MappingVariable(Variables):
         self.typeInfo.typeCategory     = "mapping"
         self.typeInfo.mappingKeyType   = key_type
         self.typeInfo.mappingValueType = value_type
+        self.typeInfo.dataLocation     = data_location
 
         # 구체 키 셀과 선택자 셀(키 = 선택자 식 텍스트, 메타는 self.sym)이 함께 들어 있다
         self.mapping: dict[str, Variables] = {}
-        self.struct_defs = struct_defs or {}
-        self.enum_defs   = enum_defs   or {}
         _init_indexed_storage(self)
 
     def __setstate__(self, state):
@@ -370,8 +385,6 @@ class MappingVariable(Variables):
                 array_length = sol_t.arrayLength,
                 is_dynamic   = sol_t.isDynamicArray,
                 scope        = self.scope,
-                struct_defs  = self.struct_defs,  # ★ struct 정의 전달
-                enum_defs    = self.enum_defs,    # ★ enum 정의 전달
             )
             arr.initialize_default_by_base_type()   # 내부까지 재귀 초기화, base type 체크 포함
             return arr
@@ -383,34 +396,17 @@ class MappingVariable(Variables):
                 key_type=sol_t.mappingKeyType,
                 value_type=sol_t.mappingValueType,
                 scope=self.scope,
-                struct_defs=self.struct_defs,
-                enum_defs=self.enum_defs,  # ⭐️ 재귀 전파
             )
 
         # 3) 구조체 ------------------------------------------------------
         if sol_t.typeCategory == "struct":
-            sv = StructVariable(identifier=sub_id,
-                                struct_type=sol_t.structTypeName,
-                                scope=self.scope)
-
-            if sol_t.structTypeName in self.struct_defs:  # ⭐️ 멤버 초기화
-                sv.initialize_struct(self.struct_defs[sol_t.structTypeName],
-                                     struct_defs=self.struct_defs, enum_defs=self.enum_defs)
-
+            sv = StructVariable(identifier=sub_id, struct_type=sol_t, scope=self.scope)
+            sv.initialize_struct()
             return sv
 
         if sol_t.typeCategory == "enum":
-            ev = EnumVariable(identifier=sub_id,
-                              enum_type=sol_t.enumTypeName,
-                              scope=self.scope)
-
-            # enum 정의가 있으면 멤버 테이블 세팅
-            if sol_t.enumTypeName in self.enum_defs:
-                defn = self.enum_defs[sol_t.enumTypeName]  # EnumDefinition
-                ev.members = {m: i for i, m in enumerate(defn.members)}
-                ev.valueIndex = 0
-                ev.value = defn.members[0]            # ← 첫 멤버명 저장
-
+            ev = EnumVariable(identifier=sub_id, enum_type=sol_t, scope=self.scope)
+            ev.initialize_enum()
             return ev
 
         # 4) interface -------------------------------------------------
@@ -470,7 +466,8 @@ class MappingVariable(Variables):
         sub_id = f"{self.identifier}[{key_val}]"
         if self.summary is None:
             return self._make_value(sub_id, self.typeInfo.mappingValueType)
-        v = copy.deepcopy(self.summary)
+        from Utils.Helper import VariableEnv
+        v = VariableEnv.copy_single_variable(self.summary)
         rename_tree(v, sub_id)
         return v
 
@@ -503,16 +500,14 @@ class StructVariable(Variables):
     def __init__(
         self,
         identifier: str | None = None,
-        struct_type: str | None = None,
+        struct_type: SolType | None = None,
         value=None,
         isConstant: bool = False,
         scope: str | None = None,
     ):
         super().__init__(identifier, value, isConstant, scope)
 
-        self.typeInfo = SolType()
-        self.typeInfo.typeCategory   = "struct"
-        self.typeInfo.structTypeName = struct_type       # 구조체 이름
+        self.typeInfo = struct_type                      # SolType(typeCategory="struct") — 공유(불변)
         self.members: dict[str, Variables] = {}          # field → variable ­obj
 
     def copy_from(self, other: 'StructVariable'):
@@ -522,39 +517,20 @@ class StructVariable(Variables):
     # ────────────────────────────────────────────────────────────
     # 초기화
     # ------------------------------------------------------------------
-    def initialize_struct(
-            self,
-            struct_def: StructDefinition,
-            *,  # ⬅️  키워드-전용
-            struct_defs: dict[str, StructDefinition] | None = None,
-            enum_defs: dict[str, "EnumDefinition"] | None = None
-    ):
-        """
-        struct_def.members : { 멤버 이름: SolType } (선언 순서)
-
-        멤버 하나하나의 top-value 생성은 VariableEnv.top_from_soltype에 위임한다
-        (array/mapping/struct/interface/enum/elementary 전 타입 지원 - 이 함수가
-        독자적으로 타입 분기를 다시 구현하면, 한쪽만 갱신되고 다른 쪽은 안 되는
-        문제가 생긴다: enum 지원이 top_from_soltype에는 있었지만 여기엔 없어서
-        enum 타입 struct 멤버(e.g. `Side side;`)를 만나면
-        `sol_t.elementaryTypeName`이 None인 채로 `.startswith()`가 호출되어
-        크래시하는 버그가 실제로 있었다 - Perpetuals.Order.side 케이스).
-        """
+    def initialize_struct(self):
+        """타입의 선언(`typeInfo.structDef`)대로 멤버를 ⊤ 로 만든다. 멤버 타입은 SolType 이므로 값 생성은
+        VariableEnv.top_from_soltype 에 맡긴다(타입 분기를 여기서 다시 구현하지 않는다)."""
         # 순환 import 회피를 위해 지역 import (Utils.Helper가 Domain.Variable을
         # import하므로 모듈 최상단에서 import하면 순환 참조가 됨)
         from Utils.Helper import VariableEnv
 
-        if struct_defs is None:
-            struct_defs = {struct_def.struct_name: struct_def}  # fallback
-        if enum_defs is None:
-            enum_defs = {}
-
+        struct_def = self.typeInfo.structDef
+        if struct_def is None:
+            raise ValueError(f"'{self.identifier}': struct '{self.typeInfo.structTypeName}' 의 정의가 없다")
+        if struct_def.predeclared == "partial":
+            raise ValueError(f"'{self.identifier}': struct '{self.typeInfo.structTypeName}' 의 멤버가 아직 정해지지 않았다")
         for m_name, m_type in struct_def.members.items():
-            var_id = f"{self.identifier}.{m_name}"
-
-            member_var = VariableEnv.top_from_soltype(
-                m_type, struct_defs=struct_defs, enum_defs=enum_defs, identifier=var_id
-            )
+            member_var = VariableEnv.top_from_soltype(m_type, identifier=f"{self.identifier}.{m_name}")
             member_var.scope = self.scope  # top_from_soltype은 scope를 모르므로 여기서 채움
             self.members[m_name] = member_var
 
@@ -566,12 +542,19 @@ class StructVariable(Variables):
 class EnumVariable(Variables):
     def __init__(self, identifier=None, enum_type=None, value=None, isConstant=False, scope=None):
         super().__init__(identifier, value, isConstant, scope)
-        self.typeInfo = SolType()
-        self.typeInfo.typeCategory = 'enum'
-        self.typeInfo.enumTypeName = enum_type  # 열거형 이름
+        self.typeInfo = enum_type  # SolType(typeCategory="enum") — 공유(불변)
         self.members = {}  # 멤버 변수들: 멤버명 -> 정수 값 (열거형의 각 멤버는 정수 값에 매핑됨)
         self.value = None  # 현재 설정된 멤버의 이름
         self.valueIndex = None
+
+    def initialize_enum(self):
+        """타입의 선언(`typeInfo.enumDef`)대로 멤버 표를 채운다(값 = 첫 멤버)."""
+        defn = self.typeInfo.enumDef
+        if defn is None:
+            raise ValueError(f"'{self.identifier}': enum '{self.typeInfo.enumTypeName}' 의 정의가 없다")
+        self.members = {m: i for i, m in enumerate(defn.members)}
+        self.valueIndex = 0
+        self.value = defn.members[0] if defn.members else None
 
     def set_member_value(self, member_name):
         """

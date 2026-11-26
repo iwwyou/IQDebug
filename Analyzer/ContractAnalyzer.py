@@ -46,6 +46,7 @@ class ContractAnalyzer:
         # for Multiple Contract
         self.contract_cfgs = {} # name -> CFG
         self.library_cfgs = {} # name -> LibraryCFG
+        self.predeclared = None   # Analyzer.Declarations.Predeclared — 현재 소스가 선언하는 타입(줄 분석 전 등록)
         self.interface_names: set[str] = set()  # interface 이름 등록 (타입 인식용)
         self._interface_ranges: list[tuple[int, int]] = []  # (start, end) 라인 범위
 
@@ -442,47 +443,16 @@ class ContractAnalyzer:
         return self.determine_top_level_context(self.sa.full_code_lines.get(line, "")) != "assembly" \
             and self.is_inside_assembly(line_number)
 
+    _CONTRACT_HEAD = re.compile(r"\s*(?:abstract\s+)?(?:contract|library|interface)\s+([A-Za-z_$][\w$]*)")
+
     def find_contract_context(self, line_number):
-        # 위로 거슬러 올라가면서 해당 라인이 속한 컨트랙트를 찾습니다.
-        close_brace_count = 0
-
-        for line in range(line_number, 0, -1):
-            brace_info = self.sa.line_info.get(line, {'open': 0, 'close': 0, 'cfg_nodes': []})
-            open_braces = brace_info['open']
-            close_braces = brace_info['close']
-
-            # '}' 카운팅: 닫힌 괄호를 먼저 센다
-            if close_brace_count > 0:
-                close_brace_count -= open_braces
-                if close_brace_count <= 0:
-                    close_brace_count = 0
-            else:
-                # '{' 발견: 이 라인이 컨트랙트 선언인지 확인
-                if open_braces > 0:
-                    code_line = self.sa.full_code_lines.get(line, '').strip()
-                    context_type = self.determine_top_level_context(code_line)
-                    if context_type in ["contract", "library", "interface", "abstract contract"]:
-                        # contract 이름 추출
-                        parts = code_line.split()
-                        # "abstract contract Name" or "contract Name" 형식
-                        if "contract" in parts:
-                            idx = parts.index("contract")
-                            if idx + 1 < len(parts):
-                                result = parts[idx + 1].split('{')[0].strip()
-                                return result
-                        elif "library" in parts:
-                            idx = parts.index("library")
-                            if idx + 1 < len(parts):
-                                result = parts[idx + 1].split('{')[0].strip()
-                                return result
-                        elif "interface" in parts:
-                            idx = parts.index("interface")
-                            if idx + 1 < len(parts):
-                                result = parts[idx + 1].split('{')[0].strip()
-                                return result
-                # 닫힌 괄호 누적
-                close_brace_count += close_braces
-
+        """line_number 를 감싸는 컨트랙트/라이브러리/인터페이스 이름(파일 수준 = None)."""
+        line = self._enclosing_open_brace_line(line_number, inclusive=True)
+        while line is not None:
+            m = self._CONTRACT_HEAD.match(self.sa.full_code_lines.get(line, ""))
+            if m:
+                return m.group(1)
+            line = self._enclosing_open_brace_line(line, inclusive=False)
         return None
 
     @staticmethod
@@ -775,7 +745,7 @@ class ContractAnalyzer:
         if ctx in ("IdentifierExpContext", "MemberAccessContext"):
             if ctx == "IdentifierExpContext":
                 name, owner = expr.identifier, self.contract_cfgs.get(self.current_target_contract)
-                v = self._constant_var(owner, name)
+                v = self._constant_var(owner, name) or self.file_constant(name)
             else:
                 base = getattr(expr.base, "identifier", None)
                 name, owner = expr.member, (self.contract_cfgs.get(base) or self.library_cfgs.get(base))
@@ -866,7 +836,9 @@ class ContractAnalyzer:
             raise ValueError(f"Unable to find contract CFG for {self.current_target_contract}")
 
         # 새로운 EnumDefinition 객체 생성
-        enum_def = EnumDefinition(enum_name)
+        enum_def = self.predeclared.defs.get((self.current_target_contract, enum_name)) if self.predeclared else None
+        if not isinstance(enum_def, EnumDefinition):
+            enum_def = EnumDefinition(enum_name)
         contract_cfg.define_enum(enum_name, enum_def)
 
         # brace_count 업데이트
@@ -892,7 +864,8 @@ class ContractAnalyzer:
         if enum_def is not None:
             # EnumDefinition에 아이템 추가
             for item in items:
-                enum_def.add_member(item)
+                if not (enum_def.predeclared and item in enum_def.members):
+                    enum_def.add_member(item)
         else:
             raise ValueError(f"Unable to find EnumDefinition context for line {self.current_start_line}")
 
@@ -961,7 +934,22 @@ class ContractAnalyzer:
                 return cfg.structDefs[member_name]
             if member_name in (getattr(cfg, 'enumDefs', {}) or {}):
                 return cfg.enumDefs[member_name]
-        return None
+        return self.predeclared_def(library_name, member_name)
+
+    def predeclared_def(self, owner, name):
+        """현재 소스가 선언하는 struct/enum — owner 자신과 부모(의존성의 부모 포함). 없으면 None."""
+        pre = self.predeclared
+        if pre is None:
+            return None
+        d = pre.defs.get((owner, name))
+        for base in pre.bases.get(owner, ()) if d is None else ():
+            d = self.predeclared_def(base, name)
+            if d is None and base not in pre.kinds:
+                cfg = self.contract_cfgs.get(base)
+                d = (cfg.structDefs.get(name) or cfg.enumDefs.get(name)) if cfg is not None else None
+            if d is not None:
+                break
+        return d
 
     # for interactiveStructDefinition in Solidity.g4
     def process_struct_definition(self, struct_name):
@@ -970,7 +958,11 @@ class ContractAnalyzer:
         if not contract_cfg:
             raise ValueError(f"Unable to find contract CFG for {self.current_target_contract}")
 
-        struct_def = StructDefinition(struct_name=struct_name)
+        struct_def = self.predeclared.defs.get((self.current_target_contract, struct_name)) if self.predeclared else None
+        if not isinstance(struct_def, StructDefinition):
+            struct_def = StructDefinition(struct_name=struct_name)
+        elif struct_def.predeclared == "partial":        # 멤버를 미리 정하지 못했다 — 지금부터 줄 분석이 채운다
+            struct_def.predeclared = None
 
         contract_cfg.define_struct(struct_def)
 
@@ -990,6 +982,9 @@ class ContractAnalyzer:
         if not self.current_target_struct:
             raise ValueError("No target struct to add members to.")
 
+        struct_def = contract_cfg.structDefs.get(self.current_target_struct)
+        if struct_def is not None and struct_def.predeclared and var_name in struct_def.members:
+            return                                       # 줄 분석 전에 이미 등록됨
         contract_cfg.add_struct_member(self.current_target_struct, var_name, type_obj)
 
         # 10. contract_cfg를 contract_cfgs에 반영
@@ -1070,84 +1065,35 @@ class ContractAnalyzer:
         #   constant/immutable 은 process_constant_variable 경로라 영향 없음(값이 바뀔 수 없으므로 유지가 맞다).
         #   동적 배열은 길이를 모르는 배열을 표현할 수단이 없어 예전처럼 빈 배열로 남는다(⚠ 미해결).
         record_expr = init_expr          # CFG 기록용 원래 initializer (진입값 계산에는 쓰지 않는다)
-        if init_expr is not None and variable_obj.typeInfo.typeCategory == "elementary" \
-                and not isinstance(variable_obj, (ArrayVariable, StructVariable, MappingVariable, EnumVariable)):
-            init_expr = None
-        if init_expr is None: # 초기화가 없으면
-            if isinstance(variable_obj, ArrayVariable) :
-                # arrayBaseType이 elementary type인 경우에만 elementaryTypeName 체크
-                if variable_obj.typeInfo.arrayBaseType.typeCategory == "elementary":
-                    # 고정 길이 numeric/bool 배열 원소 = ⊤, address/string 등은 기존대로 (initialize_default_by_base_type 가 분기)
-                    variable_obj.initialize_default_by_base_type()
-                # struct, enum 등 다른 타입의 배열은 동적으로 초기화됨 (필요 시)
-            elif isinstance(variable_obj, StructVariable) :
-                struct_name = variable_obj.typeInfo.structTypeName
-                if struct_name in contract_cfg.structDefs:
-                    struct_def = contract_cfg.structDefs[struct_name]
-                    variable_obj.initialize_struct(struct_def, struct_defs=contract_cfg.structDefs,
-                                                   enum_defs=contract_cfg.enumDefs)
-                elif self.sa.get_file_level_struct(struct_name) is not None:
-                    # file-level struct fallback
-                    all_defs = dict(contract_cfg.structDefs)
-                    all_defs.update(self.sa.file_level_structs)
-                    variable_obj.initialize_struct(self.sa.file_level_structs[struct_name], struct_defs=all_defs,
-                                                   enum_defs=contract_cfg.enumDefs)
-                else :
-                    raise ValueError(f"This struct def {struct_name} is undefined")
-            elif isinstance(variable_obj, MappingVariable) :
-                # struct/enum value type 지원을 위해 정의 전달
-                # 현재 contract + file-level + parent 체인 합산
-                all_structs = dict(contract_cfg.structDefs)
-                all_enums = dict(contract_cfg.enumDefs)
-                if self.sa.file_level_structs:
-                    all_structs.update(self.sa.file_level_structs)
-                for pcfg in getattr(contract_cfg, 'parent_cfgs', {}).values():
-                    all_structs.update(getattr(pcfg, 'structDefs', {}))
-                    all_enums.update(getattr(pcfg, 'enumDefs', {}))
-                variable_obj.struct_defs = all_structs
-                variable_obj.enum_defs = all_enums
-            elif isinstance(variable_obj,EnumVariable) :
-                pass
-            elif variable_obj.typeInfo.typeCategory == "interface" or \
-                 (hasattr(variable_obj.typeInfo, 'interfaceName') and variable_obj.typeInfo.interfaceName):
-                # interface 타입 state variable → AddressSet.top() + _cast_interface
-                ifc_name = variable_obj.typeInfo.interfaceName or variable_obj.typeInfo.elementaryTypeName
-                if ifc_name:
-                    variable_obj.value = AddressSet.top()
-                    variable_obj.value._cast_interface = ifc_name
-            elif variable_obj.typeInfo.typeCategory == "elementary":
-                et = variable_obj.typeInfo.elementaryTypeName
-                # int/uint/bool/address/bytesN = 타입 전체 범위 ⊤ (파라미터·struct 멤버와 같은 top_from_soltype 사용)
-                if et.startswith(("int", "uint", "bool")) or et == "address" \
-                        or (et.startswith("bytes") and len(et) > 5):
-                    variable_obj.value = VariableEnv.top_from_soltype(
-                        variable_obj.typeInfo, identifier=variable_obj.identifier).value
-                # (string / bytes 등 - 추상화 안 할 타입은 심볼릭 문자열 그대로)
-                else:
-                    variable_obj.value = f"symbol_{variable_obj.identifier}"
-        else : # 초기화 식이 있으면
-            if isinstance(variable_obj, ArrayVariable) :
-                inlineArrayValues = self.evaluator.evaluate_expression(
-                    init_expr,
-                    contract_cfg.state_variable_node.variables,
-                    None,
-                    None)
-
-                for i, value in enumerate(inlineArrayValues):
-                    variable_obj.elements[i] = value
-            elif isinstance(variable_obj, StructVariable) : # 관련된 경우 없을듯
-                pass
-            elif isinstance(variable_obj, MappingVariable) : # 관련된 경우 없을 듯
-                pass
-            elif variable_obj.typeInfo.typeCategory == "elementary" :
-                # ★ F39: 선언 타입을 리터럴에 실어준다 (int* 음수 부호 소실 방지)
-                self._retype_literal_to_declared(init_expr, variable_obj.typeInfo)
-                from Interpreter.Semantics.Evaluation import coerce_to_declared
-                variable_obj.value = coerce_to_declared(self.evaluator.evaluate_expression(
-                    init_expr,
-                    contract_cfg.state_variable_node.variables,
-                    None,
-                    None), variable_obj.typeInfo, f"initializer of '{variable_obj.identifier}'")   # (Phase 4b)
+        if isinstance(variable_obj, ArrayVariable) :
+            # arrayBaseType이 elementary type인 경우에만 elementaryTypeName 체크
+            if variable_obj.typeInfo.arrayBaseType.typeCategory == "elementary":
+                # 고정 길이 numeric/bool 배열 원소 = ⊤, address/string 등은 기존대로 (initialize_default_by_base_type 가 분기)
+                variable_obj.initialize_default_by_base_type()
+            # struct, enum 등 다른 타입의 배열은 동적으로 초기화됨 (필요 시)
+        elif isinstance(variable_obj, StructVariable) :
+            variable_obj.initialize_struct()
+        elif isinstance(variable_obj, MappingVariable) :
+            pass
+        elif isinstance(variable_obj,EnumVariable) :
+            pass
+        elif variable_obj.typeInfo.typeCategory == "interface" or \
+             (hasattr(variable_obj.typeInfo, 'interfaceName') and variable_obj.typeInfo.interfaceName):
+            # interface 타입 state variable → AddressSet.top() + _cast_interface
+            ifc_name = variable_obj.typeInfo.interfaceName or variable_obj.typeInfo.elementaryTypeName
+            if ifc_name:
+                variable_obj.value = AddressSet.top()
+                variable_obj.value._cast_interface = ifc_name
+        elif variable_obj.typeInfo.typeCategory == "elementary":
+            et = variable_obj.typeInfo.elementaryTypeName
+            # int/uint/bool/address/bytesN = 타입 전체 범위 ⊤ (파라미터·struct 멤버와 같은 top_from_soltype 사용)
+            if et.startswith(("int", "uint", "bool")) or et == "address" \
+                    or (et.startswith("bytes") and len(et) > 5):
+                variable_obj.value = VariableEnv.top_from_soltype(
+                    variable_obj.typeInfo, identifier=variable_obj.identifier).value
+            # (string / bytes 등 - 추상화 안 할 타입은 심볼릭 문자열 그대로)
+            else:
+                variable_obj.value = f"symbol_{variable_obj.identifier}"
 
         self.register_var(variable_obj)
 
@@ -1170,6 +1116,11 @@ class ContractAnalyzer:
     # ② constant 변수 처리 (CFG·심볼 테이블 반영)
     # ---------------------------------------------------------------------------
     def process_constant_variable(self, variable_obj, init_expr):
+        if self.current_context_type == "fileLevelConstant":
+            variable_obj.isConstant = True
+            self.sa.file_level_constants[variable_obj.identifier] = (variable_obj, init_expr)
+            return
+
         # 1. 컨트랙트 CFG 확보
         contract_cfg = self.contract_cfgs[self.current_target_contract]
         if contract_cfg is None:
@@ -1191,6 +1142,37 @@ class ContractAnalyzer:
         # 4. 평가 컨텍스트는 현재까지의 state-variable 노드 변수들
         state_vars = contract_cfg.state_variable_node.variables
 
+        self._evaluate_constant(variable_obj, init_expr, state_vars)
+        variable_obj.isConstant = True  # constant 플래그 설정
+
+        self.register_var(variable_obj)
+
+        # 3. ContractCFG 에 추가 (state 변수와 동일 API 사용)
+        contract_cfg.add_state_variable(variable_obj, expr=init_expr, line_no=self.current_start_line)
+
+        # 4. 이미 생성된 모든 FunctionCFG 에 read-only 변수로 연동
+        for _, fn_cfg in contract_cfg.iter_all_functions():
+            self._reject_param_shadowing(fn_cfg, variable_obj.identifier)
+            fn_cfg.add_related_variable(variable_obj.identifier, VariableEnv.copy_single_variable(variable_obj))
+
+        # 5. 전역 map 업데이트
+        self.contract_cfgs[self.current_target_contract] = contract_cfg
+
+        # 6. brace_count 갱신 → IDE/커서 매핑
+        self.sa.line_info[self.current_start_line]["cfg_nodes"] = [contract_cfg.state_variable_node]
+
+    def file_constant(self, name: str):
+        """파일 수준 상수 변수(없으면 None). 값은 처음 읽을 때 계산한다 — 다른 파일 수준 상수를 선언 순서와 무관하게 쓸 수 있다."""
+        entry = self.sa.file_level_constants.get(name)
+        if entry is None:
+            return None
+        var, init_expr = entry
+        if var.value is None:
+            self._evaluate_constant(var, init_expr, {})
+        return VariableEnv.copy_single_variable(var)
+
+    def _evaluate_constant(self, variable_obj, init_expr, state_vars):
+        """상수 선언의 초기화식을 평가해 variable_obj.value 에 넣는다. state_vars = 식이 읽을 수 있는 변수."""
         # 5. constant 표현식 평가 (value types와 string만 지원)
         if isinstance(variable_obj, EnumVariable):
             # 열거형도 value type이므로 지원
@@ -1250,24 +1232,6 @@ class ContractAnalyzer:
             # 기타 지원되지 않는 타입
             raise ValueError(
                 f"Type category '{variable_obj.typeInfo.typeCategory}' cannot be declared as constant: '{variable_obj.identifier}'")
-
-        variable_obj.isConstant = True  # constant 플래그 설정
-
-        self.register_var(variable_obj)
-
-        # 3. ContractCFG 에 추가 (state 변수와 동일 API 사용)
-        contract_cfg.add_state_variable(variable_obj, expr=init_expr, line_no=self.current_start_line)
-
-        # 4. 이미 생성된 모든 FunctionCFG 에 read-only 변수로 연동
-        for _, fn_cfg in contract_cfg.iter_all_functions():
-            self._reject_param_shadowing(fn_cfg, variable_obj.identifier)
-            fn_cfg.add_related_variable(variable_obj.identifier, VariableEnv.copy_single_variable(variable_obj))
-
-        # 5. 전역 map 업데이트
-        self.contract_cfgs[self.current_target_contract] = contract_cfg
-
-        # 6. brace_count 갱신 → IDE/커서 매핑
-        self.sa.line_info[self.current_start_line]["cfg_nodes"] = [contract_cfg.state_variable_node]
 
     def process_modifier_definition(self,
                                     modifier_name: str,
@@ -1423,48 +1387,6 @@ class ContractAnalyzer:
             if env is not None and "msg.value" in env:
                 env["msg.value"] = VariableEnv.copy_single_variable(narrowed)
 
-    def get_full_struct_enum_defs(self, contract_name: str | None = None):
-        """
-        contract_name(기본값: current_target_contract) 기준으로 contract 자신 +
-        file-level + parent 상속 체인의 struct/enum 정의를 모두 합쳐서 반환한다.
-        (struct_defs, enum_defs) 튜플.
-
-        여러 곳(Update.py/Evaluation.py/DebugInitializer.py)에서 struct_defs가
-        비어있는 MappingVariable/ArrayVariable을 보수하려고 `ccf.structDefs`만
-        대입했었는데, 그러면 file-level struct(예: 컨트랙트 밖에 선언된 struct)가
-        빠진 채로 이미 완전했던 값을 오히려 덮어써버리는 문제가 있었다 - 이 헬퍼로
-        통일해서 그 문제를 근본적으로 막는다.
-        """
-        contract_name = contract_name or self.current_target_contract
-        ccf = self.contract_cfgs.get(contract_name) if contract_name else None
-        all_structs = dict(ccf.structDefs) if ccf else {}
-        all_enums = dict(ccf.enumDefs) if ccf else {}
-        if self.sa.file_level_structs:
-            all_structs.update(self.sa.file_level_structs)
-        if ccf:
-            for pcfg in getattr(ccf, 'parent_cfgs', {}).values():
-                all_structs.update(getattr(pcfg, 'structDefs', {}))
-                all_enums.update(getattr(pcfg, 'enumDefs', {}))
-        return all_structs, all_enums
-
-    def struct_def_of_type(self, t):
-        """(2026-10-23) struct 타입(SolType)의 정의. 선언 스코프(`structOwner`)가 있으면 **그 컨트랙트**의 정의 표
-        (A-2 로 상속 정의 포함)에서, 없으면 그 이름이 쓰인 스코프 = 실행 중인 컨트랙트 체인 + 파일 수준에서 찾는다.
-        소유자가 있는데 정의가 없으면 오류(소유자 표시와 정의 표가 어긋났다)."""
-        name = getattr(t, "structTypeName", None)
-        if not name:
-            return None
-        owner = getattr(t, "structOwner", None)
-        short = name.split('.')[-1]
-        if owner is not None:
-            cfg = self.contract_cfgs.get(owner) or self.library_cfgs.get(owner)
-            d = (getattr(cfg, "structDefs", None) or {}).get(short) if cfg is not None else None
-            if d is None:
-                raise ValueError(f"struct '{name}': 선언 컨트랙트 '{owner}' 에 정의가 없다")
-            return d
-        structs, _ = self.get_full_struct_enum_defs()
-        return structs.get(name) or (structs.get(short) if '.' in name else None)
-
     def _create_variable_object(
             self,
             type_obj: SolType,
@@ -1478,70 +1400,33 @@ class ContractAnalyzer:
 
         # 2-A  배열
         if type_obj.typeCategory == "array":
-            all_structs, all_enums = self.get_full_struct_enum_defs()
             v = ArrayVariable(
                 identifier=var_name,
                 base_type=type_obj.arrayBaseType,
                 array_length=type_obj.arrayLength,
                 is_dynamic=type_obj.isDynamicArray,
                 scope="local",
-                struct_defs=all_structs,
-                enum_defs=all_enums,
+                data_location=type_obj.dataLocation,
             )
 
         # 2-B  구조체
         elif type_obj.typeCategory == "struct":
-            v = StructVariable(
-                identifier=var_name,
-                struct_type=type_obj.structTypeName,
-                scope="local",
-            )
-            v.typeInfo.structOwner = getattr(type_obj, "structOwner", None)
-            # ★ 정의를 붙여 멤버를 채운다.
-            #   예전엔 빈 StructVariable 을 그대로 뒀다. 그래서
-            #     `Ticks.Tick storage previous = ticks[current.previousTick];`
-            #   처럼 초기화식이 **아직 없는 매핑 엔트리**를 가리키면
-            #   (기존 엔트리를 받아오는 경우와 달리) 멤버가 비어
-            #   `Member 'nextTick' not in struct 'previous'` 로 터졌다
-            #   (Ticks.sol 4건 + AddressProviderMeta 2건).
-            #   바로 아래 2-D(매핑)·2-A(배열) 는 `get_full_struct_enum_defs()` 로
-            #   정의를 넘겨 `_make_value` 가 초기화하는데, struct/enum 분기만 빠져 있었다.
-            _structs, _enums = self.get_full_struct_enum_defs()
-            _sname = type_obj.structTypeName
-            if _sname not in _structs and _sname and '.' in _sname:
-                # qualified(`Ticks.Tick`) 로 못 찾으면 bare(`Tick`) 로 한 번 더.
-                #   등록 시점에 따라 한쪽 이름만 있을 수 있다(실측: 둘 다 있는 경우도 있음).
-                _sname = _sname.split('.')[-1]
-            if _sname in _structs:
-                v.initialize_struct(_structs[_sname],
-                                    struct_defs=_structs, enum_defs=_enums)
+            v = StructVariable(identifier=var_name, struct_type=type_obj, scope="local")
+            v.initialize_struct()
 
         # 2-C  enum
         elif type_obj.typeCategory == "enum":
-            v = EnumVariable(identifier=var_name, enum_type=type_obj.enumTypeName, scope="local")
-            # ★ 2-B 와 같은 이유로 멤버 테이블을 채운다 (`_make_value` 의 enum 분기와 동일).
-            _structs, _enums = self.get_full_struct_enum_defs()
-            _ename = type_obj.enumTypeName
-            if _ename not in _enums and _ename and '.' in _ename:
-                _ename = _ename.split('.')[-1]
-            if _ename in _enums:
-                _defn = _enums[_ename]
-                v.members = {m: i for i, m in enumerate(_defn.members)}
-                if _defn.members:
-                    v.valueIndex = 0
-                    v.value = _defn.members[0]
+            v = EnumVariable(identifier=var_name, enum_type=type_obj, scope="local")
+            v.initialize_enum()
 
         # 2-D  매핑
         elif type_obj.typeCategory == "mapping":
-            # 정의 수집은 `get_full_struct_enum_defs()` 와 동일한 로직이었다 — 중복 제거.
-            all_structs, all_enums = self.get_full_struct_enum_defs()
             v = MappingVariable(
                 identifier=var_name,
                 key_type=type_obj.mappingKeyType,
                 value_type=type_obj.mappingValueType,
                 scope="local",
-                struct_defs=all_structs,
-                enum_defs=all_enums,
+                data_location=type_obj.dataLocation,
             )
 
         # 2-E  elementary
@@ -1630,54 +1515,6 @@ class ContractAnalyzer:
         ccf.update_function_cfg(self.current_target_function, fcfg)
         self.contract_cfgs[self.current_target_contract] = ccf
         self.current_target_function_cfg = None
-
-    def _initialize_variable_default(self, v, ccf, var_name):
-        """Helper function to initialize variable with default values."""
-        # 배열 기본
-        if isinstance(v, ArrayVariable):
-            bt = v.typeInfo.arrayBaseType
-            if isinstance(bt, SolType):
-                et = bt.elementaryTypeName
-                if et and et.startswith("int"):
-                    bits = bt.intTypeLength or 256
-                    v.initialize_elements(IntegerInterval.top(bits))
-                elif et and et.startswith("uint"):
-                    bits = bt.intTypeLength or 256
-                    v.initialize_elements(UnsignedIntegerInterval.top(bits))
-                elif et == "bool":
-                    v.initialize_elements(BoolInterval.top())
-                else:
-                    v.initialize_not_abstracted_type()
-
-        # 구조체 기본
-        elif isinstance(v, StructVariable):
-            if v.typeInfo.structTypeName not in ccf.structDefs:
-                raise ValueError(f"Undefined struct {v.typeInfo.structTypeName}")
-            v.initialize_struct(ccf.structDefs[v.typeInfo.structTypeName], struct_defs=ccf.structDefs,
-                               enum_defs=ccf.enumDefs)
-
-        # enum 기본 (첫 멤버)
-        elif isinstance(v, EnumVariable):
-            enum_def = ccf.enumDefs.get(v.typeInfo.enumTypeName)
-            if enum_def:
-                v.valueIndex = 0
-                v.value = enum_def.members[0]
-
-        # elementary 기본
-        elif isinstance(v, Variables):
-            et = v.typeInfo.elementaryTypeName
-            if et.startswith("int"):
-                type_len = v.typeInfo.intTypeLength or 256
-                v.value = IntegerInterval.top(type_len)
-            elif et.startswith("uint"):
-                type_len = v.typeInfo.intTypeLength or 256
-                v.value = UnsignedIntegerInterval.top(type_len)
-            elif et == "bool":
-                v.value = BoolInterval.top()
-            elif et == "address":
-                v.value = AddressSet.top()
-            else:  # bytes/string
-                v.value = f"symbol_{var_name}"
 
     # Analyzer/ContractAnalyzer.py
     def process_yul_assignment(self, lhs: Expression, rhs: Expression) -> None:

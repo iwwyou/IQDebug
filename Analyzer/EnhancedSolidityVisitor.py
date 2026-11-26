@@ -54,6 +54,49 @@ def _is_contract_cfg(cfg) -> bool:
     return not isinstance(cfg, LibraryCFG)
 
 
+# ── 리터럴 상수식 (2026-11-25) ─────────────────────────────────────────────────
+#   Solidity 는 리터럴만으로 된 식을 **임의정밀도 유리수**로 계산하고 끝난 값만 정수로 바꾼다
+#   (`0.95 * 1e27`, `1 / 2 * 4` = 2, `2 ** 256 - 1`). 정수가 아닌 채로 쓰이면 컴파일 오류다.
+def _rational_expr(q: Fraction) -> Expression:
+    if q.denominator != 1:
+        e = Expression(literal=str(q), context='LiteralExpContext', expr_type='rational')
+    elif q < 0:
+        e = Expression(operator='-', expression=_rational_expr(-q), is_postfix=False, context='UnaryPrefixOpContext')
+    else:
+        e = Expression(literal=str(q.numerator), context='LiteralExpContext', expr_type='uint', type_length=256)
+    return e
+
+
+def _rational_of(e) -> Fraction | None:
+    """리터럴만으로 된 식의 값 (아니면 None)."""
+    ctx = getattr(e, "context", None)
+    if ctx == "TupleExpressionContext" and len(e.elements) == 1:
+        return _rational_of(e.elements[0])
+    if ctx == "UnaryPrefixOpContext" and e.operator == "-":
+        q = _rational_of(e.expression)
+        return None if q is None else -q
+    if ctx == "LiteralSubDenomination" or (ctx == "LiteralExpContext" and e.expr_type in ("uint", "rational")):
+        txt = str(e.literal).replace("_", "")
+        if txt.lower().startswith("0x"):
+            return None if len(txt) == 42 else Fraction(int(txt, 16))      # 42 글자 = 주소 리터럴
+        return Fraction(txt)
+    return None
+
+
+def _fold_literals(e: Expression) -> Expression:
+    a, b, op = _rational_of(e.left), _rational_of(e.right), e.operator
+    if a is None or b is None or (op in ("/", "%") and b == 0):
+        return e
+    if op == "**":
+        if b.denominator != 1 or abs(b) > 4096 or (a == 0 and b < 0):
+            return e
+        return _rational_expr(a ** b.numerator)
+    if op == "%":
+        q = abs(a) % abs(b)                              # 나머지의 부호는 왼쪽을 따른다
+        return _rational_expr(-q if a < 0 else q)
+    return _rational_expr({"+": a.__add__, "-": a.__sub__, "*": a.__mul__, "/": a.__truediv__}[op](b))
+
+
 class EnhancedSolidityVisitor(SolidityVisitor):
 
     def __init__(self, contract_analyzer):
@@ -224,7 +267,7 @@ class EnhancedSolidityVisitor(SolidityVisitor):
                                          scope="state")
         elif type_obj.typeCategory == "struct":
             variable_obj = StructVariable(identifier=var_name,
-                                          struct_type=type_obj.structTypeName,
+                                          struct_type=type_obj,
                                           scope="state")
         elif type_obj.typeCategory == "mapping":
             variable_obj = MappingVariable(identifier=var_name,
@@ -233,7 +276,7 @@ class EnhancedSolidityVisitor(SolidityVisitor):
                                            scope="state")
         elif type_obj.typeCategory == "enum":
             variable_obj = EnumVariable(identifier=var_name,
-                                        enum_type=type_obj.enumTypeName,
+                                        enum_type=type_obj,
                                         scope="state")
         else:  # elementary
             variable_obj = Variables(identifier=var_name, scope="state")
@@ -312,26 +355,24 @@ class EnhancedSolidityVisitor(SolidityVisitor):
         # ── ① 타입 해석 ─────────────────────────────────────────────
         type_ctx = ctx.typeName()
         type_info = self.visitTypeName(type_ctx, SolType())  # ← SolType 객체
+        if type_info.typeCategory in ("array", "mapping", "struct") or type_info.elementaryTypeName in ("string", "bytes"):
+            type_info.dataLocation = "storage"
 
         # ── ② 변수 object  생성 (array / struct / mapping / enum / elementary) ──
         if type_info.typeCategory == "array":
-            all_structs, all_enums = self.contract_analyzer.get_full_struct_enum_defs()
             var_obj = ArrayVariable(var_name, type_info.arrayBaseType,
                                     type_info.arrayLength, scope="state",
                                     is_dynamic=type_info.isDynamicArray,
-                                    struct_defs=all_structs, enum_defs=all_enums)
+                                    data_location="storage")
         elif type_info.typeCategory == "struct":
-            var_obj = StructVariable(var_name, type_info.structTypeName, scope="state",
-                                     )
+            var_obj = StructVariable(var_name, type_info, scope="state")
         elif type_info.typeCategory == "mapping":
-            all_structs, all_enums = self.contract_analyzer.get_full_struct_enum_defs()
             var_obj = MappingVariable(var_name,
                                       type_info.mappingKeyType,
                                       type_info.mappingValueType,
-                                      scope="state",
-                                      struct_defs=all_structs, enum_defs=all_enums)
+                                      scope="state", data_location="storage")
         elif type_info.typeCategory == "enum":
-            var_obj = EnumVariable(var_name, type_info.enumTypeName, scope="state")
+            var_obj = EnumVariable(var_name, type_info, scope="state")
         else:  # elementary / address / bool …
             var_obj = Variables(var_name, scope="state")
             var_obj.typeInfo = type_info
@@ -395,6 +436,13 @@ class EnhancedSolidityVisitor(SolidityVisitor):
             struct_name = ctx.identifier().getText()
             self.contract_analyzer.sa.process_file_level_struct_definition(struct_name)
         return self.visitChildren(ctx)
+
+    def add_struct_member(self, struct_def, tree):
+        """`T name;` 트리의 멤버를 struct_def 에 넣는다 (Analyzer/Declarations.py)."""
+        for ctx in tree.structMember():
+            if ctx.typeName() is None or ctx.identifier() is None:
+                raise ValueError(f"struct '{struct_def.struct_name}': 멤버 구문 오류 `{ctx.getText()}`")
+            struct_def.add_member(ctx.identifier().getText(), self.visitTypeName(ctx.typeName(), SolType()))
 
     # Visit a parse tree produced by SolidityParser#structMember.
     def visitStructMember(self, ctx: SolidityParser.StructMemberContext):
@@ -579,6 +627,9 @@ class EnhancedSolidityVisitor(SolidityVisitor):
             if isinstance(el, SolidityParser.TypeNameContext):
                 sol_type = self.visitTypeName(el, sol_type)
 
+            elif isinstance(el, SolidityParser.DataLocationContext):
+                sol_type.dataLocation = el.getText()
+
             elif isinstance(el, SolidityParser.IdentifierContext):
                 name = el.getText()
 
@@ -747,21 +798,29 @@ class EnhancedSolidityVisitor(SolidityVisitor):
 
         _enum_def = _find_in_chain(contract_cfg, type_name, 'enumDefs') if contract_cfg else None
         _struct_def = _find_in_chain(contract_cfg, type_name, 'structDefs') if contract_cfg and _enum_def is None else None
+        if _enum_def is None and _struct_def is None and contract_name:
+            # (2026-11-25) 아직 줄 분석이 닿지 않은 선언 (Analyzer/Declarations.py)
+            _d = self.contract_analyzer.predeclared_def(contract_name, type_name)
+            _enum_def, _struct_def = (_d, None) if isinstance(_d, EnumDefinition) else (None, _d)
+        _pre = self.contract_analyzer.predeclared
         if _enum_def is not None:
             type_obj.typeCategory = "enum"
             type_obj.enumTypeName = type_name
             type_obj.enumOwner = getattr(_enum_def, "owner", None)       # 파일 수준 enum 사본은 None
+            type_obj.enumDef = _enum_def
         elif _struct_def is not None:
             type_obj.typeCategory = "struct"
             type_obj.structTypeName = type_name
             type_obj.structOwner = getattr(_struct_def, "owner", None)
+            type_obj.structDef = _struct_def
         elif type_name in self.contract_analyzer.interface_names:
             # Interface 타입: 원본 이름 보존 + address 하위 호환
             type_obj.typeCategory = "interface"
             type_obj.interfaceName = type_name
             type_obj.elementaryTypeName = "address"
             type_obj.intTypeLength = 160
-        elif _is_contract_cfg(self.contract_analyzer.contract_cfgs.get(type_name)):
+        elif _is_contract_cfg(self.contract_analyzer.contract_cfgs.get(type_name)) or (
+                _pre is not None and _pre.kinds.get(type_name) in ("contract", "interface")):
             # Contract 타입 (부모 컨트랙트 등): interface와 동일하게 address 취급
             # ★ 예전 조건은 `type_name in contract_cfgs and type_name not in library_cfgs`
             #   였다. `make_library_cfg` 가 라이브러리를 contract_cfgs 에도 넣기 때문에
@@ -779,6 +838,7 @@ class EnhancedSolidityVisitor(SolidityVisitor):
             if file_struct is not None:
                 type_obj.typeCategory = "struct"
                 type_obj.structTypeName = type_name
+                type_obj.structDef = file_struct
             # ★ file-level enum 확인 (Solidity 0.8+ 는 파일 최상위 enum 을 허용한다)
             #   `sa.file_level_enums` 는 {이름: [멤버,...]} 이고, 이 분기가 없어서
             #   `enum AssetClass {...}` + `returns (AssetClass)` 가 해석되지 않았다.
@@ -788,11 +848,11 @@ class EnhancedSolidityVisitor(SolidityVisitor):
             elif type_name in (getattr(self.contract_analyzer.sa, 'file_level_enums', None) or {}):
                 type_obj.typeCategory = "enum"
                 type_obj.enumTypeName = type_name
-                if contract_cfg is not None and type_name not in contract_cfg.enumDefs:
-                    _ed = EnumDefinition(type_name)
-                    for _m in self.contract_analyzer.sa.file_level_enums[type_name]:
-                        _ed.add_member(_m)
-                    contract_cfg.enumDefs[type_name] = _ed
+                type_obj.enumDef = EnumDefinition(type_name)
+                for _m in self.contract_analyzer.sa.file_level_enums[type_name]:
+                    type_obj.enumDef.add_member(_m)
+                if contract_cfg is not None:
+                    contract_cfg.enumDefs[type_name] = type_obj.enumDef
             else:
                 # type alias 확인 (user-defined value type)
                 underlying = self.contract_analyzer.sa.resolve_type(type_name)
@@ -815,12 +875,14 @@ class EnhancedSolidityVisitor(SolidityVisitor):
                         type_obj.typeCategory = "enum"
                         type_obj.enumTypeName = type_name
                         type_obj.enumOwner = getattr(resolved, "owner", None)
+                        type_obj.enumDef = resolved
                         if contract_cfg and type_name not in contract_cfg.enumDefs:
                             contract_cfg.enumDefs[type_name] = resolved
                     elif isinstance(resolved, StructDefinition):
                         type_obj.typeCategory = "struct"
                         type_obj.structTypeName = type_name
                         type_obj.structOwner = getattr(resolved, "owner", None)
+                        type_obj.structDef = resolved
                         # struct 정의를 현재 CFG에 등록 (qualified name으로, 이후 멤버 접근용)
                         if contract_cfg and type_name not in contract_cfg.structDefs:
                             contract_cfg.structDefs[type_name] = resolved
@@ -1606,6 +1668,13 @@ class EnhancedSolidityVisitor(SolidityVisitor):
     def visitInteractiveSimpleStatement(self, ctx:SolidityParser.InteractiveSimpleStatementContext):
         return self.visitChildren(ctx)
 
+    def _declared_type(self, ctx: SolidityParser.VariableDeclarationContext) -> SolType:
+        """지역변수 선언의 타입 + 데이터 위치(storage/memory/calldata)."""
+        t = self.visitTypeName(ctx.typeName(), SolType())
+        if ctx.dataLocation():
+            t.dataLocation = ctx.dataLocation().getText()
+        return t
+
     # Visit a parse tree produced by SolidityParser#interactiveVariableDeclarationStatement.
     def visitInteractiveVariableDeclarationStatement(self, ctx:SolidityParser.InteractiveVariableDeclarationStatementContext):
         # 튜플 변수 선언인지 확인: (uint256 a, uint256 b) = func();
@@ -1620,10 +1689,8 @@ class EnhancedSolidityVisitor(SolidityVisitor):
             # 이 이유로 죽은 코드였음).
             for var_decl in self._split_tuple_slots(tuple_ctx):
                 if var_decl:
-                    type_ctx = var_decl.typeName()
                     var_name = var_decl.identifier().getText()
-                    type_obj = SolType()
-                    type_obj = self.visitTypeName(type_ctx, type_obj)
+                    type_obj = self._declared_type(var_decl)
                     var_declarations.append((type_obj, var_name))  # (type_obj, var_name) 순서
                 else:
                     var_declarations.append(None)  # (,uint256 x) 같은 경우
@@ -1637,22 +1704,15 @@ class EnhancedSolidityVisitor(SolidityVisitor):
 
         # 단일 변수 선언: uint256 x = value;
         # 1. 변수 선언 정보 가져오기
-        type_ctx = ctx.variableDeclaration().typeName()
         var_name = ctx.variableDeclaration().identifier().getText()
-
-        # dataLocation?  (memory / storage / calldata)
-        data_loc = None
-        #if ctx.dataLocation():
-        #    data_loc = ctx.dataLocation().getText()  # 'storage' 등
 
         # 2. 초기화 값이 있는 경우 처리
         init_expr = None
         if ctx.expression():
             init_expr = self.visitExpression(ctx.expression())
 
-        # 3. 변수 타입 정보 분석 및 적절한 Variables 객체 생성
-        type_obj = SolType()
-        type_obj = self.visitTypeName(type_ctx, type_obj)  # 타입 정보 분석
+        # 3. 변수 타입 정보 분석 (데이터 위치 포함)
+        type_obj = self._declared_type(ctx.variableDeclaration())
 
         # 5. ContractAnalyzer로 Variables 객체 및 lineComment 전달
         self.contract_analyzer.process_variable_declaration(
@@ -2540,7 +2600,7 @@ class EnhancedSolidityVisitor(SolidityVisitor):
         if num_ctx is not None and num_ctx.DecimalNumber() is not None:
             exact = Fraction(literal_value.replace("_", ""))
             if exact.denominator != 1:
-                raise ValueError(f"numeric literal “{literal_value}” does not evaluate to an integer")
+                return _rational_expr(exact)
             result_expr.literal = str(exact.numerator)
             result_expr.expr_type = 'uint'
             result_expr.type_length = 256
@@ -2614,7 +2674,7 @@ class EnhancedSolidityVisitor(SolidityVisitor):
             context='ExponentiationContext'
         )
 
-        return result_expr
+        return _fold_literals(result_expr)
 
     def visitLiteralSubDenomination(
             self, ctx: SolidityParser.LiteralSubDenominationContext):
@@ -2758,7 +2818,7 @@ class EnhancedSolidityVisitor(SolidityVisitor):
             context='AdditiveOpContext'
         )
 
-        return result_expr
+        return _fold_literals(result_expr)
 
     def _array_length_expr(self, type_ctx):
         """
@@ -2865,7 +2925,7 @@ class EnhancedSolidityVisitor(SolidityVisitor):
             context='MultiplicativeOpContext'
         )
 
-        return result_expr
+        return _fold_literals(result_expr)
 
     # Visit a parse tree produced by SolidityParser#EqualityOp.
     def visitEqualityOp(self, ctx:SolidityParser.EqualityOpContext):

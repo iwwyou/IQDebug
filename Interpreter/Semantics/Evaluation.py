@@ -6,7 +6,7 @@ if TYPE_CHECKING:                                         # 타입 검사 전용
      from Analyzer.ContractAnalyzer import ContractAnalyzer
 
 from Domain.FunctionRef import FunctionRef
-from Domain.Variable import Variables, ArrayVariable, StructVariable, MappingVariable, EnumVariable, EnumDefinition, array_length
+from Domain.Variable import StorageRef, Variables, ArrayVariable, StructVariable, MappingVariable, EnumVariable, EnumDefinition, array_length
 from Domain.Type import SolType
 from Domain.Interval import Interval, IntegerInterval, BoolInterval, UnsignedIntegerInterval
 from Domain.AddressSet import AddressSet
@@ -282,20 +282,10 @@ class Evaluation :
         if not ifc_fcfg or not ifc_fcfg.return_types:
             return None
 
-        # ★ file-level struct(예: `struct FloatStruct {...}`가 인터페이스/컨트랙트
-        # 밖, 파일 최상위에 선언된 경우, `IMochiProfile.liquidationFactor()`처럼
-        # 그 인터페이스의 함수가 반환 타입으로만 참조함) 병합 — `ifc_cfg.structDefs`는
-        # 그 인터페이스 "안에" 선언된 struct만 담고 있어서 빠짐, 안 채우면
-        # `top_from_soltype`이 멤버 없는 빈 StructVariable을 만듦
-        # (web3bugs_42_H_01에서 발견, `'denominator' not in struct 'lf'`).
-        struct_defs = dict(getattr(self.an.sa, 'file_level_structs', {}) or {})
-        struct_defs.update(getattr(ifc_cfg, 'structDefs', {}) or {})
-        enum_defs = getattr(ifc_cfg, 'enumDefs', {})
-
         # top 값 생성
         #   다중 반환이면 반환 타입별 ⊤ 의 리스트 (Phase 3b: 예전엔 첫 반환 타입만 만들었다)
         def _top(rt, ident):
-            tv = VariableEnv.top_from_soltype(rt, struct_defs, enum_defs, identifier=ident)
+            tv = VariableEnv.top_from_soltype(rt, identifier=ident)
             # Variables wrapper → value 추출 (elementary)
             if isinstance(tv, Variables) and \
                not isinstance(tv, (StructVariable, ArrayVariable, MappingVariable, EnumVariable)):
@@ -393,12 +383,7 @@ class Evaluation :
 
     def _top_of_type(self, sol_type, owner_cfg, ident):
         """선언 타입의 ⊤ 값 (값 타입이면 .value, 복합 타입이면 변수 객체)."""
-        # ★ file-level struct 병합 — _assemble_ireturn_value와 동일 이유
-        # (web3bugs_42_H_01, `'denominator' not in struct 'lf'`)
-        struct_defs = dict(getattr(self.an.sa, 'file_level_structs', {}) or {})
-        struct_defs.update(getattr(owner_cfg, 'structDefs', {}) or {})
-        enum_defs = getattr(owner_cfg, 'enumDefs', {}) or {}
-        top_val = VariableEnv.top_from_soltype(sol_type, struct_defs, enum_defs, identifier=ident)
+        top_val = VariableEnv.top_from_soltype(sol_type, identifier=ident)
         if isinstance(top_val, Variables) and \
            not isinstance(top_val, (StructVariable, ArrayVariable, MappingVariable, EnumVariable)):
             return top_val.value
@@ -512,7 +497,7 @@ class Evaluation :
         네임스페이스 struct 생성자(예: `IPool.TokenAmount({...})`, struct가
         interface `IPool` 안에 정의된 경우)를 위한 헬퍼. `_lookup_interface_return`
         과 동일한 PKL 로딩 패턴 재사용.
-        Returns: (struct_def, struct_defs, enum_defs) 또는 None"""
+        Returns: StructDefinition 또는 None"""
         visited = set()
         queue = [interface_name]
         while queue:
@@ -526,8 +511,7 @@ class Evaluation :
                 continue
             struct_defs = getattr(ifc_cfg, 'structDefs', {})
             if struct_name in struct_defs:
-                enum_defs = getattr(ifc_cfg, 'enumDefs', {})
-                return struct_defs[struct_name], struct_defs, enum_defs
+                return struct_defs[struct_name]
             for pname in getattr(ifc_cfg, 'parent_contracts', []):
                 if pname not in visited:
                     queue.append(pname)
@@ -542,11 +526,6 @@ class Evaluation :
             return result
 
         mapping_var = callerObject
-        if not mapping_var.struct_defs or not mapping_var.enum_defs:
-            all_structs, all_enums = self.an.get_full_struct_enum_defs()
-            mapping_var.struct_defs = {**all_structs, **mapping_var.struct_defs}
-            mapping_var.enum_defs = {**all_enums, **mapping_var.enum_defs}
-
         # key 결정: 리턴값에서 추론
         if isinstance(result, AddressSet):
             key_val = str(result)
@@ -679,10 +658,8 @@ class Evaluation :
             if member == "balance" and ety in ("address", "address payable"):
                 return self._elementary_type("uint256")
             if cat == "struct":
-                sdef = self.an.struct_def_of_type(base_t)
-                members = getattr(sdef, "members", None) if sdef is not None else None
-                if isinstance(members, dict):
-                    return members.get(member)
+                if base_t.structDef is not None:
+                    return base_t.structDef.members.get(member)
             return None
 
         # ── 인덱스 접근: 배열 base / 매핑 value
@@ -1304,7 +1281,11 @@ class Evaluation :
         elif expr.context == "TypeWrapUnwrapContext":
             return self.evaluate_type_wrap_unwrap(expr, variables, callerObject, callerContext)
         elif expr.context == "FunctionCallContext":
-            return self.evaluate_function_call_context(expr, variables, callerObject, callerContext)
+            res = self.evaluate_function_call_context(expr, variables, callerObject, callerContext)
+            if isinstance(res, StorageRef) and not getattr(self, "_keep_ref", False):
+                # (2026-11-26) storage 를 반환한 호출을 값으로 쓴다 — 그 위치의 칸 (`getPool(id).acc`)
+                return self.evaluate_expression(res.target, {**variables, **res.hidden}, callerObject, callerContext)
+            return res
         elif expr.context == "FunctionCallOptionContext":
             return self.evaluate_function_call_option_context(expr, variables, callerObject, callerContext)
         elif expr.context == "PayableFunctionCallContext":
@@ -1385,21 +1366,6 @@ class Evaluation :
             if sol_t.isDynamicArray:
                 arr.length = length_iv if length_iv is not None else UnsignedIntegerInterval.top(256)
 
-            # ★ base type이 qualified 네임스페이스 struct(예: `IPool.TokenAmount`,
-            # interface 안에 정의된 struct)면 현재 컨트랙트의 struct_defs엔
-            # 당연히 없음 — interface pkl에서 struct_defs를 가져와 채워야
-            # `_init_recursive`의 struct 분기가 실제로 초기화할 수 있음
-            # (web3bugs_35_H_08/35_H_12에서 발견).
-            base_t = sol_t.arrayBaseType
-            if isinstance(base_t, SolType) and base_t.typeCategory == "struct" and \
-                    isinstance(base_t.structTypeName, str) and "." in base_t.structTypeName:
-                ifc_name, bare_name = base_t.structTypeName.split(".", 1)
-                ifc_struct = self._find_interface_struct_def(ifc_name, bare_name)
-                if ifc_struct is not None:
-                    _, ifc_struct_defs, ifc_enum_defs = ifc_struct
-                    arr.struct_defs = {**ifc_struct_defs, **arr.struct_defs}
-                    arr.enum_defs = {**ifc_enum_defs, **arr.enum_defs}
-
             # ⬇ Solidity default: new array elements are zero-initialized
             #   (2026-10-23, 희소 배열) D = 0 셀 — 길이가 미지여도 모든 원소가 0 이다(원소를 만들지 않는다)
             if ArrayVariable._is_abstractable(sol_t.arrayBaseType):
@@ -1420,18 +1386,14 @@ class Evaluation :
 
         # ── (B) 매핑 ───────────────────────────────────────────────
         if sol_t.typeCategory == "mapping":
-            ccf = self.an.contract_cfgs[self.an.current_target_contract]
-
             return MappingVariable(fresh_id,
                                    key_type=sol_t.mappingKeyType,
                                    value_type=sol_t.mappingValueType,
-                                   scope="memory",
-                                   struct_defs=ccf.structDefs,  # ⭐️ 전달
-                                   enum_defs=ccf.enumDefs)  # ⭐️ 전달)
+                                   scope="memory")
 
         # ── (C) 구조체 ─────────────────────────────────────────────
         if sol_t.typeCategory == "struct":
-            return StructVariable(fresh_id, sol_t.structTypeName, scope="memory")
+            return StructVariable(fresh_id, sol_t, scope="memory")
 
         # ── (D) 컨트랙트 new Foo()  → 심볼릭 address ───────────────
         if sol_t.typeCategory == "userDefined" :
@@ -1503,11 +1465,6 @@ class Evaluation :
 
             # 1-B) 매핑 키 – 문자열·hex·decimal 모두 허용
             if isinstance(callerObject, MappingVariable):
-                if not callerObject.struct_defs or not callerObject.enum_defs:
-                    all_structs, all_enums = self.an.get_full_struct_enum_defs()
-                    callerObject.struct_defs = {**all_structs, **callerObject.struct_defs}
-                    callerObject.enum_defs = {**all_enums, **callerObject.enum_defs}
-
                 return callerObject.get_or_create(lit)
 
         # ───────── 2. 상위 없음 & 인덱스/멤버 base 해결 ──────────
@@ -1607,8 +1564,21 @@ class Evaluation :
         # 기타 타입
         raise ValueError(f"Unsupported literal expr_type '{ety}'")
 
+    def evaluate_ref_call(self, expr, variables):
+        """storage 를 반환하는 호출 — 칸이 아니라 위치(StorageRef)를 돌려받는다 (Storage.freeze_ref 가 쓴다)."""
+        saved, self._keep_ref = getattr(self, "_keep_ref", False), True
+        try:
+            return self.evaluate_function_call_context(expr, variables, None, None)
+        finally:
+            self._keep_ref = saved
+
     def evaluate_identifier_context(self, expr: Expression, variables, callerObject=None, callerContext=None):
         ident_str = expr.identifier
+        ref = variables.get(ident_str) if isinstance(variables, dict) else None
+        if isinstance(ref, StorageRef) and callerObject is None:     # (2026-11-26) storage 참조 = 그 위치
+            if ref.target is None:
+                raise ValueError(f"storage 참조 '{ident_str}' 를 묶기 전에 썼다")
+            return self.evaluate_expression(ref.target, variables, None, callerContext)
 
         # callerObject가 있는 경우
         if callerObject is not None:
@@ -1642,13 +1612,10 @@ class Evaluation :
                             # 구조체 타입: 빈 구조체 생성 후 초기화
                             empty_struct = StructVariable(
                                 f"{callerObject.identifier}[{idx}]",
-                                base_t.structTypeName,
+                                base_t,
                                 scope=callerObject.scope
                             )
-                            ccf = self.an.contract_cfgs[self.an.current_target_contract]
-                            if base_t.structTypeName in ccf.structDefs:
-                                empty_struct.initialize_struct(ccf.structDefs[base_t.structTypeName],
-                                                               struct_defs=ccf.structDefs, enum_defs=ccf.enumDefs)
+                            empty_struct.initialize_struct()
                             return empty_struct
                         elif isinstance(base_t, SolType) and \
                                 base_t.typeCategory in ("array", "mapping", "enum"):
@@ -1712,14 +1679,10 @@ class Evaluation :
                 if isinstance(base_t, SolType) and base_t.typeCategory == "struct":
                     empty_struct = StructVariable(
                         f"{callerObject.identifier}[virtual]",
-                        base_t.structTypeName,
+                        base_t,
                         scope=callerObject.scope
                     )
-                    # struct_defs가 필요하면 ContractAnalyzer에서 가져오기
-                    ccf = self.an.contract_cfgs[self.an.current_target_contract]
-                    if base_t.structTypeName in ccf.structDefs:
-                        empty_struct.initialize_struct(ccf.structDefs[base_t.structTypeName],
-                                                       struct_defs=ccf.structDefs, enum_defs=ccf.enumDefs)
+                    empty_struct.initialize_struct()
                     return empty_struct
 
                 # 기본형: TOP interval
@@ -1761,11 +1724,6 @@ class Evaluation :
             # ContractAnalyzer.evaluate_identifier_context 내부
 
             elif isinstance(callerObject, MappingVariable):
-                if not callerObject.struct_defs or not callerObject.enum_defs:
-                    all_structs, all_enums = self.an.get_full_struct_enum_defs()
-                    callerObject.struct_defs = {**all_structs, **callerObject.struct_defs}
-                    callerObject.enum_defs = {**all_enums, **callerObject.enum_defs}
-
                 # ── ① key 결정 ──────────────────────────────────
                 if ident_str in variables:  # ident_str == 변수명
                     key_var = variables[ident_str]
@@ -1870,6 +1828,11 @@ class Evaluation :
             if isinstance(var_obj, (StructVariable, ArrayVariable, MappingVariable)):
                 return var_obj
             return var_obj.value  # 해당 value 리턴
+
+        # 파일 수준 상수
+        const = self.an.file_constant(ident_str)
+        if const is not None:
+            return const.value
 
         # library 이름이면 qualified call marker 반환 (UFixed18Lib._from(x) 등)
         if ident_str in self.an.library_cfgs:
@@ -2054,10 +2017,6 @@ class Evaluation :
                 # 0) 함수-env 에 이미 변수로 들어와 있나?
                 full_name = f"{baseVal}.{member}"
                 if isinstance(callerObject, MappingVariable):
-                    if not callerObject.struct_defs or not callerObject.enum_defs:
-                        all_structs, all_enums = self.an.get_full_struct_enum_defs()
-                        callerObject.struct_defs = {**all_structs, **callerObject.struct_defs}
-                        callerObject.enum_defs = {**all_enums, **callerObject.enum_defs}
                     # global var의 실제 값으로 key 결정 (identifier 경로와 동일)
                     key_val = full_name  # fallback
                     if full_name in variables:
@@ -2401,10 +2360,6 @@ class Evaluation :
         # (2026-10-23) mapping / array 는 키 해석·선택을 Storage 한 곳에서 — 식별자·리터럴·멤버·이항식 인덱스마다
         #   따로 있던 키 규칙(첫 구체 키 선택, 표본 join, 이름 키 등)이 서로 달라 unsound 했다. Storage.py 참고.
         if isinstance(base_val, (MappingVariable, ArrayVariable)) and expr.index is not None:
-            if not base_val.struct_defs or not base_val.enum_defs:
-                all_structs, all_enums = self.an.get_full_struct_enum_defs()
-                base_val.struct_defs = {**all_structs, **base_val.struct_defs}
-                base_val.enum_defs = {**all_enums, **base_val.enum_defs}
             cell = self.an.storage.read(base_val, expr.index, variables)
             return cell if is_composite(cell) else cell.value
 
@@ -2512,10 +2467,6 @@ class Evaluation :
 
             # ★ callerObject가 MappingVariable이면 mapping lookup 수행
             if isinstance(callerObject, MappingVariable):
-                if not callerObject.struct_defs or not callerObject.enum_defs:
-                    all_structs, all_enums = self.an.get_full_struct_enum_defs()
-                    callerObject.struct_defs = {**all_structs, **callerObject.struct_defs}
-                    callerObject.enum_defs = {**all_enums, **callerObject.enum_defs}
                 key_val = str(addr_result)
                 if key_val not in callerObject.mapping:
                     callerObject.mapping[key_val] = callerObject.get_or_create(key_val)
@@ -2961,13 +2912,12 @@ class Evaluation :
                 if contract_var in self.an.interface_names:
                     ifc_struct = self._find_interface_struct_def(contract_var, member_name)
                     if ifc_struct is not None:
-                        struct_def, struct_defs, enum_defs = ifc_struct
                         new_struct = StructVariable(
                             identifier=f"temp_{member_name}_{id(expr)}",
-                            struct_type=f"{contract_var}.{member_name}",
+                            struct_type=ifc_struct.type(f"{contract_var}.{member_name}"),
                             scope="memory"
                         )
-                        new_struct.initialize_struct(struct_def, struct_defs=struct_defs, enum_defs=enum_defs)
+                        new_struct.initialize_struct()
 
                         named_args = expr.named_arguments if expr.named_arguments else {}
                         if named_args:
@@ -3052,8 +3002,7 @@ class Evaluation :
                     if lib_fcfg is None and func_name in lib_structs:
                         qname = f"{getattr(ccfg, 'library_name', None) or ''}.{func_name}".lstrip(".")
                         return self._mapping_lookup_if_needed(
-                            self._construct_struct(lib_structs[func_name], qname, expr, variables,
-                                                   lib_structs, getattr(ccfg, "enumDefs", {}) or {}),
+                            self._construct_struct(lib_structs[func_name], qname, expr, variables),
                             callerObject)
                     # overload: 인자 개수로 매칭
                     if lib_fcfg and len(lib_fcfg.parameters) != n_args:
@@ -3137,24 +3086,22 @@ class Evaluation :
         if not contract_cfg:
             raise ValueError(f"Unable to find contract CFG for {self.an.current_target_contract}")
 
-        # 2-A) 구조체 생성자인지 확인 (현재 contract + parent chain + using libraries)
-        found = self._find_struct_def(contract_cfg, function_name)
-        if found is not None:
-            struct_def, qualified_name = found
-            return self._construct_struct(struct_def, qualified_name, expr, variables,
-                                          contract_cfg.structDefs, contract_cfg.enumDefs)
+        # 2-A) 구조체 생성자인지 확인
+        struct_def = self._find_struct_def(function_name)
+        if struct_def is not None:
+            return self._construct_struct(struct_def, function_name, expr, variables)
 
         return self._resolve_and_call_internal(expr, variables, callerObject, callerContext,
                                                function_name, contract_cfg)
 
-    def _construct_struct(self, struct_def, qualified_name, expr, variables, struct_defs, enum_defs):
+    def _construct_struct(self, struct_def, qualified_name, expr, variables):
         """구조체 생성자 `S(a, b)` / `S({x: a})` / `Lib.S(a)` → memory StructVariable."""
         new_struct = StructVariable(
             identifier=f"temp_{qualified_name}_{id(expr)}",
-            struct_type=qualified_name,
+            struct_type=struct_def.type(qualified_name),
             scope="memory"
         )
-        new_struct.initialize_struct(struct_def, struct_defs=struct_defs, enum_defs=enum_defs)
+        new_struct.initialize_struct()
 
         # named_arguments로 필드 초기화
         named_args = expr.named_arguments if expr.named_arguments else {}
@@ -3623,31 +3570,17 @@ class Evaluation :
         # 6) 그 외: alias 없음
         return None
 
-    def _find_struct_def(self, contract_cfg, struct_name):
-        """struct 정의를 현재 contract, parent chain, using libraries에서 검색.
-        Returns: (struct_def, qualified_name) 또는 None"""
-        # 1) 현재 contract
-        if struct_name in contract_cfg.structDefs:
-            return contract_cfg.structDefs[struct_name], struct_name
-        # 2) parent chain
-        for parent_cfg in getattr(contract_cfg, 'parent_cfgs', {}).values():
-            if struct_name in parent_cfg.structDefs:
-                return parent_cfg.structDefs[struct_name], struct_name
-        # 3) using libraries
-        all_libs = []
-        for libs in getattr(contract_cfg, 'using_libraries', {}).values():
-            all_libs.extend(libs if isinstance(libs, list) else [libs])
-        all_libs.extend(getattr(contract_cfg, 'using_all_libraries', []))
-        for lib in all_libs:
-            if struct_name in lib.structDefs:
-                qualified = f"{lib.library_name}.{struct_name}"
-                return lib.structDefs[struct_name], qualified
-        # 4) library_cfgs 직접 검색
-        for lib_name, lib_cfg in self.an.library_cfgs.items():
-            if struct_name in lib_cfg.structDefs:
-                qualified = f"{lib_name}.{struct_name}"
-                return lib_cfg.structDefs[struct_name], qualified
-        return None
+    def _find_struct_def(self, struct_name):
+        """한정자 없는 이름 `S(...)` 의 struct 정의 — 실행 중인 함수가 선언된 컨트랙트/라이브러리(상속 포함), 없으면 파일 수준.
+        다른 라이브러리의 struct 는 `Lib.S` 로만 부를 수 있다."""
+        def chain(cfg):
+            d = cfg.structDefs.get(struct_name)
+            for parent_cfg in getattr(cfg, 'parent_cfgs', {}).values() if d is None else ():
+                d = chain(parent_cfg)
+                if d is not None:
+                    break
+            return d
+        return chain(self._executing_contract_cfg()) or self.an.sa.get_file_level_struct(struct_name)
 
     def _evaluate_builtin_function(self, function_name, expr, variables, callerObject):
         """Solidity built-in 함수 처리. 해당하면 결과 반환, 아니면 None."""
@@ -3747,13 +3680,10 @@ class Evaluation :
                 if isinstance(base_t, SolType) and base_t.typeCategory == "struct":
                     empty_struct = StructVariable(
                         f"{callerObject.identifier}[bottom]",
-                        base_t.structTypeName,
+                        base_t,
                         scope=callerObject.scope
                     )
-                    ccf = self.an.contract_cfgs[self.an.current_target_contract]
-                    if base_t.structTypeName in ccf.structDefs:
-                        empty_struct.initialize_struct(ccf.structDefs[base_t.structTypeName],
-                                                       struct_defs=ccf.structDefs, enum_defs=ccf.enumDefs)
+                    empty_struct.initialize_struct()
                     return empty_struct
                 elif array_base_is_address(callerObject):
                     return AddressSet.top()
@@ -3778,11 +3708,6 @@ class Evaluation :
 
         # 3) callerObject가 MappingVariable인 경우
         if isinstance(callerObject, MappingVariable):
-            if not callerObject.struct_defs or not callerObject.enum_defs:
-                all_structs, all_enums = self.an.get_full_struct_enum_defs()
-                callerObject.struct_defs = {**all_structs, **callerObject.struct_defs}
-                callerObject.enum_defs = {**all_enums, **callerObject.enum_defs}
-
             # result => 단일 키 or 범위 => map lookup
             if not hasattr(result, 'min_value') or not hasattr(result, 'max_value'):
                 # 가상 키로 value 생성
@@ -3858,10 +3783,8 @@ class Evaluation :
     def evaluate_function_call_option_context(self, expr, variables, callerObject=None, callerContext=None):
         """
         FunctionCallOptions: expr.function { option1: val1, option2: val2, ... }
-
-        두 가지 경우:
-        1) 구조체 생성자: StructName({ field1: val1, field2: val2 })
-        2) 함수 호출 옵션: contract.func{value: 1 ether, gas: 5000}(args)
+        함수 호출 옵션: contract.func{value: 1 ether, gas: 5000}(args). 구조체 생성자 `S({a: x})` 는 이름 있는 인자 호출이라
+        여기로 오지 않는다(`_construct_struct`).
         """
         # Check if it's a MemberAccess with call/delegatecall/staticcall
         if expr.function and hasattr(expr.function, 'context') and expr.function.context == "MemberAccessContext":
@@ -3870,40 +3793,6 @@ class Evaluation :
                 # This is the case: address.call{value: ...}
                 # 외부 호출은 결과를 알 수 없으므로 Top 반환
                 return UnsignedIntegerInterval.top()
-
-        # expr.function이 구조체 타입 이름인지 확인
-        if expr.function and expr.function.context == "IdentifierExpContext":
-            struct_name = expr.function.identifier
-
-            # 현재 컨트랙트 CFG에서 구조체 정의 가져오기
-            ccf = self.an.contract_cfgs[self.an.current_target_contract]
-
-            # 구조체인지 확인
-            if struct_name in ccf.structDefs:
-                # 구조체 생성자: 새 StructVariable 생성
-                struct_def = ccf.structDefs[struct_name]
-
-                new_struct = StructVariable(
-                    identifier=f"temp_{struct_name}_{id(expr)}",
-                    struct_type=struct_name,
-                    scope="memory"
-                )
-                new_struct.typeInfo = SolType(typeCategory="struct", structTypeName=struct_name)
-
-                # 구조체 초기화
-                new_struct.initialize_struct(struct_def, struct_defs=ccf.structDefs, enum_defs=ccf.enumDefs)
-
-                # options에서 필드 값 설정
-                if expr.options:
-                    for field_name, field_expr in expr.options.items():
-                        if field_name in new_struct.members:
-                            field_value = self.evaluate_expression(field_expr, variables, None, None)
-                            field_var = new_struct.members[field_name]
-                            if isinstance(field_var, Variables):
-                                field_var.value = field_value
-                            # 중첩 구조체/배열의 경우 추가 처리 필요할 수 있음
-
-                return new_struct
 
         # 함수 호출 옵션 (예: {value: 1 ether, gas: 5000})
         # 결과를 알 수 없으므로 Top 반환

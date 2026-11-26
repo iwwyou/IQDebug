@@ -51,6 +51,7 @@ REQUIRE_COMPLETE = True
 _DECL_RE = re.compile(r'^[ \t]*(?:abstract[ \t]+)?(library|interface|contract)[ \t]+([A-Za-z_]\w*)', re.M)
 _ALIAS_RE = re.compile(r'\btype[ \t]+([A-Za-z_]\w*)[ \t]+is\b')
 _FILE_STRUCT_ENUM_RE = re.compile(r'^(struct|enum)[ \t]+([A-Za-z_]\w*)')
+_FILE_CONST_RE = re.compile(r'^[\w$.]+[ \t]+constant[ \t]+([A-Za-z_]\w*)')
 _IDENT_RE = re.compile(r'\b[A-Za-z_]\w*\b')
 _STRING_RE = re.compile(r'"(?:\\.|[^"\\])*"|\'(?:\\.|[^\'\\])*\'')
 
@@ -62,7 +63,7 @@ def _strip(src: str) -> str:
 
 
 def _file_level_names(text: str) -> list[tuple[str, str]]:
-    """중괄호 깊이 0 의 struct/enum 선언."""
+    """중괄호 깊이 0 의 struct/enum/상수 선언."""
     out, depth = [], 0
     for line in text.splitlines():
         s = line.strip()
@@ -70,6 +71,9 @@ def _file_level_names(text: str) -> list[tuple[str, str]]:
             m = _FILE_STRUCT_ENUM_RE.match(s)
             if m:
                 out.append((m.group(1), m.group(2)))
+            m = _FILE_CONST_RE.match(s)
+            if m:
+                out.append(("constant", m.group(1)))
         depth = max(0, depth + s.count('{') - s.count('}'))
     return out
 
@@ -112,6 +116,7 @@ class SourceUnit:
     cfgs: dict = field(default_factory=dict)             # 선언 이름 → CFG
     file_structs: dict = field(default_factory=dict)
     file_enums: dict = field(default_factory=dict)
+    file_consts: dict = field(default_factory=dict)      # 이름 → (Variables, 초기화식)
     aliases: dict = field(default_factory=dict)
     code_lines: dict = field(default_factory=dict)
     unresolved: dict = field(default_factory=dict)       # 이름 → [메시지]
@@ -159,6 +164,7 @@ def _inject(sa, ca, units: list[SourceUnit], *, mark_dependency: bool = True) ->
                 ca.interface_names.add(name)
         sa.file_level_structs.update(u.file_structs)
         sa.file_level_enums.update(u.file_enums)
+        sa.file_level_constants.update(u.file_consts)
         sa.type_aliases.update(u.aliases)
 
 
@@ -170,11 +176,12 @@ def analyze_unit(unit: SourceUnit, dep_units: list[SourceUnit], log=print) -> No
     from Utils.Helper import ParserHelpers
     from Utils.YulHelper import YulParserHelpers
     from Dependencies.main import slice_solidity
+    from Analyzer.Declarations import predeclare
 
     sa = SolidityAnalyzer()
     ca = sa.contract_analyzer
     _inject(sa, ca, dep_units)
-    pre = {"structs": set(sa.file_level_structs), "enums": set(sa.file_level_enums), "aliases": set(sa.type_aliases)}
+    pre = {"structs": set(sa.file_level_structs), "enums": set(sa.file_level_enums), "consts": set(sa.file_level_constants), "aliases": set(sa.type_aliases)}
 
     unresolved: dict[str, list[str]] = {}
     errors: list[str] = []
@@ -187,6 +194,7 @@ def analyze_unit(unit: SourceUnit, dep_units: list[SourceUnit], log=print) -> No
             errors.append(msg)
         log(f"  [{'UNRESOLVED' if isinstance(ex, UnresolvedName) else 'ERR'}] {msg}")
 
+    predeclare(sa, unit.text)
     try:
         records = slice_solidity(unit.text)
     except Exception as ex:                              # 입력 전제 위반 — 이 단위만 Invalid (빌드 전체를 멈추지 않는다)
@@ -223,6 +231,7 @@ def analyze_unit(unit: SourceUnit, dep_units: list[SourceUnit], log=print) -> No
     unit.cfgs = cfgs
     unit.file_structs = {k: v for k, v in sa.file_level_structs.items() if k not in pre["structs"]}
     unit.file_enums = {k: v for k, v in sa.file_level_enums.items() if k not in pre["enums"]}
+    unit.file_consts = {k: v for k, v in sa.file_level_constants.items() if k not in pre["consts"]}
     unit.aliases = {k: v for k, v in sa.type_aliases.items() if k not in pre["aliases"]}
     unit.code_lines = dict(sa.full_code_lines)
     unit.unresolved = unresolved
@@ -257,6 +266,7 @@ def _fingerprint(u: SourceUnit) -> str:
         ))
     parts.append(tuple(sorted((k, members(v)) for k, v in u.file_structs.items())))
     parts.append(tuple(sorted((k, tuple(v)) for k, v in u.file_enums.items())))
+    parts.append(tuple(sorted(u.file_consts)))
     parts.append(tuple(sorted(u.aliases.items())))
     return hashlib.sha256(repr(parts).encode("utf-8")).hexdigest()
 
@@ -409,6 +419,7 @@ class ProjectRegistry:
             if payload is not None:
                 u.file_structs, u.file_enums, u.aliases = (payload["file_structs"], payload["file_enums"],
                                                            payload["aliases"])
+                u.file_consts = payload["file_consts"]
             u.unresolved = {k: list(v) for k, v in m["unresolved"].items()}
             u.errors = list(m["errors"])
             u.fingerprint = m.get("fingerprint")
@@ -511,7 +522,7 @@ def _write_unit(path: pathlib.Path, u: SourceUnit, owner: dict) -> dict:
 
     state = {n: {k: v for k, v in c.__dict__.items() if k != "from_dependency"} for n, c in u.cfgs.items()}
     payload = {"unit": u.uid, "cfg_state": state,
-               "file_structs": u.file_structs, "file_enums": u.file_enums, "aliases": u.aliases}
+               "file_structs": u.file_structs, "file_enums": u.file_enums, "file_consts": u.file_consts, "aliases": u.aliases}
     buf = io.BytesIO()
     _P(buf, protocol=pickle.HIGHEST_PROTOCOL).dump(payload)
     path.write_bytes(buf.getvalue())
@@ -584,6 +595,7 @@ def load(sa, ca, deps_root, exclude=(), verbose: bool = True, require_complete: 
     for payload in loaded["payloads"].values():
         sa.file_level_structs.update(payload["file_structs"])
         sa.file_level_enums.update(payload["file_enums"])
+        sa.file_level_constants.update(payload["file_consts"])
         sa.type_aliases.update(payload["aliases"])
     for name, cfg in shells.items():
         ca.contract_cfgs[name] = cfg

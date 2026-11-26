@@ -90,12 +90,10 @@ class Update :
         재할당 코드가 이미 member별 deep-copy를 하던 것과 같은 이유).
         """
         if isinstance(dst, ArrayVariable) and isinstance(src, ArrayVariable):
-            dst.typeInfo = copy.deepcopy(src.typeInfo)
+            location = dst.typeInfo.dataLocation              # 위치는 dst 의 선언이 정한다
+            dst.typeInfo = copy.copy(src.typeInfo)
+            dst.typeInfo.dataLocation = location
             VariableEnv.adopt_storage(dst, src)
-            if src.struct_defs:
-                dst.struct_defs = src.struct_defs
-            if src.enum_defs:
-                dst.enum_defs = src.enum_defs
             return True
         if isinstance(dst, StructVariable) and isinstance(src, StructVariable):
             dst.members = VariableEnv.copy_variables(src.members)
@@ -115,6 +113,9 @@ class Update :
         if self._depth:
             return self._update_left_var(expr, rVal, operator, variables, callerObject, callerContext,
                                          log, line_no, top_expr)
+        # (2026-11-26) storage 참조를 통한 쓰기 = 그 위치에 쓰기 — 경로를 펼친 LHS 로 (전파·무효화도 원래 경로 기준)
+        from Interpreter.Semantics.Storage import expand_refs
+        expr = expand_refs(expr, variables)
         saved = (self._pending, self._assume)
         self._pending, self._assume = [], assume
         self._depth += 1
@@ -363,10 +364,6 @@ class Update :
     def _update_indexed(self, c, expr, rVal, operator, variables, callerContext, log, line_no, top_expr):
         """c[expr.index] 대입(또는 더 깊은 LHS 의 중간 단계). 고른 셀에 값을 쓰고(strong), 셀을 _pending 에 남겨
         최상위 대입이 끝난 뒤 alias 전파를 받게 한다."""
-        if not c.struct_defs or not c.enum_defs:
-            all_structs, all_enums = self.an.get_full_struct_enum_defs()
-            c.struct_defs = {**all_structs, **c.struct_defs}
-            c.enum_defs = {**all_enums, **c.enum_defs}
         storage = self.an.storage
         res = storage.resolve(c, expr.index, variables)
         if self._assume and res.kind in ("range", "bottom"):
@@ -405,11 +402,6 @@ class Update :
         # ────────────────────────────────────────────────
         if VariableEnv.is_global_expr(expr) and isinstance(callerObject, MappingVariable):
             full_name = f"{expr.base.identifier}.{member}"  # "msg.sender"
-
-            if not callerObject.struct_defs or not callerObject.enum_defs:
-                all_structs, all_enums = self.an.get_full_struct_enum_defs()
-                callerObject.struct_defs = {**all_structs, **callerObject.struct_defs}
-                callerObject.enum_defs = {**all_enums, **callerObject.enum_defs}
 
             # global var의 실제 값으로 key 결정 (identifier 경로와 동일)
             key = full_name  # fallback
@@ -669,11 +661,6 @@ class Update :
         # 2) MappingVariable  ─ map[ literal ]
         # ========================================================================
         if isinstance(caller_object, MappingVariable):
-            if not caller_object.struct_defs or not caller_object.enum_defs:
-                all_structs, all_enums = self.an.get_full_struct_enum_defs()
-                caller_object.struct_defs = {**all_structs, **caller_object.struct_defs}
-                caller_object.enum_defs = {**all_enums, **caller_object.enum_defs}
-
             key = lit_str  # 매핑 키는 문자열 그대로
             entry = caller_object.mapping.setdefault(key, caller_object.get_or_create(key))
 
@@ -888,11 +875,6 @@ class Update :
         # 3)  caller_object 가 **MappingVariable**  – map[key] = …
         # ======================================================================
         if isinstance(caller_object, MappingVariable):
-            if not caller_object.struct_defs or not caller_object.enum_defs:
-                all_structs, all_enums = self.an.get_full_struct_enum_defs()
-                caller_object.struct_defs = {**all_structs, **caller_object.struct_defs}
-                caller_object.enum_defs = {**all_enums, **caller_object.enum_defs}
-
             # ── (1) ident 가 변수로 선언돼 있을 때 ──────────────────────────
             if ident in variables:
                 key_var = variables[ident]

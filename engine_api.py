@@ -34,6 +34,7 @@ from __future__ import annotations
 from dataclasses import asdict, dataclass, field
 from typing import Literal, Optional, TypedDict, Union
 
+from Analyzer.Declarations import predeclare
 from Utils.Errors import SourceError
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -358,7 +359,7 @@ def _serialize_node_state(n, recorder, env=None) -> dict[str, str]:
     RecordManager._flatten_var 는 인스턴스 상태에 의존하지 않는 순수 평탄화라 재사용 가능."""
     flat: dict[str, str] = {}
     for name, var in (getattr(n, "variables", {}) if env is None else env).items():
-        if "" in name:      # (Phase 3b) shadowing 으로 보관된 바깥 binding — 내부용 키
+        if "" in name or "" in name:      # 내부용 키 (shadowing 보관 · storage 참조의 숨은 index)
             continue
         recorder._flatten_var(var, name, flat)  # fail-loud: 직렬화 구멍은 그대로 터뜨림
     # ⊥(bottom = 도달 불가 분기) 가독화: "[None,None]" → "⊥"
@@ -786,7 +787,7 @@ def _collect_top_vars(fcfg, scope: str) -> list[TopVar]:
     seen: set[str] = set()
     for n in fcfg.graph.nodes():
         for name, var in getattr(n, "variables", {}).items():
-            if "\x1f" in name:      # (Phase 3b) shadowing 보관 키 — 내부용
+            if "\x1f" in name or "\x1e" in name:      # 내부용 키 (shadowing 보관 · storage 참조의 숨은 index)
                 continue
             val = getattr(var, "value", None)
             # AddressSet/BytesSet.is_top 는 bool 속성. interval 의 is_top 은 메서드라
@@ -1535,12 +1536,8 @@ def _derive_debug_slots(fcfg, ccf=None, func_src: str = "", func_name: str = "",
         return out
 
     def ret_struct_def(t):
-        """struct 반환 타입의 정의 — 선언한 인터페이스(structOwner) 기준."""
-        if getattr(t, "typeCategory", None) != "struct":
-            return None
-        owner, name = getattr(t, "structOwner", None), getattr(t, "structTypeName", None) or ""
-        cfg = contract_cfgs.get(owner) if owner else None
-        return (getattr(cfg, "structDefs", None) or {}).get(name.split(".")[-1]) if cfg is not None else None
+        """struct 반환 타입의 정의."""
+        return t.structDef if getattr(t, "typeCategory", None) == "struct" else None
 
     def add_ireturn(label, t, depth=0):
         """(2026-10-23, M6) struct 반환은 멤버 leaf 까지 펼친다 — `p = vg.delayedStrategyParams(n); p.managementFee` 처럼
@@ -1893,7 +1890,7 @@ class EngineSession:
     def analyze(self, records: list[Record],
                 contract: Optional[str] = None, func: Optional[str] = None,
                 intents: Optional[list] = None,
-                param_types: Optional[list[str]] = None) -> Structure:
+                param_types: Optional[list[str]] = None, source: Optional[str] = None) -> Structure:
         """편집 delta records 를 누적 적용 → CFG 구조 + 빈 debug 슬롯. 값/상태 없음. [코드 편집 트리거]
 
         입력 모델 (delta fragment, full-slice 아님):
@@ -1916,6 +1913,8 @@ class EngineSession:
         # fail-loud: 드라이버 에러는 그대로 전파. 유저 코드 syntax 검증은 별도(추후 ANTLR
         #   게이트가 누적 코드 파스 실패를 diagnostics 로 산출 — 버그 숨기는 catch-all 아님).
         def apply(cur):
+            if source is not None:              # 줄 분석 전에 선언을 모은다(records 만 받으면 뒤에 선언된 타입을 모른다)
+                predeclare(self._sa, source)
             for rec in records:
                 cur["op"] = rec
                 self._apply_code_record(rec["code"], rec["startLine"], rec["endLine"], rec["event"],
@@ -1952,7 +1951,7 @@ class EngineSession:
             self._editor_errors = [Diagnostic(line=ex.line if ex.line is not None else -1,
                                               message=str(ex), category="semantic")]
             return self.structure(contract, func, self._editor_errors)
-        return self.analyze(records, contract=contract, func=func, intents=intents)
+        return self.analyze(records, contract=contract, func=func, intents=intents, source=source)
 
     def set_intents(self, intents: list, contract: Optional[str] = None, func: Optional[str] = None) -> Structure:
         """(2026-10-23, M8) intent 만 바뀌었을 때 — CFG 는 그대로, 슬롯만 다시 도출한다(intent 가 참조하는 진입 값 슬롯)."""
@@ -2129,6 +2128,7 @@ class EngineSession:
         #   함수 본문 문장 편집과 선언 추가는 증분 그대로.
         if any(self._is_declaration_level(o.start) for o in (dels + mods)):
             def rebuild(cur):
+                predeclare(self._sa, new_source)
                 for rec in new_records:
                     cur["op"] = rec
                     self._apply_code_record(rec["code"], rec["startLine"], rec["endLine"], rec["event"],
@@ -2152,6 +2152,7 @@ class EngineSession:
                 f"증분 편집 미지원: {o.event} line {o.start} ({o.kind}) `{o.code.strip()[:60]}` — "
                 f"이 구조의 CFG 수술은 아직 구현되지 않았다 (세션 상태는 변경 전 그대로)")
         def apply(cur):
+            predeclare(self._sa, new_source)
             for o in mods:
                 cur["op"] = o; self._apply_modify(o)
             for o in dels:

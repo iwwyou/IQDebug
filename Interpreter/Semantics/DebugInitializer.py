@@ -42,10 +42,6 @@ class DebugInitializer:
         컨테이너를 **고르기 전에** 스냅샷에 등록한다: 새 키 엔트리·선택자 셀·summary 변화까지 flush 후 restore 로 되돌리기 위해
         (예전엔 leaf 만 등록돼 새로 만든 엔트리가 mapping 에 남았다)."""
         self._snapshot_once_for_debug(container)
-        if not container.struct_defs or not container.enum_defs:
-            all_structs, all_enums = self.an.get_full_struct_enum_defs()
-            container.struct_defs = {**all_structs, **container.struct_defs}
-            container.enum_defs = {**all_enums, **container.enum_defs}
         return self.an.storage.assume_select(container, expr.index, variables, label=str(expr))
 
     def resolve_lhs_expr_for_debug(
@@ -142,11 +138,6 @@ class DebugInitializer:
         # 1) caller_object가 ArrayVariable인 경우 - arr[variable_index]
         # ======================================================================
         if isinstance(caller_object, ArrayVariable):
-            if not caller_object.struct_defs or not caller_object.enum_defs:
-                all_structs, all_enums = self.an.get_full_struct_enum_defs()
-                caller_object.struct_defs = {**all_structs, **caller_object.struct_defs}
-                caller_object.enum_defs = {**all_enums, **caller_object.enum_defs}
-
             if ident not in variables:
                 # 디버깅에서는 변수가 없어도 리터럴로 처리 시도
                 if ident.isdigit():
@@ -210,11 +201,6 @@ class DebugInitializer:
                 key_str = self._resolve_mapping_key(ident, caller_object, variables)
 
             # ── ③ 매핑 엔트리 가져오거나 생성 ─────────────
-            if not caller_object.struct_defs or not caller_object.enum_defs:
-                all_structs, all_enums = self.an.get_full_struct_enum_defs()
-                caller_object.struct_defs = {**all_structs, **caller_object.struct_defs}
-                caller_object.enum_defs = {**all_enums, **caller_object.enum_defs}
-
             entry = caller_object.get_or_create(key_str)
             if isinstance(entry, (StructVariable, ArrayVariable, MappingVariable)):
                 return entry
@@ -298,11 +284,6 @@ class DebugInitializer:
         if VariableEnv.is_global_expr(expr) and isinstance(callerObject, MappingVariable):
             full_name = f"{expr.base.identifier}.{member_name}"  # "msg.sender"
 
-            if not callerObject.struct_defs or not callerObject.enum_defs:
-                all_structs, all_enums = self.an.get_full_struct_enum_defs()
-                callerObject.struct_defs = {**all_structs, **callerObject.struct_defs}
-                callerObject.enum_defs = {**all_enums, **callerObject.enum_defs}
-
             # global var의 실제 값으로 key 결정
             key = full_name  # fallback
             if full_name in variables:
@@ -338,11 +319,6 @@ class DebugInitializer:
             # 글로벌 멤버 접근 - callerObject가 MappingVariable이면 키로 사용
             if isinstance(callerObject, MappingVariable):
                 full_name = f"{base_obj}.{member_name}"
-
-                if not callerObject.struct_defs or not callerObject.enum_defs:
-                    all_structs, all_enums = self.an.get_full_struct_enum_defs()
-                    callerObject.struct_defs = {**all_structs, **callerObject.struct_defs}
-                    callerObject.enum_defs = {**all_enums, **callerObject.enum_defs}
 
                 key = full_name
                 if full_name in variables:
@@ -399,10 +375,6 @@ class DebugInitializer:
                 idx = int(lit)
                 if idx < 0:
                     return None
-                if not callerObject.struct_defs or not callerObject.enum_defs:
-                    all_structs, all_enums = self.an.get_full_struct_enum_defs()
-                    callerObject.struct_defs = {**all_structs, **callerObject.struct_defs}
-                    callerObject.enum_defs = {**all_enums, **callerObject.enum_defs}
                 # 동적 배열이면 확장 가능, 정적 배열이면 범위 체크
                 try:
                     if callerObject.typeInfo.isDynamicArray:
@@ -419,11 +391,6 @@ class DebugInitializer:
 
             # MappingVariable인 경우
             elif isinstance(callerObject, MappingVariable):
-                if not callerObject.struct_defs or not callerObject.enum_defs:
-                    all_structs, all_enums = self.an.get_full_struct_enum_defs()
-                    callerObject.struct_defs = {**all_structs, **callerObject.struct_defs}
-                    callerObject.enum_defs = {**all_enums, **callerObject.enum_defs}
-
                 # ★ 리터럴 키도 identifier-context 분기(위 159번째 줄)와 동일하게
                 # _resolve_mapping_key로 변환 — 매핑의 key type이 address면
                 # `AddressSet({N})` 형태로 맞춰줘야 실제 evaluator가 나중에
@@ -458,11 +425,6 @@ class DebugInitializer:
         # ======================================================================
         if VariableEnv.is_global_expr(expr) and isinstance(callerObject, MappingVariable):
             full_name = f"{expr.base.identifier}.{member}"  # "msg.sender"
-
-            if not callerObject.struct_defs or not callerObject.enum_defs:
-                all_structs, all_enums = self.an.get_full_struct_enum_defs()
-                callerObject.struct_defs = {**all_structs, **callerObject.struct_defs}
-                callerObject.enum_defs = {**all_enums, **callerObject.enum_defs}
 
             # global var의 실제 값으로 key 결정
             key = full_name
@@ -757,11 +719,6 @@ class DebugInitializer:
         else:
             key_str = str(key_val)
 
-        if not callerObject.struct_defs or not callerObject.enum_defs:
-            all_structs, all_enums = self.an.get_full_struct_enum_defs()
-            callerObject.struct_defs = {**all_structs, **callerObject.struct_defs}
-            callerObject.enum_defs = {**all_enums, **callerObject.enum_defs}
-
         return callerObject.get_or_create(key_str)
 
     def _resolve_mapping_key(self, ident: str, caller_object, variables: dict) -> str:
@@ -890,18 +847,8 @@ class DebugInitializer:
 
         # struct type인 경우
         elif base_type.typeCategory == "struct":
-            sv = StructVariable(
-                identifier=elem_id,
-                struct_type=base_type.structTypeName,
-                scope=arr.scope
-            )
-            if not arr.struct_defs or not arr.enum_defs:
-                all_structs, all_enums = self.an.get_full_struct_enum_defs()
-                arr.struct_defs = {**all_structs, **arr.struct_defs}
-                arr.enum_defs = {**all_enums, **arr.enum_defs}
-            if base_type.structTypeName in arr.struct_defs:
-                sv.initialize_struct(arr.struct_defs[base_type.structTypeName],
-                                     struct_defs=arr.struct_defs, enum_defs=arr.enum_defs)
+            sv = StructVariable(identifier=elem_id, struct_type=base_type, scope=arr.scope)
+            sv.initialize_struct()
             return sv
 
         # nested array인 경우

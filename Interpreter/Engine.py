@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING, Optional
 if TYPE_CHECKING:
     from Analyzer.ContractAnalyzer import ContractAnalyzer
 
-from Domain.Variable import Variables, MappingVariable, ArrayVariable, StructVariable, EnumVariable
+from Domain.Variable import StorageRef, Variables, MappingVariable, ArrayVariable, StructVariable, EnumVariable
 from Domain.IR import Expression
 from Domain.Interval import UnsignedIntegerInterval, IntegerInterval, BoolInterval
 from Domain.AddressSet import AddressSet
@@ -118,35 +118,15 @@ class Engine:
         #   ★ (Phase 3a, D2) 예전엔 "이미 있으면 건너뜀" 이라, 루프 안 선언이 다시 실행될 때 이전 반복 값이
         #     남았다(back-edge 로 들어온 같은 이름). 선언은 실행될 때마다 새 바인딩을 만든다.
         # ──────────────────────────────────────────────────────────────
+        if var_type.typeCategory in ("struct", "array", "mapping") and getattr(var_type, "dataLocation", None) == "storage":
+            # (2026-11-26) storage 참조 — 값을 복사하지 않고 위치에 묶는다(Storage.bind_ref)
+            variables[var_name] = StorageRef(identifier=var_name, typeInfo=var_type)
+            if init_expr is not None:
+                self.an.storage.bind_ref(variables, var_name, init_expr)
+            return variables
         if var_type.typeCategory in ("struct", "array", "mapping"):
-            # ★ F29. `ContractAnalyzer._create_variable_object` 와 **같은 것**을 만들어야 한다.
-            #   여기엔 그 함수의 **인라인 사본**이 있었는데 struct/enum 정의
-            #   (`struct_defs`/`enum_defs`)를 붙이지 않아 **멤버가 빈** 객체가 나왔다.
-            #
-            #   왜 이 경로가 타지는가: `process_variable_declaration` 은 선언 노드를 만든
-            #   직후 `reinterpret_from(fcfg, stmt_blk)` 를 부른다. 재해석은 in-env 를
-            #   predecessor 에서 다시 계산하므로(선언 전이니 그 변수가 없는 게 정상)
-            #   선언문이 **재실행**되고, 그때 이 코드가 ContractAnalyzer 가 제대로 만든
-            #   객체를 덮어쓴다. 실측 객체 수명(`AddressProviderMeta.fromUInt`):
-            #     [1] CA 가 members=['freezable','frozen'] 로 생성(id=84016)
-            #     [2] 블록 env 에 심음 + 선언 statement 도 CFG 에 등록
-            #     [3] reinterpret_from 진입 — pred 에 meta 없음(정상)
-            #     [4] 여기서 members=[] 로 재생성(id=75280)  ← 덮어씀
-            #     [5] `meta.freezable = ...` → Member 'freezable' not in struct 'meta'
-            #   ★ `meta` 가 사라지는 게 아니라 `meta.members` 가 빈다.
-            #
-            #   "CFG 에 등록된 expression 을 보면 되지 않나" = **이미 그렇게 하고 있다**
-            #   ([4]가 `stmt.type_obj` 를 읽는다). 문제는 "보지 않음" 이 아니라
-            #   **"보고 만드는 방법이 틀림"** 이었다. 그래서 사본을 지우고 팩토리를 부른다.
-            #   배열·매핑도 `struct_defs`/`enum_defs` 를 안 넘겨 같은 결함이 있었다
-            #   (구조체 배열 · 값이 구조체인 매핑).
-            #
-            #   ⚠ 대안(선언 statement 에 프로토타입을 저장해 clone)은 멱등성은 지키지만
-            #     **증분 편집에 불리**하다 — struct 정의가 바뀌면 프로토타입이 낡는다.
-            #     `type_obj` 재구성은 **현재 정의**를 집어온다.
-            #   ⚠ `_create_variable_object` 의 3번째 인자 `ccf` 는 현재 미사용이고
-            #     내부적으로 `get_full_struct_enum_defs()` → `current_target_contract` 를
-            #     본다(백로그 ⑪). 기존 호출부와 동일한 한계이므로 회귀는 아니다.
+            # ★ F29. 선언 statement 의 `type_obj` 로 매번 새로 만든다(프로토타입을 저장해 clone 하지 않는다). 만드는 방법은
+            #   `ContractAnalyzer._create_variable_object` 하나뿐이다. (2026-11-25) struct·enum 정의는 타입이 들고 있다.
             variables[var_name] = self.an._create_variable_object(var_type, var_name, None)
         else:
             # Elementary / interface 타입 처리
@@ -230,6 +210,10 @@ class Engine:
 
     def _interpret_assignment(self, stmt, variables, node=None):
         lexp, rexpr, op = stmt.left, stmt.right, stmt.operator
+        if (op == "=" and getattr(lexp, "context", None) == "IdentifierExpContext"
+                and isinstance(variables.get(lexp.identifier), StorageRef)):
+            self.an.storage.bind_ref(variables, lexp.identifier, rexpr)     # (2026-11-26) `d = s[y]` = 다시 묶기
+            return variables
         r_val = (self.eval.evaluate_expression(rexpr, variables, None, None)
                  if isinstance(rexpr, Expression) else rexpr)
 
@@ -350,8 +334,17 @@ class Engine:
             # bare return; (값 없는 리턴)
             r_val = None
         else:
-            r_val = self.eval.evaluate_expression(rexpr, variables, None, None)
-            r_val = self._coerce_return(r_val)
+            rt = self._storage_return_type()
+            if rt is not None:
+                # (2026-11-26) storage 반환 = 위치 — 호출자가 그 위치에 묶는다
+                saved, self.eval._keep_ref = getattr(self.eval, "_keep_ref", False), False
+                try:
+                    r_val = self.an.storage.returned_ref(rexpr, rt, variables)
+                finally:
+                    self.eval._keep_ref = saved
+            else:
+                r_val = self.eval.evaluate_expression(rexpr, variables, None, None)
+                r_val = self._coerce_return(r_val)
         if self._record_enabled and not self._suppress_stmt_records:
             self.rec.record_return(
                 line_no=stmt.src_line,
@@ -364,6 +357,15 @@ class Engine:
         if ret_acc is not None:
             ret_acc.append(r_val); ret_acc.append("__STOP__")
         return variables
+
+    def _storage_return_type(self):
+        """반환값 하나가 storage 위치인 함수면 그 타입(아니면 None). 여러 값 반환의 storage 원소는 아직 값으로 다룬다."""
+        fc = self.an.current_target_function_cfg
+        types = list(getattr(fc, "return_types", None) or []) or [getattr(v, "typeInfo", None) for v in (fc.return_vars or [])]
+        if len(types) == 1 and getattr(types[0], "dataLocation", None) == "storage" \
+                and getattr(types[0], "typeCategory", None) in ("struct", "array", "mapping"):
+            return types[0]
+        return None
 
     def _coerce_return(self, r_val):
         """(Phase 4b) 반환값 → 선언 반환 타입 암묵 변환. 다중 반환은 리스트(슬롯 위치 보존)."""
@@ -1136,14 +1138,28 @@ class Engine:
         if self._func_key(fcfg) in self._call_stack():
             return self._recursive_call_summary(fcfg, arg_values, caller_env, kind)
         bindings, sources = {}, {}
-        for pname, val in zip(params, arg_values):
+        storage = self.an.storage
+        arg_exprs = storage.arg_exprs(fcfg, call_expr, kind)
+        for pname, val, aexpr in zip(params, arg_values, arg_exprs):
             proto = (fcfg.related_variables or {}).get(pname)
             if proto is None:
                 raise ValueError(f"call to '{fcfg.function_name}': parameter '{pname}' has no declaration")
             if isinstance(val, (StructVariable, ArrayVariable, MappingVariable)):
+                # (2026-11-26) 인자가 상태변수의 위치인가 — 뿌리가 호출자·callee 가 공유하는 storage 변수
+                root = storage.ref_root(aexpr, caller_env) if aexpr is not None and caller_env is not None else None
+                in_state = root is not None and root in caller_env and self._is_shared_storage(root, caller_env[root])
+                ploc = getattr(getattr(proto, "typeInfo", None), "dataLocation", None)
+                if ploc == "storage" and in_state and kind != "this":
+                    # storage 파라미터 = 호출자 인자의 위치(index 는 호출 시점 값). callee 의 쓰기가 상태변수에 바로 간다 — 되쓰기 없음
+                    ref, hidden = storage.freeze_ref(pname, proto.typeInfo, aexpr, caller_env)
+                    bindings[pname] = ref
+                    bindings.update(hidden)
+                    continue
                 b = VariableEnv.copy_single_variable(val)
                 b.identifier = pname
-                if kind != "this":
+                # 되쓰기(참조 의미)는 memory → memory 와 별도 칸(타깃 자신의 storage 파라미터)만.
+                #   상태변수를 memory·calldata 파라미터로 넘기면 사본이다(callee 가 바꿔도 상태변수는 그대로).
+                if kind != "this" and not in_state:
                     sources[pname] = val
             elif isinstance(proto, (StructVariable, ArrayVariable, MappingVariable)):
                 raise ValueError(f"call to '{fcfg.function_name}': argument for composite parameter '{pname}' "
@@ -2028,7 +2044,7 @@ class Engine:
                 # explicit return 없이 named return var 만 채우고 끝나는 함수가 항상
                 # None 을 리턴했다.
                 def _rv_value(rv):
-                    if isinstance(rv, (StructVariable, ArrayVariable, MappingVariable)):
+                    if isinstance(rv, (StructVariable, ArrayVariable, MappingVariable, StorageRef)):
                         return rv
                     return rv.value
                 if len(fcfg.return_vars) == 1:
@@ -2059,6 +2075,8 @@ class Engine:
         `return (1, a)` / `return (2, b)` 인 함수가 늘 첫 tuple 만 반환했다."""
         if a is None and b is None:
             return None
+        if isinstance(a, StorageRef) and isinstance(b, StorageRef):
+            return self.an.storage.join_refs(a, b)
         if isinstance(a, (list, tuple)) and isinstance(b, (list, tuple)):
             if len(a) != len(b):
                 raise ValueError(f"return join in '{fcfg.function_name}': tuple arity {len(a)} vs {len(b)}")
@@ -2191,7 +2209,9 @@ class Engine:
         for i, rv in enumerate(fcfg.return_vars or []):
             if rv.identifier in exit_env:
                 src = exit_env[rv.identifier]
-                if hasattr(rv, "value"): rv.value = getattr(src, "value", src)
+                if isinstance(src, StorageRef):                 # named storage 반환 = 위치
+                    fcfg.return_vars[i] = self.an.storage.export_ref(src, exit_env) if src.target is not None else src
+                elif hasattr(rv, "value"): rv.value = getattr(src, "value", src)
                 else: fcfg.return_vars[i] = src
 
     def _last_executable_line(self, fcfg: FunctionCFG) -> int | None:
