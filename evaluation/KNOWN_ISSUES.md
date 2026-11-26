@@ -150,6 +150,21 @@ callee storage 파라미터(EnumerableSet 류)는 세지 않았다. 실제 선�
 
 ## 해결됨
 
+### I21. 도달 불가 경로·bytesN 값 표현 — ✅ 2026-11-26
+
+배열 진입 길이를 "입력한 원소 수"(기본 0)로 바꾸자 도달 불가(⊥) 경로가 자주 생겨, 이전부터 있던 결함이 드러났다. 모두 이전 코드에서도
+같은 입력(길이 0 을 직접 입력)으로 재현됐다.
+
+- **루프 탈출 요약이 도달하지 않은 본문 노드를 빈 env 로 평가**: `for (i < arr.length) require(arr[i] != c);` 에서 길이 0 이면
+  `'arr' may not be declared`. `Engine._fixpoint_impl._pred_src` 가 도달하지 않은 루프 노드에 `{}` 대신 None(제외)을 준다.
+- **도달하지 않은 안쪽 루프가 "loop nodes not interpreted" 로 멈춤**(ComptrollerG7.claimComp): 미해석 노드를 ⊥ 로 판정할 때 선행이
+  먼저 판정되기를 기다려, 서로 순환하는 노드들이 끝내 판정되지 않았다. 수렴 후에는 "도달한 선행의 feasible 흐름이 없으면 도달 불가".
+- **bytes32 배열 원소 기본값이 문자열 심볼**이었다(mapping 값은 BytesSet ⊤). push 값이 반영되자 경로마다 BytesSet·문자열이 섞여 join 이
+  깨졌다(ERC721 `_holderTokens`). 원소 기본값 = BytesSet ⊤.
+- **bytesN 칸에 정수 구간이 저장**됐다(경로에 따라 같은 칸이 구간·BytesSet). `coerce_to_declared` 가 선언 bytesN 이면 BytesSet 으로
+  맞춘다(한 값이면 그 값, 아니면 ⊤). 덤으로 EIP712 `_domainSeparatorV4`·Seaport `_domainSeparator` 의 "cannot join BytesSet with Interval" 4 함수가 풀렸다.
+
+
 ### I5·I7. 의존성 빌드·분석 실패 — ✅ 2026-11-25
 
 새 데이터셋 빌드에서 미완 83 타깃(선정 함수 913)이었다. 단위마다 첫 오류로 나누고 최소 예제로 재현해 고쳤다. 지금 415 / 415 Complete.

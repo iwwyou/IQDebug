@@ -138,6 +138,14 @@ def coerce_to_declared(value, sol_type, what: str = "value"):
     et = getattr(sol_type, "elementaryTypeName", None) if sol_type is not None else None
     if getattr(sol_type, "typeCategory", "elementary") != "elementary" or not isinstance(et, str):
         return value
+    if et.startswith("bytes") and et[5:].isdigit():
+        # (2026-11-26) bytesN 칸에 정수 구간이 들어오면 BytesSet 으로 — 엔진 안의 값 표현을 맞춘다(같은 칸이 경로마다 구간·BytesSet 이면
+        #   join 이 깨진다, ERC721 `_holderTokens` 실측). 한 값이면 그 값, 아니면 ⊤.
+        if value.is_bottom():
+            return BytesSet.bot(int(et[5:]))
+        if value.min_value == value.max_value and value.min_value >= 0:
+            return BytesSet(values={value.min_value}, byte_size=int(et[5:]))
+        return BytesSet.top(int(et[5:]))
     if et.startswith("uint"):
         cls = UnsignedIntegerInterval
     elif et.startswith("int"):
@@ -2169,6 +2177,8 @@ class Evaluation :
                     val = self.evaluate_expression(args[0], variables) if args else None
                     if isinstance(val, Variables) and not is_composite(val):
                         val = val.value
+                    if val is not None and not is_composite(val):      # 원소의 선언 타입으로 (대입과 같은 암묵 변환)
+                        val = coerce_to_declared(val, elemType, f"value pushed to '{baseVal.identifier}'")
                     if L.min_value == L.max_value and not in_widening:
                         n = L.min_value
                         elem = baseVal.get_or_create_element(n)
