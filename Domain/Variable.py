@@ -82,12 +82,23 @@ class StorageRef(Variables):
     target = None 은 아직 묶이지 않은 선언(`D storage d;`).
     hidden = 함수가 반환한 참조일 때 숨은 index 변수의 값(그 함수의 환경은 사라지므로 값을 들고 나온다)."""
 
-    def __init__(self, identifier=None, typeInfo=None, target=None, scope="local", hidden=None):
+    def __init__(self, identifier=None, typeInfo=None, target=None, scope="local", hidden=None, targets=None):
         super().__init__(identifier, value=None, scope=scope, typeInfo=typeInfo)
-        self.target = target
+        # (2026-11-26) 후보 위치 목록 — 경로마다 다른 곳을 가리키면 합류에서 여럿이 된다(path-insensitive)
+        self.targets = list(targets) if targets is not None else ([target] if target is not None else [])
         self.hidden = hidden or {}
-        self.value = "→ " + str(target) if target is not None else "→ (unbound)"
+        self.dangling = None        # pop·delete 로 배열 밖이 된 원소를 가리키면 그 이유(쓰면 오류) — Storage.mark_dangling
+        self.value = "→ " + " | ".join(str(t) for t in self.targets) if self.targets else "→ (unbound)"
 
+    @property
+    def target(self):
+        """위치 식 하나 — 후보가 여럿이면 `RefChoiceContext`(읽기 = 후보 값 join, 쓰기 = 후보마다 weak). 묶이지 않았으면 None."""
+        from Domain.IR import Expression
+        if not self.targets:
+            return None
+        if len(self.targets) == 1:
+            return self.targets[0]
+        return Expression(elements=list(self.targets), context="RefChoiceContext")
 
 class ArrayVariable(Variables):
     """
@@ -169,6 +180,8 @@ class ArrayVariable(Variables):
             w = bt.intTypeLength or 256
             return UnsignedIntegerInterval(0, 2 ** w - 1, w)
 
+        if isinstance(bt, SolType) and (bt.elementaryTypeName or "").startswith("bytes") and bt.elementaryTypeName[5:].isdigit():
+            return BytesSet.top(int(bt.elementaryTypeName[5:]))
         # ─ 그 밖의 타입(bytes,string,구조체 등) ───
         return f"symbol_{eid}"  # 마지막 보루
 
@@ -215,6 +228,9 @@ class ArrayVariable(Variables):
                 return Variables(eid, val, scope=self.scope, typeInfo=btype)
             if btype.elementaryTypeName == "bool":
                 return Variables(eid, BoolInterval(0, 1), scope=self.scope, typeInfo=btype)
+            et = btype.elementaryTypeName
+            if et.startswith("bytes") and et[5:].isdigit():   # (2026-11-26) bytesN = ⊤ 집합 — mapping 값(_make_value)과 같게.
+                return Variables(eid, BytesSet.top(int(et[5:])), scope=self.scope, typeInfo=btype)   # 예전엔 문자열 심볼이라 push 한 값(BytesSet)과 join 이 깨졌다
             # bytes/string 등
             return Variables(eid, f"symbol_{eid}", scope=self.scope, typeInfo=btype)
 

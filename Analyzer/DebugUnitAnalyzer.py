@@ -46,6 +46,10 @@ class DebugBatchManager:
                     tree = ParserHelpers.generate_parse_tree(code, "intentUnit")
                     EnhancedSolidityVisitor(self.analyzer).visit(tree)
 
+            # (2026-11-26) 동적 배열의 진입 길이 = 입력한 원소 수
+            for fcfg in list(self.analyzer._batch_targets):
+                self.analyzer.debug_initializer.finalize_entry_arrays(fcfg.related_variables)
+
             # 선택된 한 함수만 재-해석
             self.analyzer.flush_reinterpret_target()
 

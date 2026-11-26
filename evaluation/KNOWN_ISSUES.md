@@ -108,15 +108,17 @@ solc 컴파일 게이트로는 막을 수 없다. 이 소스는 합법이기 때
 
 ## I20. 해석 결과가 부정확하거나 틀린 곳 — 2026-11-24~25 재현, 미수정
 
-1. **빈 동적 배열 접근이 revert 하지 않는다.** `arr.length = [0,0]` 에서 `r = arr[0]` 이 ⊤. 3단계(배열 = 원소 목록)에서 고친다.
+1. ~~빈 동적 배열 접근이 revert 하지 않는다~~ — ✅ 2026-11-26 길이 밖 접근 = 그 경로 ⊥, 빈 배열 pop 도. 함께 찾은 결함: `arr.push(v)` 의 v 를
+   멤버 접근식에서 찾아 **push 한 원소가 늘 ⊤** 였다(이전부터) — 호출식의 인자를 넘기게 고쳤다. forge 15 경우 확인.
 2. **루프 정밀도.** 길이 3·원소 1,2,3 을 넣은 합 루프가 6 이 아니라 ⊤(widening). mapping 칸 `m[0..2]` 도 같다. sound 하지만 부정확하다.
 3. **memory 별칭.** `b = a; b[0] = 3; r = m[a[0]]` 이 m[3] 이 아니라 m[0] 을 읽는다 — unsound. 4단계.
-4. **조건부 포인터.** `D storage d = a; if (c) d = b; d.v = 1;` 이 a.v·b.v 를 바꾸지 않는다(c 와 무관) — unsound. I18 과 같은 원인, 2단계.
-5. `new L.Inner[](2)` 의 원소가 0 이 아니라 ⊤. return 변수를 거친 struct 값(`z = s; return`)이 ⊤.
-6. `abi.decode(d, (L.Inner))`·`abi.decode(d, (uint256[], uint256))` 가 예외("unrecognised type-list element").
-7. **편집 중 struct 멤버 추가.** 기존 struct 에 멤버를 더하고 바로 쓰면 `Member 'w' not in struct 's'`. 선언 추가는 증분으로 적용하는데
+4. ~~조건부 포인터~~ — ✅ 2026-11-26 후보 모음 join(I18).
+5. ~~멤버 `++`~~ — ✅ 2026-11-26. `x++` 가 넘기는 정수 1 을 복합 대입이 왼쪽 타입의 값으로 바꾼다(`Update.compound_assignment`). `g.v++`·`m[k]++`·`a[1]++`·참조 경유·int·uint8 확인.
+6. `new L.Inner[](2)` 의 원소가 0 이 아니라 ⊤. return 변수를 거친 struct 값(`z = s; return`)이 ⊤.
+7. `abi.decode(d, (L.Inner))`·`abi.decode(d, (uint256[], uint256))` 가 예외("unrecognised type-list element").
+8. **편집 중 struct 멤버 추가.** 기존 struct 에 멤버를 더하고 바로 쓰면 `Member 'w' not in struct 's'`. 선언 추가는 증분으로 적용하는데
    이미 만든 상태변수 객체가 옛 멤버를 가진다. 1단계 이전부터 같다.
-8. **S2(한 줄에 착지 노드 둘)** — 새로 해석까지 간 `StakefishERC20Wrapper.mintTo`, `VariableDebtToken.initialize`.
+9. **S2(한 줄에 착지 노드 둘)** — 새로 해석까지 간 `StakefishERC20Wrapper.mintTo`, `VariableDebtToken.initialize`.
 
 ---
 
@@ -136,7 +138,8 @@ solc 컴파일 게이트로는 막을 수 없다. 이 소스는 합법이기 때
 (3) 선언의 데이터 위치가 기록되지 않았다(1단계에서 기록하게 했다). 2단계(storage 참조 = 위치)에서 고친다.
 
 **진행 (2026-11-26).** 지역 포인터는 고쳤다 — `StorageRef`(Domain/Variable.py)가 묶을 때 고정한 경로를 갖고, 읽기·쓰기·선택자 해석에서
-그 경로로 펼친다(`Storage.bind_ref`·`expand_refs`). 위 첫째·둘째·넷째 증상은 해결, callee storage 파라미터(셋째)는 남았다.
+그 경로로 펼친다(`Storage.bind_ref`·`expand_refs`). 같은 날 callee storage 파라미터(위치로 넘김)·storage 반환·경로마다 다른 위치(후보 모음)도
+고쳐 네 증상 모두 해결 — forge 예제로 확인, 규칙은 `SEMANTICS_LOCATIONS.md`. 이 항목은 해결됨으로 옮길 수 있다.
 
 **규모.** 텍스트 집계로 선정 타깃 파일 중 지역 storage 포인터 선언이 있는 파일 41, 그 이름에 쓰기도 있는 파일 25.
 callee storage 파라미터(EnumerableSet 류)는 세지 않았다. 실제 선정 함수에서 틀린 상태가 나오는지는 확인 전.

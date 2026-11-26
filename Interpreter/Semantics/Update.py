@@ -114,8 +114,21 @@ class Update :
             return self._update_left_var(expr, rVal, operator, variables, callerObject, callerContext,
                                          log, line_no, top_expr)
         # (2026-11-26) storage 참조를 통한 쓰기 = 그 위치에 쓰기 — 경로를 펼친 LHS 로 (전파·무효화도 원래 경로 기준)
-        from Interpreter.Semantics.Storage import expand_refs
+        from Interpreter.Semantics.Storage import expand_refs, split_choice, _join_into
         expr = expand_refs(expr, variables)
+        alts = split_choice(expr)
+        if alts is not None:
+            # 후보가 여럿인 위치에 쓰기 — 어느 후보인지 모르므로 후보마다 "옛 값 ∪ 새 값"(weak). 좁히기(assume)는 하지 않는다.
+            if assume:
+                return None
+            if rVal is None:
+                raise ValueError(f"`{expr}`: 후보가 여럿인 storage 참조를 통한 delete·객체 찾기는 지원하지 않는다")
+            for alt in alts:
+                old = VariableEnv.copy_single_variable(self.resolve_lhs_expr(alt, variables))
+                self.update_left_var(alt, rVal, operator, variables, callerObject, callerContext,
+                                     log, line_no, top_expr, assume)
+                _join_into(self.resolve_lhs_expr(alt, variables), old)
+            return None
         saved = (self._pending, self._assume)
         self._pending, self._assume = [], assume
         self._depth += 1
@@ -368,6 +381,10 @@ class Update :
         res = storage.resolve(c, expr.index, variables)
         if self._assume and res.kind in ("range", "bottom"):
             return None                      # 미확정 위치는 좁힐 대상이 없다
+        if not self._assume and storage.out_of_bounds(c, res):
+            # (2026-11-26) 길이 밖 쓰기 = 이 실행은 revert — 이 경로는 도달하지 않는다
+            self.an.engine._set_bottom_env(variables)
+            return storage.bottom_cell(c) if (callerContext is not None or rVal is None) else None
         cell = storage.select(c, res)
         if not self._assume:
             self._pending.append((c, res, cell, expr))
@@ -1100,6 +1117,11 @@ class Update :
         # 0) 단순 대입인 '='
         if operator == '=':
             return right_interval
+
+        # (2026-11-26) 정수 상수 오른쪽(`x++` 의 1 등) = 왼쪽 타입의 값. 식별자 대입은 `_write_leaf` 가 바꿔 주지만
+        #   멤버·원소 대입(`g.v++`)은 이 함수로 바로 와서 `'int' object has no attribute 'is_bottom'` 이었다.
+        if isinstance(right_interval, int) and not isinstance(right_interval, bool)                 and isinstance(left_interval, (UnsignedIntegerInterval, IntegerInterval)):
+            right_interval = type(left_interval)(right_interval, right_interval, left_interval.type_length)
 
         # 1) ⊥-전파용 로컬 헬퍼 ――――――――――――――――――――――――――――
         def _arith_safe(l, r, fn):

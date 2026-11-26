@@ -154,37 +154,78 @@ class Storage:
 
     def export_ref(self, ref, variables):
         """환경의 참조(named return 등)를 함수 밖으로 — 숨은 index 값을 함께 담은 사본."""
-        if not isinstance(ref, StorageRef) or ref.target is None:
+        if not isinstance(ref, StorageRef) or not ref.targets:
             raise ValueError(f"storage 반환 '{getattr(ref, 'identifier', '?')}' 가 묶이지 않았다")
-        out = StorageRef(identifier=ref.identifier, typeInfo=ref.typeInfo, target=ref.target)
+        out = StorageRef(identifier=ref.identifier, typeInfo=ref.typeInfo, targets=ref.targets)
         out.hidden = {k: VariableEnv.copy_single_variable(v) for k, v in variables.items()
                       if k.startswith(ref.identifier + self.REF_SEP)}
+        out.dangling = ref.dangling
         return out
 
-    def join_refs(self, a, b):
-        """두 경로가 반환한 참조의 join — 같은 경로면 숨은 index 값을 join, 다르면 아직 미지원(후보 모음)."""
-        if str(a.target) != str(b.target):
-            raise ValueError(f"storage 반환이 경로마다 다른 위치다 ({a.target} / {b.target}) — 후보 모음 join 은 2단계 뒤쪽에서")
-        out = StorageRef(identifier=a.identifier, typeInfo=a.typeInfo, target=a.target)
-        out.hidden = {k: VariableEnv._merge_values(a.hidden[k], b.hidden[k], "join") for k in a.hidden}
+    @staticmethod
+    def join_refs(a, b):
+        """두 참조의 join = 후보 위치의 합집합(같은 경로는 하나로). 숨은 index 는 이름이 묶은 자리마다 달라 그대로 합친다."""
+        seen, targets = set(), []
+        for t in list(a.targets) + list(b.targets):
+            if str(t) not in seen:
+                seen.add(str(t))
+                targets.append(t)
+        out = StorageRef(identifier=a.identifier, typeInfo=a.typeInfo, targets=targets, scope=a.scope)
+        hidden = dict(a.hidden)
+        for k, v in b.hidden.items():
+            hidden[k] = VariableEnv._merge_values(hidden[k], v, "join") if k in hidden else v
+        out.hidden = hidden
+        out.dangling = getattr(a, "dangling", None) or getattr(b, "dangling", None)
         return out
 
-    def ref_root(self, expr, variables):
-        """식이 가리키는 위치의 뿌리 변수 이름(참조를 펼친 뒤). 위치 식(이름·멤버·index)이 아니면 None."""
-        e = expand_refs(expr, variables)
-        while e is not None and getattr(e, "context", None) in ("MemberAccessContext", "IndexAccessContext",
-                                                                 "TupleExpressionContext"):
-            e = e.elements[0] if e.context == "TupleExpressionContext" and len(e.elements or []) == 1 else e.base
-        return e.identifier if getattr(e, "context", None) == "IdentifierExpContext" else None
+    def mark_dangling(self, variables, arr, why):
+        """`arr.pop()`·`delete arr` 뒤 — 이제 배열 길이 밖인 원소를 가리키는 참조를 표시한다. 실제 EVM 에서는 그 참조가 배열 밖
+        storage 칸을 계속 읽고 쓰며 다음 push 가 그 값을 원소로 드러낸다(forge 확인). 그 칸을 모델링하지 않으므로 쓰면 명시적 오류.
+        길이 밖이 **확실한** 경우만(index 최솟값 ≥ 새 길이 최댓값) — 범위가 겹치면 기존 원소 칸으로 sound 하게 처리된다."""
+        from Domain.Variable import array_length
+        n = array_length(arr)
+        for ref in [v for v in variables.values() if isinstance(v, StorageRef) and v.targets]:
+            for t in ref.targets:
+                e = t
+                while e is not None and getattr(e, "context", None) in ("MemberAccessContext", "IndexAccessContext"):
+                    if e.context == "IndexAccessContext":
+                        try:
+                            c = self.ev.evaluate_expression(e.base, variables, None, None)
+                        except Exception:
+                            c = None
+                        k = variables.get(getattr(e.index, "identifier", None))
+                        kv = getattr(k, "value", None)
+                        if c is arr and getattr(kv, "min_value", None) is not None and not kv.is_bottom()                                 and kv.min_value >= n.max_value:
+                            ref.dangling = f"`{ref.identifier}` 가 가리키는 `{arr.identifier}[{kv}]` 는 {why} 뒤 배열 길이({n}) 밖이다"
+                    e = e.base
+
+    def ref_roots(self, expr, variables):
+        """식이 가리키는 위치들의 뿌리 변수 이름(참조를 펼친 뒤). 위치 식(이름·멤버·index·후보)이 아니면 None."""
+        def roots(e):
+            ctx = getattr(e, "context", None)
+            if ctx == "RefChoiceContext":
+                out = [roots(x) for x in e.elements]
+                return None if any(r is None for r in out) else [r for rs in out for r in rs]
+            if ctx == "TupleExpressionContext" and len(e.elements or []) == 1:
+                return roots(e.elements[0])
+            if ctx in ("MemberAccessContext", "IndexAccessContext") and e.base is not None:
+                return roots(e.base)
+            if ctx == "IdentifierExpContext":
+                return [e.identifier]
+            return None
+        return roots(expand_refs(expr, variables))
 
     def freeze_ref(self, name, type_info, init_expr, variables):
         """(StorageRef, {숨은 변수 이름: 값 칸}) — 경로의 index 를 variables 에서 지금 값으로 고정한다. 환경은 바꾸지 않는다
-        (callee 파라미터는 호출자 환경에서 고정하고 callee 환경에 넣는다)."""
+        (callee 파라미터는 호출자 환경에서 고정하고 callee 환경에 넣는다).
+        숨은 변수 이름은 묶는 자리(식)마다 다르다(`d␞<자리>.k0`) — 분기마다 다른 곳에 묶은 참조가 합류해도 서로의 index 가 섞이지 않고,
+        루프에서 같은 자리를 다시 묶으면 같은 이름이라 index 가 정수처럼 join·widening 된다."""
         counter = [0]
         hidden = {}
+        site = f"{id(init_expr) & 0xffffff:06x}"
 
         def hidden_key(container, value):
-            hk = f"{name}{self.REF_SEP}k{counter[0]}"
+            hk = f"{name}{self.REF_SEP}{site}.k{counter[0]}"
             counter[0] += 1
             kt = (container.typeInfo.mappingKeyType if isinstance(container, MappingVariable)
                   else _UINT256)
@@ -192,36 +233,50 @@ class Storage:
             return Expression(identifier=hk, context="IdentifierExpContext")
 
         def freeze(e, variables=variables):
+            """위치 식 → 고정한 위치 식 목록(후보)."""
             ctx = getattr(e, "context", None)
             if ctx == "TupleExpressionContext" and len(e.elements or []) == 1:
                 return freeze(e.elements[0], variables)
+            if ctx == "RefChoiceContext":
+                return [t for x in e.elements for t in freeze(x, variables)]
+            if ctx == "ConditionalExpContext":
+                # `c ? a : b` — 조건을 평가해 한쪽만 가능하면 그쪽, 모르면 두 후보
+                c = self.ev.evaluate_expression(e.condition, variables, None, None)
+                lo, hi = getattr(c, "min_value", 0), getattr(c, "max_value", 1)
+                return (freeze(e.true_expr, variables) if lo == 1 else []) + \
+                       (freeze(e.false_expr, variables) if hi == 0 else []) if (lo == hi == 1 or lo == hi == 0) else \
+                       freeze(e.true_expr, variables) + freeze(e.false_expr, variables)
             if ctx == "FunctionCallContext":
                 # storage 를 반환하는 호출 — callee 가 반환한 경로를 이 이름의 숨은 변수로 다시 고정한다
                 v = self.ev.evaluate_ref_call(e, variables)
-                if not isinstance(v, StorageRef) or v.target is None:
+                if not isinstance(v, StorageRef) or not v.targets:
                     raise ValueError(f"storage 참조 '{name}' = `{e}`: 호출이 storage 위치를 반환하지 않았다")
-                return freeze(v.target, {**variables, **v.hidden})
+                env = {**variables, **v.hidden}
+                return [t for x in v.targets for t in freeze(x, env)]
             if ctx == "IdentifierExpContext":
                 if e.identifier not in variables:
                     raise ValueError(f"storage 참조 '{name}': '{e.identifier}' 를 찾지 못했다")
-                return e
+                return [e]
             if ctx == "MemberAccessContext" and e.base is not None:
-                return Expression(base=freeze(e.base, variables), member=e.member, context="MemberAccessContext")
+                return [Expression(base=b, member=e.member, context="MemberAccessContext") for b in freeze(e.base, variables)]
             if ctx == "IndexAccessContext" and e.base is not None and e.index is not None:
-                base = freeze(e.base, variables)
-                container = self.ev.evaluate_expression(base, variables, None, None)
-                if not isinstance(container, (MappingVariable, ArrayVariable)):
-                    raise ValueError(f"storage 참조 '{name}': `{base}` 는 mapping·배열이 아니다")
-                key = self.ev.evaluate_expression(e.index, variables, None, None)
-                if isinstance(key, Variables) and not is_composite(key):
-                    key = key.value
-                return Expression(base=base, index=hidden_key(container, self._coerce_key(container, key)),
-                                  context="IndexAccessContext")
-            raise ValueError(f"storage 참조 '{name}' = `{e}`: 이 형태의 위치는 아직 지원하지 않는다 "
-                             f"(조건식 등 — 후보 모음 join 은 2단계 뒤쪽에서)")
+                out = []
+                for base in freeze(e.base, variables):
+                    container = self.ev.evaluate_expression(base, variables, None, None)
+                    if not isinstance(container, (MappingVariable, ArrayVariable)):
+                        raise ValueError(f"storage 참조 '{name}': `{base}` 는 mapping·배열이 아니다")
+                    key = self.ev.evaluate_expression(e.index, variables, None, None)
+                    if isinstance(key, Variables) and not is_composite(key):
+                        key = key.value
+                    out.append(Expression(base=base, index=hidden_key(container, self._coerce_key(container, key)),
+                                          context="IndexAccessContext"))
+                return out
+            raise ValueError(f"storage 참조 '{name}' = `{e}`: 이 형태의 위치는 지원하지 않는다")
 
-        target = freeze(expand_refs(init_expr, variables))
-        return StorageRef(identifier=name, typeInfo=type_info, target=target), hidden
+        targets = freeze(expand_refs(init_expr, variables))
+        if not targets:
+            raise ValueError(f"storage 참조 '{name}' = `{init_expr}`: 가능한 위치가 없다")
+        return StorageRef(identifier=name, typeInfo=type_info, targets=targets), hidden
 
     # ───────────────────────────── 키 해석 ─────────────────────────────
     def resolve(self, c, index_expr: Expression, variables, *, debug=False) -> KeyRes:
@@ -290,6 +345,9 @@ class Storage:
             # (2026-10-23, 희소 배열) 정적 배열도 구체화되지 않은 원소가 있다 — res 범위 안 위치 수 > 구체 셀 수 이면 True
             hi = _hi(res.vals)
             n = c.static_length()
+            if n is None and c.length is not None:        # (2026-11-26) 길이를 아는 동적 배열 — 길이 밖 위치는 revert 라 고를 수 없다
+                from Domain.Variable import array_length
+                n = array_length(c).max_value
             if n is not None:
                 hi = n - 1 if hi is None else min(hi, n - 1)
             if hi is None:
@@ -351,9 +409,34 @@ class Storage:
             return obj
         return self._joined(c, res, "?")
 
+    # ───────────────────────────── 길이 밖 접근 (2026-11-26) ─────────────────────────────
+    @staticmethod
+    def out_of_bounds(c, res) -> bool:
+        """배열 c 에서 res 가 고르는 위치가 **모두** 길이 밖인가(그 실행은 revert, Panic 0x32). 길이를 모르면 False."""
+        if not isinstance(c, ArrayVariable) or res.kind == "bottom":
+            return False
+        from Domain.Variable import array_length
+        n = c.static_length()
+        if n is None:
+            if c.length is None:
+                return False
+            n = array_length(c).max_value
+        if res.kind == "concrete":
+            return int(res.key) >= n
+        lo = getattr(res.vals, "min_value", None) if isinstance(res.vals, _INTERVALS) else None
+        return lo is not None and lo >= n
+
+    def bottom_cell(self, c):
+        """도달하지 않는 접근의 값 — ⊥ (그 값을 쓰는 경로가 도달 불가가 된다)."""
+        cell = c.fresh_element("⊥") if isinstance(c, ArrayVariable) else c.fresh_entry("⊥")
+        self.an.engine._make_bottom(cell)
+        return cell
+
     # ───────────────────────────── 읽기 ─────────────────────────────
     def read(self, c, index_expr, variables):
         res = self.resolve(c, index_expr, variables)
+        if self.out_of_bounds(c, res):
+            return self.bottom_cell(c)
         return self.select(c, res)
 
     # ───────────────────────────── 쓰기 후 전파 ─────────────────────────────
@@ -472,6 +555,8 @@ def expand_refs(e, variables):
         if isinstance(v, StorageRef):
             if v.target is None:
                 raise ValueError(f"storage 참조 '{e.identifier}' 를 묶기 전에 썼다")
+            if v.dangling:
+                raise ValueError(f"미지원: 떠 있는 storage 참조 사용 — {v.dangling} (실제로는 배열 밖 storage 칸을 읽고 쓴다)")
             return v.target
         return e
     out = None
@@ -483,6 +568,8 @@ def expand_refs(e, variables):
                 import copy
                 out = copy.copy(e)
             setattr(out, f, y)
+    if e.context == "RefChoiceContext":
+        return e
     for f in ("arguments", "elements"):
         xs = getattr(e, f)
         if xs:
@@ -531,6 +618,36 @@ def _containers(variables):
     for v in (variables or {}).values():
         walk(v)
     return out
+
+
+def split_choice(e):
+    """식 안의 첫 후보 위치(`RefChoiceContext`)를 후보마다 하나씩 바꾼 식 목록. 후보가 없으면 None."""
+    if not isinstance(e, Expression):
+        return None
+    if e.context == "RefChoiceContext":
+        return list(e.elements)
+    import copy
+    for f in ("left", "right", "base", "index", "expression", "function", "condition", "true_expr", "false_expr"):
+        alts = split_choice(getattr(e, f))
+        if alts is not None:
+            out = []
+            for a in alts:
+                n = copy.copy(e)
+                setattr(n, f, a)
+                out.append(n)
+            return out
+    for f in ("arguments", "elements"):
+        xs = getattr(e, f) or []
+        for i, x in enumerate(xs):
+            alts = split_choice(x)
+            if alts is not None:
+                out = []
+                for a in alts:
+                    n = copy.copy(e)
+                    setattr(n, f, xs[:i] + [a] + xs[i + 1:])
+                    out.append(n)
+                return out
+    return None
 
 
 def _join_into(cell, obj):

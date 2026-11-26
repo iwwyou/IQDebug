@@ -5,6 +5,7 @@ Yul parse tree를 Expression IR로 변환하여 ContractAnalyzer에 전달.
 """
 
 from __future__ import annotations
+import re
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -36,6 +37,10 @@ class EnhancedYulVisitor(YulVisitor):
         #   예전엔 오류 리스너를 꺼 둔 채 부분 트리를 그대로 방문해 `success := and(` 가 인자 없는 `and()` 가 됐다.
         parser = getattr(ctx, "parser", None)
         if parser is not None and parser.getNumberOfSyntaxErrors() > 0:
+            # (2026-11-26) `p.slot` / `x.offset` — storage 참조를 칸 번호로 직접 다룬다(어느 변수인지 모른다, SEMANTICS_LOCATIONS §4)
+            text = ca.sa.full_code_lines.get(ca.current_start_line, "")
+            if re.search(r"\b[A-Za-z_$][\w$]*\.(slot|offset)\b", text):
+                return self._unsupported("storage reference `.slot`/`.offset` (storage 칸 번호를 직접 다룸)")
             return self._unsupported("statement that does not parse on its own line (여러 줄에 걸친 Yul 식)")
         for stmt in ctx.yulStatement():
             self.visitYulStatement(stmt)

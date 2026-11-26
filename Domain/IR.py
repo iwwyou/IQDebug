@@ -93,6 +93,8 @@ class Expression:
         if self.context in ("VarRefAtEntry", "VarRefAtExit", "VarRefAtBefore",
                             "VarRefAtAfter", "VarRefAtAssign") and self.elements:
             return f"{self.elements[0]}({self.context[len('VarRefAt'):]})"
+        if self.context == "RefChoiceContext" and self.elements:
+            return "{" + " | ".join(str(e) for e in self.elements) + "}"
         if self.literal is not None:
             return str(self.literal)
         if self.identifier is not None:

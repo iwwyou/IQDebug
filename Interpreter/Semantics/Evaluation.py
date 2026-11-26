@@ -1246,6 +1246,21 @@ class Evaluation :
         return joined
 
     def evaluate_expression(self, expr: Expression, variables, callerObject=None, callerContext=None):
+        if callerObject is None and callerContext is None and expr is not None \
+                and expr.context in ("MemberAccessContext", "IndexAccessContext") and isinstance(variables, dict):
+            # (2026-11-26) 후보가 여럿인 storage 참조를 지나는 접근식 — 후보마다 평가해 join
+            from Interpreter.Semantics.Storage import expand_refs, split_choice
+            alts = split_choice(expand_refs(expr, variables))
+            if alts is not None:
+                out = None
+                for alt in alts:
+                    v = self.evaluate_expression(alt, variables, None, None)
+                    v = VariableEnv.copy_single_variable(v) if isinstance(v, Variables) else v
+                    out = v if out is None else VariableEnv._merge_values(out, v, "join")
+                return out
+        return self._evaluate_expression(expr, variables, callerObject, callerContext)
+
+    def _evaluate_expression(self, expr: Expression, variables, callerObject=None, callerContext=None):
         # (2026-10-23, Yul P0-a) Yul 식은 256-bit word 의미로 따로 평가한다 (Interpreter/Semantics/YulEval.py)
         if str(expr.context).startswith("Yul"):
             return self._evaluate_yul(expr, variables)
@@ -1256,6 +1271,14 @@ class Evaluation :
             return self.evaluate_literal_context(expr, variables, callerObject, callerContext)
         elif expr.context == "IdentifierExpContext":
             return self.evaluate_identifier_context(expr, variables, callerObject, callerContext)
+        elif expr.context == "RefChoiceContext":
+            # (2026-11-26) storage 참조의 후보 위치들 — 읽기 = 후보 값의 join
+            out = None
+            for alt in expr.elements:
+                v = self.evaluate_expression(alt, variables, callerObject, callerContext)
+                v = VariableEnv.copy_single_variable(v) if isinstance(v, Variables) else v
+                out = v if out is None else VariableEnv._merge_values(out, v, "join")
+            return out
         elif expr.context == "VarRefBase":
             # Guardian DSL의 단순 변수 참조 (IdentifierExpContext와 동일 구조)
             return self.evaluate_identifier_context(expr, variables, callerObject, callerContext)
@@ -1578,6 +1601,9 @@ class Evaluation :
         if isinstance(ref, StorageRef) and callerObject is None:     # (2026-11-26) storage 참조 = 그 위치
             if ref.target is None:
                 raise ValueError(f"storage 참조 '{ident_str}' 를 묶기 전에 썼다")
+            if callerContext == "IndexAccessContext" and len(ref.targets) > 1:
+                # 후보마다 다른 컨테이너 — 칸을 고르려면 식 전체를 후보마다 나눠야 한다(index 읽기는 상위에서 펼쳐 처리)
+                return self.evaluate_expression(ref.target, variables, None, None)
             return self.evaluate_expression(ref.target, variables, None, callerContext)
 
         # callerObject가 있는 경우
@@ -2139,16 +2165,23 @@ class Evaluation :
                 engine = getattr(self.an, 'engine', None)
                 in_widening = bool(engine and getattr(engine, '_in_widening_mode', False))
                 if expr.member == "push":
-                    val = self.evaluate_expression(expr.arguments[0], variables) if expr.arguments else None
+                    args, self._call_args = getattr(self, "_call_args", None) or [], None
+                    val = self.evaluate_expression(args[0], variables) if args else None
+                    if isinstance(val, Variables) and not is_composite(val):
+                        val = val.value
                     if L.min_value == L.max_value and not in_widening:
                         n = L.min_value
                         elem = baseVal.get_or_create_element(n)
-                        if val is not None:
+                        if is_composite(val):
+                            self.an.updater._assign_whole_composite(elem, val)
+                        elif val is not None:
                             elem.value = val
                         baseVal.length = UnsignedIntegerInterval(n + 1, n + 1, 256)
                     else:
                         new = baseVal._create_new_array_element("*")
-                        if val is not None:
+                        if is_composite(val):
+                            self.an.updater._assign_whole_composite(new, val)
+                        elif val is not None:
                             new.value = val
                         hi = L.max_value
                         for i, e in baseVal.elements.items():
@@ -2163,12 +2196,14 @@ class Evaluation :
                     return None  # Solidity push 는 값 반환 X
 
                 if expr.member == "pop":
-                    if L.max_value == 0:  # 빈 배열 pop → revert (경로 차단은 Phase 5)
+                    if L.max_value == 0:  # 빈 배열 pop → revert — 이 경로는 도달하지 않는다
+                        self.an.engine._set_bottom_env(variables)
                         return None
                     if L.min_value == L.max_value:
                         n = L.min_value
                         baseVal.elements = {k: v for k, v in baseVal.elements.items() if k < n - 1}
                     baseVal.length = UnsignedIntegerInterval(max(L.min_value, 1) - 1, L.max_value - 1, 256)
+                    self.an.storage.mark_dangling(variables, baseVal, "pop")
                     return None
 
         # ──────────────────────────────────────────────────────────────
@@ -2978,7 +3013,13 @@ class Evaluation :
                         return ret
 
             # member access를 평가하여 라이브러리 함수인지 확인
-            function_result = self.evaluate_expression(expr.function, variables, None, "functionCallContext")
+            # (2026-11-26) `arr.push(v)` 의 인자는 호출식에 있다 — 멤버 접근 평가(push 처리)가 읽을 수 있게 넘긴다.
+            #   예전엔 멤버 접근식(`arr.push`)에서 찾아 늘 비어 있었고, push 한 원소가 항상 ⊤ 였다.
+            _saved_args, self._call_args = getattr(self, "_call_args", None), expr.arguments
+            try:
+                function_result = self.evaluate_expression(expr.function, variables, None, "functionCallContext")
+            finally:
+                self._call_args = _saved_args
             
             # 라이브러리 함수 호출인 경우
             if (isinstance(function_result, Expression) and

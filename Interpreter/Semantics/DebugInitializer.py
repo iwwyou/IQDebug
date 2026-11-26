@@ -33,6 +33,36 @@ class DebugInitializer:
         self.an = analyzer
         self._assumed: dict = {}     # 이번 디버깅 회차에 값을 놓은 셀 id → (슬롯, 값)  — 같은 위치 입력 모순 검사
 
+    def finalize_entry_arrays(self, variables):
+        """(2026-11-26) 디버깅 입력을 다 놓은 뒤 — 진입 시점의 동적 배열 = **입력한 원소 목록**. 길이 = 입력한 가장 큰 index + 1,
+        아무것도 넣지 않았으면 0(그 배열의 원소 접근은 revert). 비운 중간 원소는 ⊤. 길이를 따로 입력했거나(`.length`, `array[...]`)
+        변수 index 칸(`arr[i]`)으로 입력한 배열은 그대로 둔다. mapping 은 입력한 칸 안의 배열만(입력하지 않은 칸 = ⊤ 그대로)."""
+        seen = set()
+
+        def walk(v):
+            if id(v) in seen:
+                return
+            seen.add(id(v))
+            if isinstance(v, ArrayVariable):
+                if v.typeInfo.isDynamicArray and v.length is None and not v.sym_cells:
+                    self._snapshot_once_for_debug(v)
+                    n = max(v.elements) + 1 if v.elements else 0
+                    v.length = UnsignedIntegerInterval(n, n, 256)
+                for e in list(v.elements.values()):
+                    walk(e)
+            elif isinstance(v, StructVariable):
+                for m in v.members.values():
+                    walk(m)
+            elif isinstance(v, MappingVariable):
+                for k, e in list(v.mapping.items()):
+                    if k not in v.sym:
+                        walk(e)
+
+        for name, v in list(variables.items()):
+            if getattr(v, "isConstant", False):
+                continue
+            walk(v)
+
     def begin_batch(self):
         """디버깅 1회(flush) 시작 — DebugUnitAnalyzer.flush 가 부른다."""
         self._assumed = {}

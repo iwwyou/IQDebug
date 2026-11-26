@@ -382,12 +382,10 @@ class VariableEnv:
         if type(v1) is not type(v2):
             return f"symbolic{mode.capitalize()}({v1},{v2})"
 
-        # ②-b storage 참조 — 같은 경로(숨은 index 변수는 따로 join 된다)면 그대로, 다른 위치의 join 은 아직 미지원
+        # ②-b storage 참조 — 후보 위치의 합집합(숨은 index 변수는 환경에서 따로 join 된다)
         if isinstance(v1, StorageRef):
-            if str(v1.target) == str(v2.target):
-                return copy.copy(v1)
-            raise ValueError(f"storage 참조 '{v1.identifier}' 가 경로마다 다른 위치를 가리킨다 ({v1.target} / {v2.target}) "
-                             f"— 후보 모음 join 은 2단계 뒤쪽에서 구현한다")
+            from Interpreter.Semantics.Storage import Storage
+            return Storage.join_refs(v1, v2)
 
         # ③ leaf Variables / EnumVariable
         if isinstance(v1, (Variables, EnumVariable)) and \

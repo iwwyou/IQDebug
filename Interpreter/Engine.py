@@ -247,6 +247,8 @@ class Engine:
                 #   해석기는 피연산자에 정수 0 을 대입했다(복합 타입이면 틀린 결과). 의미를 해석기로 옮긴다.
                 self._delete_composite(target)
                 self.up.flush_resolved_write()      # (2026-10-23) `delete m[a]` 도 쓰기 — alias 전파
+                if isinstance(target, ArrayVariable) and target.typeInfo.isDynamicArray:
+                    self.an.storage.mark_dangling(variables, target, "delete")   # 길이 0 — 원소를 가리키던 참조는 떠 있다
             else:
                 self.up.update_left_var(operand, self._zero_of(target), '=', variables, None, None,
                                         (self._record_enabled and not self._suppress_stmt_records))
@@ -582,7 +584,10 @@ class Engine:
             안 함)가 이 경로를 타면서 발생(web3bugs_52_H_04/52_H_34에서 발견).
             """
             if p in loop_nodes:
-                return out_vars.get(p) or {}
+                # (2026-11-26) 아직(또는 끝내) 도달하지 않은 루프 본문 노드도 같다 — 빈 env 로 조건을 refine 하면 변수를 못 찾는다
+                #   (`for (i < arr.length) require(arr[i] != c);` 에서 길이 0 → 본문 도달 불가 → 탈출 요약이 빈 env 로 require 를 평가).
+                #   상태변수·전역이 늘 들어 있으므로 도달한 노드의 env 는 비지 않는다.
+                return out_vars.get(p) or None
             p_vars = getattr(p, "variables", None)
             if not p_vars:
                 return None
@@ -783,33 +788,18 @@ class Engine:
         #   들어오는 흐름이 전부 infeasible 엣지이거나 ⊥ 노드에서 오는 경우에만 명시적 ⊥ (바깥 worklist 와 같은 의미).
         #   도달한 선행에서 feasible 한 흐름이 있는데도 해석되지 않았다면 해석기 결함 → 예외(⊥ 로 덮지 않는다).
         pending = [n for n in loop_nodes if out_vars.get(n) is None and not n.variables]
-        bot_nodes: set = set()
-        changed = True
-        while pending and changed:
-            changed = False
-            for n in list(pending):
-                ok = True
-                for p in G.predecessors(n):
-                    if p in bot_nodes:
-                        continue
-                    if p in loop_nodes:
-                        if out_vars.get(p) is None:
-                            if p in pending:
-                                ok = False          # 아직 판정 안 된 선행 — 다음 회차
-                                break
-                            continue
-                        if _edge_flow_from_node_out(p, n, out_vars[p]) is not None:
-                            raise ValueError(f"interpreter invariant: loop node '{n.name}' has a feasible flow "
-                                             f"from '{p.name}' but was not interpreted")
-                if ok:
-                    bot = VariableEnv.copy_variables(start_env or {})
-                    self._set_bottom_env(bot)
-                    n.variables = bot
-                    bot_nodes.add(n)
-                    pending.remove(n)
-                    changed = True
-        if pending:
-            raise ValueError(f"interpreter invariant: loop nodes not interpreted: {[n.name for n in pending]}")
+        # (2026-11-26) 수렴한 뒤이므로 "도달한 노드" 집합은 feasible 흐름에 대해 닫혀 있다 — 도달한 선행에서 feasible 흐름이 오는
+        #   미해석 노드만 결함이고, 나머지는 서로 순환하더라도(도달하지 않은 안쪽 루프) 전부 도달 불가다. 예전엔 선행이 먼저 판정되기를
+        #   기다려, 안쪽 루프 전체가 도달 불가이면(바깥 루프 길이 0) 서로를 기다리다 "not interpreted" 로 멈췄다.
+        for n in pending:
+            for p in G.predecessors(n):
+                if p in loop_nodes and out_vars.get(p) is not None                         and _edge_flow_from_node_out(p, n, out_vars[p]) is not None:
+                    raise ValueError(f"interpreter invariant: loop node '{n.name}' has a feasible flow "
+                                     f"from '{p.name}' but was not interpreted")
+        for n in pending:
+            bot = VariableEnv.copy_variables(start_env or {})
+            self._set_bottom_env(bot)
+            n.variables = bot
 
         # exit env
         exit_node = self.find_loop_exit_node(head)
@@ -1146,8 +1136,8 @@ class Engine:
                 raise ValueError(f"call to '{fcfg.function_name}': parameter '{pname}' has no declaration")
             if isinstance(val, (StructVariable, ArrayVariable, MappingVariable)):
                 # (2026-11-26) 인자가 상태변수의 위치인가 — 뿌리가 호출자·callee 가 공유하는 storage 변수
-                root = storage.ref_root(aexpr, caller_env) if aexpr is not None and caller_env is not None else None
-                in_state = root is not None and root in caller_env and self._is_shared_storage(root, caller_env[root])
+                roots = storage.ref_roots(aexpr, caller_env) if aexpr is not None and caller_env is not None else None
+                in_state = bool(roots) and all(r in caller_env and self._is_shared_storage(r, caller_env[r]) for r in roots)
                 ploc = getattr(getattr(proto, "typeInfo", None), "dataLocation", None)
                 if ploc == "storage" and in_state and kind != "this":
                     # storage 파라미터 = 호출자 인자의 위치(index 는 호출 시점 값). callee 의 쓰기가 상태변수에 바로 간다 — 되쓰기 없음
@@ -1785,7 +1775,9 @@ class Engine:
         sep = self.SHADOW_SEP
         for k in [k for k in env if sep in k and k not in keep]:
             env[k.split(sep, 1)[0]] = env.pop(k)
-        for k in [k for k in env if k not in keep]:
+        # (2026-11-26) storage 참조의 숨은 index 변수는 그 참조가 남으면 남는다 — 블록 안에서 다시 묶은 바깥 참조
+        rsep = self.an.storage.REF_SEP
+        for k in [k for k in env if k not in keep and not (rsep in k and k.split(rsep, 1)[0] in keep)]:
             del env[k]
         return env
 
@@ -2130,6 +2122,10 @@ class Engine:
             self._make_bottom(v)
 
     def _make_bottom(self, v: Variables) -> None:
+        if isinstance(v, StorageRef):               # (2026-11-26) 도달 불가 경로의 참조 = 후보 없음 (합류에서 빠진다)
+            v.targets = []
+            v.value = "→ ⊥"
+            return
         if isinstance(v, ArrayVariable):
             for elem in v.elements.values():
                 self._make_bottom(elem)
@@ -2210,7 +2206,7 @@ class Engine:
             if rv.identifier in exit_env:
                 src = exit_env[rv.identifier]
                 if isinstance(src, StorageRef):                 # named storage 반환 = 위치
-                    fcfg.return_vars[i] = self.an.storage.export_ref(src, exit_env) if src.target is not None else src
+                    fcfg.return_vars[i] = self.an.storage.export_ref(src, exit_env) if src.targets else src
                 elif hasattr(rv, "value"): rv.value = getattr(src, "value", src)
                 else: fcfg.return_vars[i] = src
 
