@@ -208,6 +208,9 @@ class Update :
                 # 원소 하나 = 괄호식 `(x)` — 안쪽 식이 대상이다(refine 이 `(a * b) > 0` 의 좌변을 넘기는 경우 포함)
                 return self._update_left_var(expr.elements[0], rVal, operator, variables,
                                             callerObject, callerContext, log, line_no, top_expr)
+            if rVal is None and self.an.engine._is_bottom_env(variables):
+                # (2026-11-27) 도달하지 않는 경로 — callee 가 항상 revert 해 반환값이 없다. 쓸 것이 없다.
+                return None
             if not isinstance(rVal, (list, tuple)):
                 # ★ (Phase 3b, D4) 예전엔 우변이 튜플 값이 아니면 대입 전체를 조용히 건너뛰었다.
                 raise ValueError(f"tuple assignment: right-hand side is not a tuple value ({type(rVal).__name__})")

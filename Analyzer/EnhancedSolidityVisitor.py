@@ -1063,20 +1063,23 @@ class EnhancedSolidityVisitor(SolidityVisitor):
         return tuple(result)
 
     def visitIReturnPatternA(self, ctx):
-        contract_var = ctx.intentIdentifier().getText()
+        # (2026-11-27) 수신자 = 경로 원문(`token`, `s.token`, `pools[pid]`) — 키 규칙은 Interpreter/Semantics/IReturnKey.py
+        receiver = ctx.varRef().getText()
         func_name = ctx.intentMemberName().getText()
         access_chain = self._parse_ireturn_access_chain(ctx.ireturnAccessChain())
         value = self._parse_debug_value(ctx.debugValue())
-        self.contract_analyzer.process_ireturn(contract_var, func_name, access_chain, value)
+        self.contract_analyzer.process_ireturn_key(receiver, None, func_name, access_chain, value)
         return None
 
     def visitIReturnPatternB(self, ctx):
-        interface_name = ctx.intentIdentifier(0).getText()
-        addr_var = ctx.intentIdentifier(1).getText()
+        # (2026-11-27) 수신자 = 캐스트 `IFace(경로)` 또는 `IFace()`(이름 붙지 않는 그 인터페이스 호출 전부)
+        interface_name = ctx.intentIdentifier().getText()
+        inner = ctx.varRef().getText() if ctx.varRef() is not None else ""
         func_name = ctx.intentMemberName().getText()
         access_chain = self._parse_ireturn_access_chain(ctx.ireturnAccessChain())
         value = self._parse_debug_value(ctx.debugValue())
-        self.contract_analyzer.process_ireturn_cast(interface_name, addr_var, func_name, access_chain, value)
+        self.contract_analyzer.process_ireturn_key(f"{interface_name}({inner})", interface_name,
+                                                   func_name, access_chain, value)
         return None
 
     # Visit a parse tree produced by SolidityParser#duringIntent.

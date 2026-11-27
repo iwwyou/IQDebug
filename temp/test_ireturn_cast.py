@@ -66,8 +66,10 @@ check("no diagnostics", not ev.diagnostics, str(ev.diagnostics))
 
 with contextlib.redirect_stdout(io.StringIO()):
     ev = s.evaluate({"IF(feeds[t]).get()": {"t": "interval", "lo": "7", "hi": "7"}}, contract="C", func="f")
-check("expression-cast key = explicit input error",
-      any("읽을 수 없는 키" in d.message for d in ev.diagnostics), str(ev.diagnostics))
+# (2026-11-27) 캐스트 안이 경로여도 원문 키로 입력한다(IReturn 수신자 일반화) — 예전엔 "읽을 수 없는 키" 오류였다
+exit_state = next(n.state for n in ev.cfg.nodes if n.id == ev.cfg.exit)
+check("expression-cast key IF(feeds[t]).get() = 7", exit_state.get("z") == "[7,7]" and not ev.diagnostics,
+      f"{exit_state.get('z')} {ev.diagnostics}")
 
 check("no contract-cast slot", not any(k.startswith("D(") for k in keys), str(sorted(keys)))
 with contextlib.redirect_stdout(io.StringIO()):

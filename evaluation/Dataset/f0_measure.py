@@ -142,25 +142,79 @@ def engine_param_type(t: str) -> str:
     return _SOLC_PREFIX.sub("", t).replace(" ", "")
 
 
+# (2026-11-27) 기본 입력에서 동적 배열마다 넣는 원소 수 — 진입 길이 = 이 수(엔진 규칙: 길이 = 입력한 원소 수).
+#   0 이면 빈 배열(모든 원소 접근이 revert). 실험 설계 값이므로 환경변수로 바꿀 수 있다.
+ARRAY_ELEMS = int(os.environ.get("F0_ARRAY_ELEMS", "1"))
+
+
+def _full_value(s, aid):
+    """슬롯 타입의 전 범위 값. 반환 (값 | None, 다음 주소 id)."""
+    if s.valueKind == "interval":
+        b = s.bits or 256
+        lo, hi = ((-(1 << (b - 1)), (1 << (b - 1)) - 1) if s.signed else (0, (1 << b) - 1))
+        return {"t": "interval", "lo": str(lo), "hi": str(hi)}, aid
+    if s.valueKind == "bool":
+        return {"t": "bool", "v": "any"}, aid
+    if s.valueKind == "address":
+        # (2026-11-27 사용자 결정) 주소는 넣지 않는다 = ⊤. 예전엔 슬롯마다 다른 기호 id 를 줘서 "모든 주소가 서로 다르다" 를 가정했고,
+        #   `require(x.borrower == msg.sender)` 같은 가드가 항상 거짓이 돼 경로가 ⊥ 가 됐다. msg.sender 는 엔진 기본 기호 주소가 들어간다.
+        return None, aid
+    return None, aid
+
+
+def _with_first_index(key, value):
+    """경로 키의 첫 index 를 value 로 바꾼다(`poolInfo[pid].acc` → `poolInfo[0].acc`)."""
+    from engine_api import _parse_label
+    root, accs = _parse_label(key)
+    out, done = root, False
+    for k, x in accs:
+        if k == "member":
+            out += "." + x
+        elif k == "index":
+            out += "[%s]" % (value if not done else x)
+            done = True
+        else:
+            return None                     # 호출이 낀 경로는 바꾸지 않는다
+    return out
+
+
+def _literal_indexes(key):
+    from engine_api import _index_texts, _constant_index
+    return all(_constant_index(t) for t in _index_texts(key))
+
+
 def default_values(slots):
+    """F0 기본 입력 = 가장 덜 좁힌 입력. (2026-11-27) 3단계 슬롯 규칙에 맞춘다:
+    - 일반 슬롯: 타입 전 범위.
+    - mapping 변수 방식이 되는 슬롯: 키 그대로 전 범위. 안 되는 슬롯(index 가 함수 안에서 바뀜 등): 넣지 않는다 —
+      추가하지 않은 칸 = ⊤ 이라 전 범위 입력과 같은 뜻이고, 값 방식과 섞지 않는다.
+    - 동적 배열(첫 index 가 배열): 원소 `ARRAY_ELEMS` 개를 index 0.. 로 넣는다(진입 길이 = 그 수).
+    - 정적 배열의 변수 index 슬롯: 넣지 않는다(입력하지 않은 원소 = ⊤). 리터럴 index 슬롯은 그대로 넣는다.
+    - 진입 시점 값이 없는 index(requiresIndex)는 배열이 아니면 건너뛴다.
+    - 주소 슬롯은 넣지 않는다(⊤)."""
     vals, skipped, aid = {}, 0, 1
     for s in slots:
+        if s.key.endswith(".length"):
+            # 길이는 입력이 아니다(원소 수). 엔진이 길이 슬롯을 거르지만 타입으로 못 따라가는 경로(I22-5)가 남아 있다.
+            continue
+        kind = getattr(s, "containerKind", None)
+        literal = kind is not None and _literal_indexes(s.key)
+        if kind == "array" and not literal:
+            for i in range(ARRAY_ELEMS):
+                k = _with_first_index(s.key, str(i))
+                v, aid = _full_value(s, aid)
+                if k is not None and v is not None:
+                    vals[k] = v
+            continue
+        if kind in ("mapping", "static-array") and not literal and not getattr(s, "varMode", False):
+            skipped += 1
+            continue
         if s.requiresIndex:
             skipped += 1
             continue
-        # 동적 배열 길이: 비워 두면 엔진이 미지 길이(⊤)로 둔다. 전 범위 구간을 명시하면 `DebugInitializer` 가
-        # 구체 길이만 받으므로 오류가 난다(재측정 1: 176건) — 기본 입력 = 미지정.
-        if s.key.endswith(".length"):
-            continue
-        if s.valueKind == "interval":
-            b = s.bits or 256
-            lo, hi = ((-(1 << (b - 1)), (1 << (b - 1)) - 1) if s.signed else (0, (1 << b) - 1))
-            vals[s.key] = {"t": "interval", "lo": str(lo), "hi": str(hi)}
-        elif s.valueKind == "bool":
-            vals[s.key] = {"t": "bool", "v": "any"}
-        elif s.valueKind == "address":
-            vals[s.key] = {"t": "address", "id": aid}
-            aid += 1
+        v, aid = _full_value(s, aid)
+        if v is not None:
+            vals[s.key] = v
     return vals, skipped
 
 

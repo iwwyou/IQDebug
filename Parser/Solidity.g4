@@ -286,9 +286,12 @@ debugParam
     : '@Param' varRef '=' debugValue
     ;
 
+// (2026-11-27) 수신자 일반화 — Interpreter/Semantics/IReturnKey.py 의 키 규칙과 같다.
+//   A: 수신자 = 경로(식별자·멤버·index)          `token.f()`, `s.token.f()`, `pools[pid].f()`
+//   B: 수신자 = 캐스트, 안은 경로 또는 비움(`IFace()` = 원문 키로 이름 붙지 않는 그 인터페이스의 호출 전부)
 debugIReturn
-    : '@IReturn' intentIdentifier '.' intentMemberName '(' ')' ireturnAccessChain? '=' debugValue        # IReturnPatternA
-    | '@IReturn' intentIdentifier '(' intentIdentifier ')' '.' intentMemberName '(' ')' ireturnAccessChain? '=' debugValue   # IReturnPatternB
+    : '@IReturn' varRef '.' intentMemberName '(' ')' ireturnAccessChain? '=' debugValue        # IReturnPatternA
+    | '@IReturn' intentIdentifier '(' varRef? ')' '.' intentMemberName '(' ')' ireturnAccessChain? '=' debugValue   # IReturnPatternB
     ;
 
 ireturnAccessChain

@@ -148,6 +148,48 @@ callee storage 파라미터(EnumerableSet 류)는 세지 않았다. 실제 선�
 
 ---
 
+## I22. 3단계 슬롯 뒤 남은 것 — 2026-11-27
+
+1. ✅ 2026-11-27 **callee 출구에 도달하지 않으면 튜플 대입이 예외** — `Pool.unlockAsset` 의 `(a, b) = unlockAssetInternal(..)` 에서
+   기본 입력이 callee 의 `require` 를 모두 막으면 반환값이 None 이고 `Update._update_left_var` 가
+   "tuple assignment: right-hand side is not a tuple value" 로 죽었다(3단계 전 코드도 단독 실행하면 같았다 — 표본의 ok 는 실행 순서 탓).
+   수정: callee 출구가 ⊥ 이거나 어떤 경로도 닿지 않으면(`_interpret_callee_body`) caller 환경을 ⊥ 로 만들고, 튜플 대입은 ⊥ 경로에서
+   반환값이 없으면 아무것도 하지 않는다. 스칼라 대입은 원래 이렇게 동작했다. 확인: 튜플 대입·지역 튜플·튜플 선언·분기 한쪽만 revert·뒤 문장.
+2. 🔧 2026-11-27 **F0 기본 입력 생성기** — 새 슬롯 규칙에 맞췄다(`f0_measure.default_values`): 동적 배열은 원소 `F0_ARRAY_ELEMS`(기본 1)개,
+   변수 방식이 안 되는 mapping·정적 배열의 변수 index 슬롯은 넣지 않음(= ⊤), 리터럴 index(형변환 상수 `bytes32(0)` 포함)는 그대로.
+   표본 521(new13): 실패→ok 3, ok→실패 8. ok→실패는 (가) `.length` 키(아래 5, 생성기에서 다시 거름 → 2 개 복구) (나) 구체 원소 덕에 처음 도달한
+   경로의 엔진 공백 — `Cannot join intervals of different type lengths`(Payments 2), `div_` overload 인자 None(claimComp), 재귀 요약의 enum ⊤
+   (_aggregateAvailable), using-for `.transfer`·주소 `.balanceOf` 해석(FundsReceiver.drain, PoolToken.withdraw). 미수정.
+   **주소 (2026-11-27 사용자 결정)**: 예전엔 주소 슬롯마다 다른 기호 id(= 모든 주소가 서로 다르다)를 줘서, 원소가 구체화되자
+   `require(creditLines[id].borrower == msg.sender)` 같은 가드가 항상 거짓 → ⊥ 였다(Pool.closeCreditLine). 이제 주소는 넣지 않는다(⊤).
+   `msg.sender` 는 엔진 기본 기호 주소({101}). `==` 는 통과 경로에서 좁혀지고 `!=` 는 좁히지 못한다(정밀도만 손해).
+   그러자 주소 슬롯만 있는 함수가 입력 0개가 되어 해석이 건너뛰어졌다(24 함수) → 입력 0개도 ⊤ 로 해석하게 엔진을 바꿨다(`SEMANTICS_LOCATIONS.md` §4).
+3. **storage 파라미터끼리의 별칭** — 타깃의 두 storage 파라미터가 같은 칸을 가리키는 입력은 후보에 없다(`SEMANTICS_LOCATIONS.md` §3.2).
+4. ✅ 화면 확인 — 2026-11-27 브라우저에서 확인(컨테이너 블록·방식 토글·원소 추가·위치 선택·지금 → 칸). Debug 화면 들여쓰기, 참조 표시의 숨은 이름, length 표시를 함께 고쳤다.
+5. ✅ 2026-11-27 **footprint 경로가 다른 struct 의 멤버를 붙인다** — 원인: using-for 호출 `_tokenOwners.length()` 의 후보를 수신자 타입 확인 없이
+   모든 using 라이브러리에서 모았다(EnumerableSet.length(UintSet) 까지 따라가 `_tokenOwners._inner._values` 가 생김). 수신자 타입을 알면 첫
+   파라미터 타입이 같은 후보만 따라가게 했다(`_derive_debug_slots.candidates`). frax ERC721 `tokenByIndex`·`tokenOfOwnerByIndex` 통과.
+6. 🔧 2026-11-27 **표본에서 드러난 엔진 공백** (주소 ⊤·배열 원소 1 개 입력으로 새로 도달한 경로)
+   - ✅ 삼항식 두 분기의 정수 폭이 다름(`c ? uint48 : uint256`) — 같은 부호면 넓은 폭으로 맞춰 join(Solidity 공통 타입). Payments 2.
+   - ✅ 괄호식 수신자의 using-for(`(a.mul(b)).div(c)`) — 정적 타입이 괄호를 따라 들어간다. ArthPoolInvestorForV2.mintRedeemPart1.
+   - ✅ 자기 컨트랙트 이름 한정 호출(`ERC721.ownerOf()`, I19 의 `This 'ERC721' …` 9 건의 원인) — 실행 중인 함수의 컨트랙트·그 조상도
+     정적 호출 시작점으로 받는다. frax ERC721 `transferFrom`·`_transfer`·`_burn`.
+   - ✅ string·bytes `delete` 의 0 값 = 빈 문자열(리터럴과 같은 표현). ERC721 `_burn`.
+   - ✅ 2026-11-27 **enum 값 도메인** — 값 = 멤버 index 의 uint8 구간(`EnumVariable`): 한 멤버 [i,i], 모름 [0,n-1], 0 값 [0,0].
+     상태변수·파라미터·입력 안 한 칸 = 모름, 지역 선언·named return·delete = 첫 멤버. `E(x)` 캐스트(범위 밖 = revert → ⊥),
+     `type(E).min/max`, havoc = 모름, 디버깅 입력(API `{t:"enum", v}`·화면 select), 표시 = 멤버 이름(`B`, `{B..C}`, `⊤{A..C}`).
+     예전: 값이 멤버 이름 문자열·256 비트 구간이 섞였고, 서로 다른 멤버의 합류는 `symbolicJoin(A,B)` 문자열, "모름" 은 첫 멤버(unsound),
+     입력 안 한 상태변수·파라미터는 None·`symbolicUint256(None)`, 지역 `S z;` 는 `symbol_z`, `delete st` 예외, `S(x)`·`type(S)` 미지원.
+     forge: 범위 밖 캐스트 revert·delete = 0·지역 기본값 0·type().max 확인. 한계: 구간이라 `{A, C}` 합류는 `{A..C}` 로 넓어진다.
+   - ✅ 2026-11-27 **@IReturn 수신자 일반화 (사용자 결정 규칙)** — 입력 = "키에 맞는 외부 view 호출들의 반환값 범위", 인자는 키에 없다.
+     키 = `<수신자>.f()<반환값 접근>`. 수신자 원문에 메서드 호출이 없으면 원문 그대로(`token`, `s.token`, `pools[pid]`, `IERC20(addr)`,
+     `IERC20(s.addr)`; 호출 지점의 이름 — callee 안이면 callee 이름), 있으면 `IFace()`(원문 키로 이름 붙지 않는 그 인터페이스 호출 전부).
+     규칙 한 곳: `Interpreter/Semantics/IReturnKey.py` — 슬롯 도출·입력 파싱(문법 `debugIReturn` 의 varRef·빈 캐스트)·실행 조회가 같이 쓴다.
+     슬롯 도출은 호출 사슬의 메서드 호출마다 수신자의 정적 타입이 인터페이스이고 그 함수를 선언하면 지점으로 잡는다(예전엔 루트가
+     인터페이스 핸들·캐스트일 때만 — `s.token.f()`·`pools[i].f()`·`getPool().f()` 는 슬롯이 없었다). 입력 검증은 수신자 타입을 알 때만
+     (예전엔 타깃 범위에서 못 찾는 callee·modifier 지역 핸들을 "is not an interface-typed variable" 로 거부 — 표본 30 함수).
+     여러 호출 지점에 걸리는 키는 화면에 "호출 n곳". `test_ireturn_cast` 의 `IF(feeds[t]).get()` 검사를 새 규칙(입력 반영)으로 바꿨다.
+
 ## 해결됨
 
 ### I21. 도달 불가 경로·bytesN 값 표현 — ✅ 2026-11-26

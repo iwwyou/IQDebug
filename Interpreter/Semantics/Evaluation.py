@@ -29,6 +29,7 @@ def _is_yul_ctx(expr) -> bool:
 
 # 값이 아닌 이름 — `X.f()` 의 X 로 오면 using-for 대상이 아니다 (Evaluation._is_non_typed_receiver)
 _NON_VALUE_NAMES = frozenset({"super", "this", "msg", "block", "tx", "abi"})
+_NO_IRETURN = object()      # (2026-11-27) @IReturn 입력 없음 표식(값 None = void 반환과 구분)
 
 
 def _reinterpret_as(iv, target_cls):
@@ -135,6 +136,11 @@ def coerce_to_declared(value, sol_type, what: str = "value"):
     """
     if not isinstance(value, (IntegerInterval, UnsignedIntegerInterval)):
         return value
+    if getattr(sol_type, "typeCategory", None) == "enum":
+        # (2026-11-27) enum 칸 = uint8 멤버 index — 폭만 맞춘다(값 범위는 E.A·E(x) 가 이미 멤버 안으로 정했다)
+        if value.is_bottom():
+            return UnsignedIntegerInterval(None, None, EnumVariable.BITS)
+        return UnsignedIntegerInterval(value.min_value, value.max_value, EnumVariable.BITS)
     et = getattr(sol_type, "elementaryTypeName", None) if sol_type is not None else None
     if getattr(sol_type, "typeCategory", "elementary") != "elementary" or not isinstance(et, str):
         return value
@@ -379,15 +385,38 @@ class Evaluation :
             return None
         return self._assemble_ireturn_value(interface_name, func_name, entries, callerObject)
 
-    def _resolve_ireturn_pattern_b(self, fcfg, interface_name, addr_var, func_name, callerObject):
-        """Pattern B: Interface(addr).funcName().<chain> 조회"""
-        if not fcfg.ireturn_registry:
+    def _ireturn_type_names(self):
+        return set(self.an.interface_names or ()) | set((self.an.contract_cfgs or {}).keys())
+
+    def _ireturn_iface(self, base_expr, variables):
+        """외부 호출 수신자의 인터페이스 이름(본문 없는 인터페이스일 때만). 캐스트면 그 타입, 아니면 정적 타입."""
+        from Interpreter.Semantics import IReturnKey
+        names = self._ireturn_type_names()
+        if IReturnKey.is_cast(base_expr, names):
+            nm = getattr(base_expr, "typeName", None) or getattr(getattr(base_expr, "function", None), "identifier", None)
+            return nm if nm in (self.an.interface_names or ()) else None
+        try:
+            st = self._static_type_of(base_expr, variables)
+        except Exception:                       # noqa: BLE001 — 정적 타입을 못 정하면 IReturn 대상이 아니다
             return None
-        entries = self._collect_ireturn_entries(
-            fcfg.ireturn_registry, (interface_name, addr_var, func_name))
+        nm = getattr(st, "interfaceName", None) if getattr(st, "typeCategory", None) == "interface" else None
+        return nm if nm in (self.an.interface_names or ()) else None
+
+    def _ireturn_lookup(self, base_expr, member_name, variables, callerObject):
+        """(2026-11-27) @IReturn 조회 — 키 (수신자 원문 | `IFace()`, 함수, 반환값 접근). 입력이 없으면 _NO_IRETURN."""
+        from Interpreter.Semantics import IReturnKey
+        fcfg = self.an.current_target_function_cfg
+        reg = getattr(fcfg, "ireturn_registry", None) if fcfg is not None else None
+        if not reg:
+            return _NO_IRETURN
+        iface = self._ireturn_iface(base_expr, variables)
+        if iface is None or self._type_declares_member(iface, member_name) is False:
+            return _NO_IRETURN
+        rk = IReturnKey.receiver_key(base_expr, iface, self._ireturn_type_names())
+        entries = self._collect_ireturn_entries(reg, (rk, member_name))
         if not entries:
-            return None
-        return self._assemble_ireturn_value(interface_name, func_name, entries, callerObject)
+            return _NO_IRETURN
+        return self._assemble_ireturn_value(iface, member_name, entries, callerObject)
 
     def _top_of_type(self, sol_type, owner_cfg, ident):
         """선언 타입의 ⊤ 값 (값 타입이면 .value, 복합 타입이면 변수 객체)."""
@@ -600,6 +629,10 @@ class Evaluation :
         if expr is None:
             return None
         ctx = getattr(expr, "context", None)
+
+        # ── 괄호식 `(e)` = 원소 하나인 튜플 식 — 안쪽 식의 타입 (2026-11-27, `(a.mul(b)).div(c)` 의 수신자)
+        if ctx == "TupleExpressionContext" and len(getattr(expr, "elements", None) or []) == 1:
+            return self._static_type_of(expr.elements[0], variables)
 
         # ── 함수 호출: 리턴 타입
         #   `visitFunctionCall` 이 만드는 모양은
@@ -1130,6 +1163,51 @@ class Evaluation :
                     return result
 
         return None
+
+    def _enum_def_named(self, name):
+        """(2026-11-27) 이름 → EnumDefinition (실행 체인의 컨트랙트·부모, 파일 수준). 없으면 None."""
+        if not isinstance(name, str):
+            return None
+        ed = self._find_enum_in_chain(name)
+        if ed is not None:
+            return ed
+        members = (getattr(self.an.sa, "file_level_enums", {}) or {}).get(name)
+        if members:
+            ed = EnumDefinition(name)
+            for m in members:
+                ed.add_member(m)
+            return ed
+        return None
+
+    def _enum_cast(self, ed, arg_expr, variables):
+        """`E(x)` — 정수 x 를 멤버 index 로. 범위 [0, n-1] 밖의 부분은 revert 경로라 버린다(전부 밖이면 이 경로 ⊥)."""
+        x = self.evaluate_expression(arg_expr, variables, None, None)
+        n = len(ed.members)
+        if not isinstance(x, (UnsignedIntegerInterval, IntegerInterval)):
+            raise ValueError(f"enum cast {ed.enum_name}(...): argument is not an integer ({type(x).__name__})")
+        if x.is_bottom():
+            return UnsignedIntegerInterval(None, None, EnumVariable.BITS)
+        lo, hi = max(x.min_value, 0), min(x.max_value, n - 1)
+        if lo > hi:
+            self.an.engine._set_bottom_env(variables)
+            return UnsignedIntegerInterval(None, None, EnumVariable.BITS)
+        return UnsignedIntegerInterval(lo, hi, EnumVariable.BITS)
+
+    def _is_qualifying_contract(self, name: str) -> bool:
+        """(2026-11-27) `Name.f()` 의 Name 이 정적 호출의 시작점이 될 수 있는 컨트랙트인가 — 타깃 컨트랙트 자신·그 조상,
+        또는 실행 중인 함수가 속한 컨트랙트 자신·그 조상(상속받은 함수 안의 `Base.f()`)."""
+        cfgs = self.an.contract_cfgs or {}
+        roots = [self.an.current_target_contract]
+        try:
+            roots.append(self.engine._fcfg_owner(self.an.current_target_function_cfg)[0])
+        except Exception:                       # noqa: BLE001 — 실행 중인 함수가 없을 수 있다
+            pass
+        for r in roots:
+            if not r or r not in cfgs:
+                continue
+            if name == r or self._is_known_parent_contract(cfgs[r], name):
+                return True
+        return False
 
     def _is_known_parent_contract(self, contract_cfg, name: str) -> bool:
         """name이 contract_cfg의 부모 체인(직계/조상 포함) 안에 있는 컨트랙트
@@ -1839,12 +1917,10 @@ class Evaluation :
                     return enum_def
                 elif ident_str in self.an.library_cfgs:
                     return {"isLibrary": True, "libraryName": ident_str}
-                elif (self.an.current_target_contract and
-                      self.an.current_target_contract in self.an.contract_cfgs and
-                      self._is_known_parent_contract(
-                          self.an.contract_cfgs[self.an.current_target_contract], ident_str)):
+                elif self._is_qualifying_contract(ident_str):
                     # 명시적 base-contract-qualified 호출: ParentName.foo()
                     # (super.foo()와 비슷하지만 조상 하나를 이름으로 못박는 문법)
+                    # (2026-11-27) 자기 이름(`ERC721.ownerOf()` — OpenZeppelin ERC721)도 같다: 그 컨트랙트에서 시작하는 정적 호출
                     return {"isBaseContract": True, "contractName": ident_str}
                 else:
                     from Utils.Errors import UnresolvedName
@@ -2317,7 +2393,7 @@ class Evaluation :
         if isinstance(baseVal, EnumDefinition):
             try:
                 idx = baseVal.members.index(member)
-                return UnsignedIntegerInterval(idx, idx, 256)
+                return UnsignedIntegerInterval(idx, idx, EnumVariable.BITS)     # (2026-11-27) enum = uint8
             except ValueError:
                 raise ValueError(f"'{member}' not a member of enum '{baseVal.enum_name}'")
 
@@ -2343,6 +2419,11 @@ class Evaluation :
                     return IntegerInterval(mx, mx, bits)
                 mn = -2 ** (bits - 1)
                 return IntegerInterval(mn, mn, bits)
+
+            ed = self._enum_def_named(T)
+            if ed is not None:                  # (2026-11-27) type(E).min / max = 첫·마지막 멤버
+                i = len(ed.members) - 1 if member == "max" else 0
+                return UnsignedIntegerInterval(i, i, EnumVariable.BITS)
 
             raise ValueError(f"type() with unsupported base '{T}'")
 
@@ -2613,6 +2694,12 @@ class Evaluation :
           튜플 대입에서 조용히 무시돼 변수들이 초기값으로 남았다."""
         if isinstance(a, (list, tuple)) and isinstance(b, (list, tuple)) and len(a) == len(b):
             return [self._join_branch_values(x, y) for x, y in zip(a, b)]
+        if (isinstance(a, (IntegerInterval, UnsignedIntegerInterval)) and type(a) is type(b)
+                and a.type_length != b.type_length):
+            # (2026-11-27) `c ? uint48 : uint256` — Solidity 는 두 분기를 공통 타입(같은 부호의 넓은 폭)으로 맞춘다.
+            #   값 범위는 그대로, 폭만 넓힌다(Payments `stopTime - startTime : block.timestamp - startTime`).
+            w = max(a.type_length, b.type_length)
+            a, b = (type(a)(a.min_value, a.max_value, w), type(b)(b.min_value, b.max_value, w))
         if hasattr(a, 'join') and hasattr(b, 'join') and type(a) == type(b):
             return a.join(b)
         if isinstance(a, Variables) and isinstance(b, Variables):
@@ -2945,6 +3032,11 @@ class Evaluation :
             if getattr(base_expr, 'identifier', None) == 'abi':
                 return self._evaluate_abi_call(expr, member_name)
 
+            # (2026-11-27) @IReturn — 수신자 일반화(경로·캐스트·`IFace()`). 키 규칙 = Interpreter/Semantics/IReturnKey.py
+            hit = self._ireturn_lookup(base_expr, member_name, variables, callerObject)
+            if hit is not _NO_IRETURN:
+                return hit
+
             if hasattr(base_expr, 'identifier'):
                 contract_var = base_expr.identifier
 
@@ -3010,17 +3102,7 @@ class Evaluation :
             #   (`FunctionCallContext`)은 한 번도 참이 아니어서 이 조회가 죽어 있었고, 아래의 "주소를 보지 않는" 대체 조회가 모든
             #   캐스트 호출을 처리했다(`IF(a).f()` 에 준 값이 `IF(b).f()` 에도 들어감). 키 = (인터페이스, 주소 이름, 함수) — 주소가
             #   식별자가 아닌 식이면 입력 키로 쓸 수 없으므로(문법 확장 = future work) 조회하지 않는다(반환 ⊤).
-            if (getattr(base_expr, 'context', None) == 'TypeConversion'
-                    and getattr(base_expr, 'typeName', None) in self.an.interface_names):
-                cast_interface = base_expr.typeName
-                fcfg = self.an.current_target_function_cfg
-                addr_var = getattr(base_expr.expression, 'identifier', None) \
-                    if getattr(base_expr.expression, 'context', None) == 'IdentifierExpContext' else None
-                if fcfg and addr_var:
-                    ret = self._resolve_ireturn_pattern_b(
-                        fcfg, cast_interface, addr_var, member_name, callerObject)
-                    if ret is not None:
-                        return ret
+            #   (2026-11-27) 조회는 위 `_ireturn_lookup` 이 한다(캐스트 안이 경로·식이어도).
 
             # member access를 평가하여 라이브러리 함수인지 확인
             # (2026-11-26) `arr.push(v)` 의 인자는 호출식에 있다 — 멤버 접근 평가(push 처리)가 읽을 수 있게 넘긴다.
@@ -3273,7 +3355,11 @@ class Evaluation :
                                   expression=(expr.arguments[0] if expr.arguments else None),
                                   operator='typecast', context='TypeConversion')
                 return self.evaluate_expression(conv, variables, callerObject, callerContext)
-            # (2) 그 외 = 존재하지 않는 함수 (컴파일 오류급)
+            # (2) enum 형변환 `E(x)` — x 가 멤버 수 이상이면 revert(Panic 0x21). (2026-11-27)
+            ed = self._enum_def_named(function_name)
+            if ed is not None and len(expr.arguments or []) == 1:
+                return self._mapping_lookup_if_needed(self._enum_cast(ed, expr.arguments[0], variables), callerObject)
+            # (3) 그 외 = 존재하지 않는 함수 (컴파일 오류급)
             raise ValueError(f"call to undefined function '{function_name}'")
 
         # 4) 함수 파라미터와 인자 매핑

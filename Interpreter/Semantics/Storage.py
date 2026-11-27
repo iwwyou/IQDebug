@@ -262,7 +262,8 @@ class Storage:
             if ctx == "IndexAccessContext" and e.base is not None and e.index is not None:
                 out = []
                 for base in freeze(e.base, variables):
-                    container = self.ev.evaluate_expression(base, variables, None, None)
+                    # 앞 단계에서 고정한 숨은 index 변수도 보여야 한다(`m[a][b]` 의 m[a] 를 평가할 때)
+                    container = self.ev.evaluate_expression(base, {**variables, **hidden}, None, None)
                     if not isinstance(container, (MappingVariable, ArrayVariable)):
                         raise ValueError(f"storage 참조 '{name}': `{base}` 는 mapping·배열이 아니다")
                     key = self.ev.evaluate_expression(e.index, variables, None, None)

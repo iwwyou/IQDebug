@@ -1076,7 +1076,7 @@ class ContractAnalyzer:
         elif isinstance(variable_obj, MappingVariable) :
             pass
         elif isinstance(variable_obj,EnumVariable) :
-            pass
+            variable_obj.set_top()             # (2026-11-27) 상태변수 진입 값 = 모름(다른 타입과 같다)
         elif variable_obj.typeInfo.typeCategory == "interface" or \
              (hasattr(variable_obj.typeInfo, 'interfaceName') and variable_obj.typeInfo.interfaceName):
             # interface 타입 state variable → AddressSet.top() + _cast_interface
@@ -1160,6 +1160,20 @@ class ContractAnalyzer:
 
         # 6. brace_count 갱신 → IDE/커서 매핑
         self.sa.line_info[self.current_start_line]["cfg_nodes"] = [contract_cfg.state_variable_node]
+
+    def parse_expression_text(self, text: str):
+        """Solidity 식 텍스트 → Expression IR. 문장을 방문하지 않으므로 CFG 를 바꾸지 않는다(디버깅 입력의 위치 식용)."""
+        from Utils.Helper import ParserHelpers
+        from Analyzer.EnhancedSolidityVisitor import EnhancedSolidityVisitor
+        from Parser.SolidityParser import SolidityParser
+        tree = ParserHelpers.generate_parse_tree(f"__iq_loc = {text};", "simpleStatement")
+        stack = [tree]
+        while stack:
+            n = stack.pop()
+            if isinstance(n, SolidityParser.AssignmentContext):
+                return EnhancedSolidityVisitor(self).visitExpression(n.expression(1))
+            stack.extend(getattr(n, "children", None) or [])
+        raise ValueError(f"위치 식 `{text}` 를 읽을 수 없다")
 
     def file_constant(self, name: str):
         """파일 수준 상수 변수(없으면 None). 값은 처음 읽을 때 계산한다 — 다른 파일 수준 상수를 선언 순서와 무관하게 쓸 수 있다."""
@@ -2667,103 +2681,55 @@ class ContractAnalyzer:
 
         return None
 
-    def process_ireturn(self, contract_var: str, func_name: str, access_chain: tuple, value):
-        """
-        @IReturn annotation 처리 (Pattern A: contractVar.funcName().<chain>).
-        access_chain: tuple of ("member", name) or ("index", int), e.g.:
-          () → 단일 return,  (("index", 0),) → [0],  (("member", "fee"),) → .fee
-        """
-        # 1) contract_var가 interface type 변수인지 검증 — (2026-10-23) 진짜 인터페이스만(컨트랙트 타입도 typeCategory 가
-        #   "interface" 로 적혀 있다). IReturn 은 본문 없는 인터페이스 호출 전용(사용자 결정, F49 폐기).
-        interface_name = self._find_interface_name_for_var(contract_var)
-        if interface_name is not None and interface_name not in self.interface_names:
-            raise ValueError(f"@IReturn: '{contract_var}' 의 타입 '{interface_name}' 은 본문이 있는 컨트랙트다 — "
-                             f"IReturn 은 인터페이스 호출 전용")
+    def process_ireturn_key(self, receiver: str, interface_name, func_name: str, access_chain: tuple, value):
+        """(2026-11-27) @IReturn 입력 — 키 = (수신자 원문, 함수 이름, 반환값 접근). 규칙: Interpreter/Semantics/IReturnKey.py.
+        수신자의 인터페이스를 알 수 있으면(캐스트 `I(..)`, 타깃의 상태변수·파라미터·지역 핸들) 검증한다: 진짜 인터페이스인가,
+        그 함수가 있고 view/pure 인가. 모르면(callee·modifier 의 지역 핸들 — 원문 키라 타깃 범위에 없다) 검증 없이 받는다;
+        실행 중 그 원문의 호출을 만날 때 인터페이스가 정해진다. 예전엔 타깃 범위에서 못 찾으면
+        "is not an interface-typed variable" 로 거부했다(표본 30 함수)."""
+        import re as _re_
         if interface_name is None:
-            raise ValueError(
-                f"@IReturn: '{contract_var}' is not an interface-typed variable."
-            )
+            m = _re_.fullmatch(r"[A-Za-z_$][\w$]*", receiver)
+            if m:
+                interface_name = self._find_interface_name_for_var(receiver)
+                if interface_name is not None and interface_name not in self.interface_names:
+                    raise ValueError(f"@IReturn: '{receiver}' 의 타입 '{interface_name}' 은 본문이 있는 컨트랙트다 — "
+                                     f"IReturn 은 인터페이스 호출 전용")
+        if interface_name is not None:
+            _cfg = self.contract_cfgs.get(interface_name)
+            if interface_name not in self.interface_names:
+                if _cfg is not None:
+                    raise ValueError(f"@IReturn: '{interface_name}' 은 본문이 있는 컨트랙트(또는 라이브러리)다 — "
+                                     f"IReturn 은 인터페이스 호출 전용")
+                raise ValueError(f"@IReturn: '{interface_name}' is not a known interface. "
+                                 f"Known interfaces: {list(self.interface_names)}")
+            interface_cfg = _cfg
+            if interface_cfg is None or func_name not in interface_cfg.functions:
+                # 부모 인터페이스에 선언됐을 수 있다 — 실행 쪽(_type_declares_member)과 같은 범위로 본다
+                if self.evaluator._type_declares_member(interface_name, func_name) is not True:
+                    available = list(interface_cfg.functions.keys()) if interface_cfg else []
+                    raise ValueError(f"@IReturn: function '{func_name}' not found in interface '{interface_name}'. "
+                                     f"Available: {available}")
+            else:
+                fcfg = interface_cfg.get_function_cfg(func_name)
+                if fcfg.mutability not in ("view", "pure"):
+                    raise ValueError(f"@IReturn: '{interface_name}.{func_name}' is not view/pure "
+                                     f"(mutability={fcfg.mutability}). @IReturn only supports view/pure interface functions.")
 
-        # 2) 해당 interface에 func_name 함수가 존재하는지 검증
-        interface_cfg = self.contract_cfgs.get(interface_name)
-        if interface_cfg is None or func_name not in interface_cfg.functions:
-            available = list(interface_cfg.functions.keys()) if interface_cfg else []
-            raise ValueError(
-                f"@IReturn: function '{func_name}' not found in interface '{interface_name}'. "
-                f"Available: {available}"
-            )
-
-        # 3) view/pure 함수인지 검증
-        fcfg = interface_cfg.get_function_cfg(func_name)
-        if fcfg.mutability not in ("view", "pure"):
-            raise ValueError(
-                f"@IReturn: '{interface_name}.{func_name}' is not view/pure "
-                f"(mutability={fcfg.mutability}). "
-                f"@IReturn only supports view/pure interface functions."
-            )
-
-        # 4) FunctionCFG의 ireturn_registry에 저장
         ccf = self.contract_cfgs[self.current_target_contract]
         self.current_target_function_cfg = ccf.get_function_cfg(self.current_target_function, param_types=self.current_target_function_param_types)
         if self.current_target_function_cfg is None:
             raise ValueError("@IReturn must be inside a function.")
-
-        key = (contract_var, func_name, access_chain)
-        self.current_target_function_cfg.ireturn_registry[key] = value
-
-        # 5) 재해석 배치
+        self.current_target_function_cfg.ireturn_registry[(receiver, func_name, tuple(access_chain))] = value
         self._batch_targets.add(self.current_target_function_cfg)
 
-    # ------------------------------------------------------------------
-    #  @IReturn (Pattern B: explicit cast)  debug 주석
-    # ------------------------------------------------------------------
+    # 하위 호환(테스트·옛 호출) — 키 하나로 보낸다
+    def process_ireturn(self, contract_var: str, func_name: str, access_chain: tuple, value):
+        self.process_ireturn_key(contract_var, None, func_name, access_chain, value)
+
     def process_ireturn_cast(self, interface_name: str, addr_var: str,
                              func_name: str, access_chain: tuple, value):
-        """
-        @IReturn Pattern B annotation 처리: IInterface(addrVar).funcName().<chain>
-        """
-        # 1) interface_name 이 인터페이스인지 검증 — (2026-10-25) IReturn 은 본문 없는 인터페이스 호출 전용(사용자 결정, F49 폐기).
-        #   예전엔 구체 컨트랙트 캐스트도 받았으나(S0) 실행 시 조회는 인터페이스만 보므로 값이 조용히 무시됐다. 본문 있는
-        #   컨트랙트 타입 호출은 그 본문을 실행해야 한다(다른 인스턴스 storage 모델 = future work). Pattern A 와 같은 오류.
-        _cfg = self.contract_cfgs.get(interface_name)
-        if interface_name not in self.interface_names:
-            if _cfg is not None:
-                raise ValueError(f"@IReturn: '{interface_name}' 은 본문이 있는 컨트랙트(또는 라이브러리)다 — "
-                                 f"IReturn 은 인터페이스 호출 전용")
-            raise ValueError(
-                f"@IReturn: '{interface_name}' is not a known interface. "
-                f"Known interfaces: {list(self.interface_names)}"
-            )
-
-        # 2) 해당 interface에 func_name 함수가 존재하는지 검증
-        interface_cfg = self.contract_cfgs.get(interface_name)
-        if interface_cfg is None or func_name not in interface_cfg.functions:
-            available = list(interface_cfg.functions.keys()) if interface_cfg else []
-            raise ValueError(
-                f"@IReturn: function '{func_name}' not found in interface '{interface_name}'. "
-                f"Available: {available}"
-            )
-
-        # 3) view/pure 함수인지 검증
-        fcfg = interface_cfg.get_function_cfg(func_name)
-        if fcfg.mutability not in ("view", "pure"):
-            raise ValueError(
-                f"@IReturn: '{interface_name}.{func_name}' is not view/pure "
-                f"(mutability={fcfg.mutability}). "
-                f"@IReturn only supports view/pure interface functions."
-            )
-
-        # 4) FunctionCFG의 ireturn_registry에 저장
-        ccf = self.contract_cfgs[self.current_target_contract]
-        self.current_target_function_cfg = ccf.get_function_cfg(self.current_target_function, param_types=self.current_target_function_param_types)
-        if self.current_target_function_cfg is None:
-            raise ValueError("@IReturn must be inside a function.")
-
-        key = (interface_name, addr_var, func_name, access_chain)
-        self.current_target_function_cfg.ireturn_registry[key] = value
-
-        # 5) 재해석 배치
-        self._batch_targets.add(self.current_target_function_cfg)
+        self.process_ireturn_key(f"{interface_name}({addr_var or ''})", interface_name, func_name, access_chain, value)
 
     # ContractAnalyzer.py (일부)
 

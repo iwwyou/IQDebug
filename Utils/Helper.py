@@ -556,7 +556,7 @@ class VariableEnv:
 
         if sol_t.typeCategory == "enum":
             ev = EnumVariable(identifier=identifier, enum_type=sol_t)
-            ev.initialize_enum()
+            ev.initialize_enum(top=True)       # (2026-11-27) ⊤ = 모든 멤버 (예전엔 첫 멤버 — unsound)
             return ev
 
         if sol_t.typeCategory == "function":          # (2026-10-23) 함수 포인터 = ⊤ (Domain/FunctionRef.py)

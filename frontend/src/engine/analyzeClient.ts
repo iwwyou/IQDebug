@@ -26,6 +26,8 @@ export interface AnalyzeRequest {
   source: string
   inputs: Record<string, RangeValue> // slotKey → 값
   intents?: IntentItem[]
+  /** (2026-11-27) 첨부 의존성 {이름: 원문} — 서버가 레지스트리로 빌드해 세션에 로드한다 */
+  deps?: Record<string, string>
 }
 
 export interface Diagnostic {
@@ -50,6 +52,10 @@ export interface EvaluateResult {
   callees?: Record<string, CFG>
   top_vars: TopVar[]
   diagnostics?: Diagnostic[] // debug 값 입력 오류(잘못된 interval 등) — 슬롯 옆 표시
+  /** (2026-11-27) 변수 방식 입력 키 → 이번 입력에서 고른 칸 (`userInfo[0][msg.sender].amount` → `userInfo[0][AddressSet({1})].amount`) */
+  slotCells?: Record<string, string>
+  /** (2026-11-27) 이번 실행에 놓인 입력 수. 0 = 입력 없이 적용 → 모든 진입 값 ⊤ */
+  appliedInputs?: number
 }
 
 // verify() = intent 판정

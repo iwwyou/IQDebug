@@ -139,13 +139,15 @@ export interface TopVar {
 export type DebugKind = 'StateVar' | 'Param' | 'GlobalVar' | 'IReturn'
 
 // 값 입력 종류 — 슬롯의 타입이 결정 (numeric→interval, bool→bool, address→symbolicAddress)
-export type ValueKind = 'interval' | 'bool' | 'address' | 'array' | 'bytes' | 'enum'
+export type ValueKind = 'interval' | 'bool' | 'address' | 'array' | 'bytes' | 'enum' | 'location'
 
 // 사용자가 입력하는 값 (debugValue 캐논으로 직렬화됨)
 export type RangeValue =
   | { t: 'interval'; lo: string; hi: string }
   | { t: 'bool'; v: 'true' | 'false' | 'any' }
   | { t: 'address'; id: number } // symbolicAddress N
+  | { t: 'location'; path: string } // (2026-11-27) storage 파라미터가 가리킬 곳 — `poolInfo[pid]`. 비우면 별도 칸
+  | { t: 'enum'; v: string } // (2026-11-27) enum 멤버 이름 하나. 비우면 모름
   | { t: 'none' }
 
 export interface Suggestion {
@@ -170,6 +172,21 @@ export interface DebugSlot {
   specializable?: boolean
   /** 인덱스가 함수 지역변수(루프 i 등) — 진입 시점 값이 없어 이 키 그대로는 입력 불가, 구체 인덱스로만 */
   requiresIndex?: boolean
+  /** (2026-11-27, 3단계) 첫 index 가 고르는 컨테이너 — 화면이 컨테이너별로 묶는다 */
+  container?: string | null
+  containerKind?: 'mapping' | 'array' | 'static-array' | null
+  containerLength?: number | null
+  /** 변수 방식(`m[x]` 키 그대로) 입력 가능 여부 — mapping 이고 index 가 함수 안에서 바뀌지 않을 때만 */
+  varMode?: boolean
+  varModeReason?: string | null
+  /** valueKind = 'location' (타깃 storage 파라미터) — 가리킬 곳 후보. `[]` 는 사용자가 채우는 index */
+  locationOptions?: string[] | null
+  /** 후보별 `[]` 자리마다 키 타입이 맞는 진입 이름 (파라미터 → 상태변수 → 전역). 제안일 뿐 자동으로 채우지 않는다 */
+  locationIndexHints?: Record<string, string[][]> | null
+  /** valueKind = 'enum' — 멤버 이름(선언 순) */
+  enumMembers?: string[] | null
+  /** @IReturn 키가 덮는 호출 지점 수(2 이상일 때만) — 같은 입력이 그 호출들에 모두 적용된다 */
+  ireturnSites?: number | null
 }
 
 export type DepStatus = 'ready' | 'building' | 'error'
@@ -200,4 +217,8 @@ export interface AnalysisResult {
   intents: IntentItem[]
   /** 분석이 노출하는 debuggable slots (사용자는 값만 채움) */
   debugSlots: DebugSlot[]
+  /** (2026-11-27) 변수 방식 입력이 마지막 evaluate 에서 고른 칸 */
+  slotCells?: Record<string, string>
+  /** 마지막 evaluate 에 놓인 입력 수 (0 = 모든 진입 값 ⊤ 로 실행). 적용 전이면 undefined */
+  appliedInputs?: number
 }

@@ -8,6 +8,17 @@ import VerdictPanel from './VerdictPanel'
 import DebugInputPanel from './DebugInputPanel'
 import IntentPanel from './IntentPanel'
 
+/** (2026-11-27) 엔진 outline 의 source 는 들여쓰기를 뗀 줄이다(slice 저장소). 원본 파일의 같은 줄 범위가
+ *  공백만 빼고 줄마다 같을 때만 원본(들여쓰기 보존)으로 바꾼다 — 편집 중이라 어긋나면 엔진 텍스트 그대로. */
+function withIndent(engineSrc: string, startLine: number | undefined, original: string): string {
+  if (!engineSrc || !startLine || !original) return engineSrc
+  const mine = engineSrc.split('\n')
+  const orig = original.split(/\r?\n/).slice(startLine - 1, startLine - 1 + mine.length)
+  if (orig.length !== mine.length) return engineSrc
+  const same = mine.every((l, i) => l.trim() === orig[i].trim())
+  return same ? orig.join('\n') : engineSrc
+}
+
 export default function DebugView() {
   const activeContract = useStore((s) => s.activeContract)
   const activeFunction = useStore((s) => s.activeFunction)
@@ -17,6 +28,7 @@ export default function DebugView() {
   const analyzeError = useStore((s) => s.analyzeError)
   const syntaxErrors = useStore((s) => s.syntaxErrors)
   const depContents = useStore((s) => s.depContents)
+  const original = useStore((s) => s.files.find((f) => f.path === s.activeFile)?.content ?? '')
   const result = results[keyOf(activeContract, activeFunction)]
   const fnMeta = functions.find((f) => f.name === activeFunction)
   const nav = useNavigation(result)
@@ -30,10 +42,10 @@ export default function DebugView() {
   const frame = nav.stack[nav.stack.length - 1]
   const pane = (() => {
     if (!frame || frame.cfgKey === null) {
-      return { source: fnMeta?.source ?? '', startLine: fnMeta?.startLine, note: '' }
+      return { source: withIndent(fnMeta?.source ?? '', fnMeta?.startLine, original), startLine: fnMeta?.startLine, note: '' }
     }
     const fm = functions.find((f) => f.contract === frame.contract && f.name === frame.name)
-    if (fm) return { source: fm.source, startLine: fm.startLine, note: '' }
+    if (fm) return { source: withIndent(fm.source, fm.startLine, original), startLine: fm.startLine, note: '' }
     const dep = frame.contract ? depContents[frame.contract] : undefined
     if (dep && frame.startLine && frame.endLine) {
       // CRLF 도 섞일 수 있어 정규식으로 자른다(업로드된 원문은 줄끝이 보존된다).

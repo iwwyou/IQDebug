@@ -10,8 +10,13 @@
 """
 from __future__ import annotations
 
+import contextlib
+import hashlib
+import io
 import pathlib
+import re
 import sys
+import tempfile
 
 sys.path.insert(0, str(pathlib.Path(__file__).parent))
 
@@ -47,6 +52,8 @@ class Req(BaseModel):
     # (2026-10-28, 6차 검토 C9) overload 를 시그니처로 지정한다. 생략하면 이름만으로 고르고
     #   (= 먼저 등록된 overload) 그 사실이 Structure 에 드러나지 않는다. 프론트는 아직 안 보낸다.
     param_types: list[str] | None = None
+    # (2026-11-27) 첨부한 의존성 파일 — {이름(확장자 제외): 원문}. 타깃이 import 하는 이름 = `<이름>.sol`.
+    deps: dict[str, str] = {}
 
 
 class OutlineReq(BaseModel):
@@ -58,11 +65,47 @@ class OutlineReq(BaseModel):
 _outline_cache: dict[int, list] = {}
 
 
+def _deps_hash(deps: dict) -> str:
+    h = hashlib.sha1()
+    for name in sorted(deps):
+        h.update(name.encode("utf-8") + b"\0" + deps[name].encode("utf-8") + b"\0")
+    return h.hexdigest()[:16]
+
+
 def _key(r: Req) -> str:
     # overload 는 세션도 분리한다 — 같은 이름의 서로 다른 시그니처가 한 세션을 공유하면
     #   CFG 와 debug 값이 섞인다.
     sig = "(" + ",".join(r.param_types) + ")" if r.param_types is not None else ""
-    return f"{r.contract}.{r.func}{sig}"
+    # (2026-11-27) 의존성이 바뀌면 다른 세션이다 — 로드된 의존성은 세션 안에서 바뀌지 않는다
+    dep = f"@{_deps_hash(r.deps)}" if r.deps else ""
+    return f"{r.contract}.{r.func}{sig}{dep}"
+
+
+_SAFE = re.compile(r"[^A-Za-z0-9._-]+")
+_DEPS_DIR = pathlib.Path(tempfile.gettempdir()) / "iqdebug_server_deps"
+
+
+def _deps_root(deps: dict) -> str | None:
+    """(2026-11-27) 첨부 의존성 → 레지스트리 빌드 디렉터리(내용 해시별로 한 번만 빌드). 비어 있으면 None.
+    빌드는 데이터셋과 같은 `registry.build_root` 다 — 단위가 Complete 가 아니면 분석 시점에 DependencyNotReady 로 알린다."""
+    if not deps:
+        return None
+    from Dependencies import registry
+    root = _DEPS_DIR / _deps_hash(deps)
+    try:
+        registry.current_build(root)
+        return str(root)
+    except Exception:                                      # noqa: BLE001 — 아직 빌드하지 않았다
+        pass
+    (root / "sources").mkdir(parents=True, exist_ok=True)
+    origins = {}
+    for name, text in sorted(deps.items()):
+        uid = _SAFE.sub("_", name)[:60] or "dep"
+        origins[uid] = name if name.endswith(".sol") else name + ".sol"
+        (root / "sources" / f"{uid}.sol").write_text(text, encoding="utf-8", newline="\n")
+    with contextlib.redirect_stdout(io.StringIO()):
+        registry.build_root(root, origins=origins)
+    return str(root)
 
 
 def _to_intents(items: list) -> list[IntentItem]:
@@ -73,7 +116,7 @@ def _to_intents(items: list) -> list[IntentItem]:
 def _build(r: Req):
     """새 세션 생성 + full source → slice → analyze 1회. (session, Structure) 반환.
     (analyze 를 같은 세션에 두 번 호출하면 records 이중 적용으로 손상 → 항상 fresh.)"""
-    sess = EngineSession()
+    sess = EngineSession(_deps_root(r.deps))
     _sessions[_key(r)] = sess
     # (2026-10-24, M8) intent 도 함께 — 슬롯 도출이 intent 가 참조하는 진입 값(상태변수·글로벌·경로)을 포함한다.
     st = sess.analyze_source(r.source, contract=r.contract, func=r.func,
@@ -170,6 +213,8 @@ def evaluate(r: Req) -> dict:
         "callees": {k: _cfg_to_dict(c) for k, c in (ev.callees or {}).items()},
         "top_vars": [asdict(t) for t in ev.top_vars],
         "diagnostics": [asdict(d) for d in ev.diagnostics],
+        "slotCells": ev.slotCells,     # (2026-11-27) 변수 방식 입력이 고른 칸 — 화면의 "지금 → 칸"
+        "appliedInputs": ev.appliedInputs,  # 0 = 입력 없이 적용(모든 진입 값 ⊤)
     }
 
 

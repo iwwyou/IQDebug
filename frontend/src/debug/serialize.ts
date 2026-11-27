@@ -12,6 +12,10 @@ export function valueToText(v: RangeValue): string {
       return v.v // true | false | any
     case 'address':
       return `symbolicAddress ${v.id}`
+    case 'location':
+      return v.path // storage 파라미터 위치(엔진이 어노테이션이 아니라 진입 바인딩으로 쓴다)
+    case 'enum':
+      return v.v
     case 'none':
       return ''
   }
@@ -42,6 +46,10 @@ export function emptyValue(slot: DebugSlot): RangeValue {
       return { t: 'bool', v: 'any' }
     case 'address':
       return { t: 'address', id: 0 }
+    case 'location':
+      return { t: 'location', path: '' } // 비우면 별도 칸
+    case 'enum':
+      return { t: 'enum', v: '' } // 비우면 모름
     default:
       return { t: 'none' }
   }

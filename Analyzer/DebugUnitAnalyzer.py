@@ -31,11 +31,15 @@ class DebugBatchManager:
         self._lines.append(code)
 
     # ── flush : 누적된 모든 라인 순서대로 해석 ────────────────
-    def flush(self):
-        if not self._lines:
+    def flush(self, target=None):
+        """(2026-11-27) target = 해석할 함수 CFG. 주면 줄이 없어도(입력 0개 = 모든 진입 값 ⊤, 위치 입력만 있음) 그 함수를 해석한다."""
+        if not self._lines and target is None:
             return
+        if target is not None:
+            self.analyzer._batch_targets.add(target)
         snap = self.snapman.snapshot()
         self.analyzer.debug_initializer.begin_batch()
+        self.analyzer._slot_cells = []
         try:
             # (2026-11-20) 입력 적용은 실행 단계가 아니다 — 슬롯 키의 인덱스 식(`_allowances[_msgSender()]`)을
             #   풀려고 함수를 해석해도 그것은 사용자가 Step Into 할 호출이 아니므로 callee 상태를 캡처하지 않는다.

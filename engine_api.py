@@ -74,7 +74,7 @@ EdgeKind = Literal["normal", "true", "false", "back_edge"]
 LoopExitKind = Literal["normal", "break", "return", "revert", "other"]
 VerdictStatus = Literal["Satisfied", "Warning", "Violated", "Unreachable"]
 DebugKind = Literal["StateVar", "Param", "GlobalVar", "IReturn"]
-ValueKind = Literal["interval", "bool", "address", "array", "bytes", "enum"]
+ValueKind = Literal["interval", "bool", "address", "array", "bytes", "enum", "location"]
 Backend = Literal["llm", "solver", "hybrid"]
 
 
@@ -232,6 +232,20 @@ class DebugSlot:
     specializable: bool = False    # 인덱스 자리가 있는 경로 슬롯
     requiresIndex: bool = False    # 인덱스가 타깃 **지역변수**(`pegObservations[i]` 의 루프 i) — 진입 시점에 값이 없으므로
                                    #   이 키 그대로는 입력할 수 없고 구체 인덱스로만 입력한다
+    # (2026-11-27, 3단계 슬롯) 경로의 첫 index 가 고르는 컨테이너 — 화면이 컨테이너별로 묶는다(ROADMAP 결정 3·4·12)
+    container: Optional[str] = None          # `userInfo`, `s[x].list` — 첫 index 앞까지의 경로
+    containerKind: Optional[str] = None      # "mapping" | "array"(동적 = 원소 목록) | "static-array"
+    containerLength: Optional[int] = None    # static-array 의 선언 길이
+    varMode: bool = False                    # 변수 방식(`m[x]` 그대로) 입력이 가능한가 — mapping 이고 index 가 함수 안에서 바뀌지 않을 때만
+    varModeReason: Optional[str] = None      # 불가하면 그 이유(화면 표시)
+    # (2026-11-27) 타깃 자신의 storage 파라미터 — 가리킬 곳 후보(`poolInfo[]` 의 `[]` 는 사용자가 채우는 index). valueKind = "location"
+    locationOptions: Optional[list[str]] = None
+    # 후보별 `[]` 자리마다 키 타입이 맞는 진입 이름(파라미터 → 상태변수 → 전역 순). 제안일 뿐 자동으로 채우지 않는다
+    locationIndexHints: Optional[dict[str, list[list[str]]]] = None
+    # (2026-11-27) valueKind = "enum" 일 때 멤버 이름(선언 순). 입력 = 멤버 하나, 비우면 모름
+    enumMembers: Optional[list[str]] = None
+    # (2026-11-27) @IReturn 키가 덮는 호출 지점 수 — `IFace().f()` 처럼 여러 곳에 같은 입력이 적용될 때 화면이 알린다
+    ireturnSites: Optional[int] = None
 
 
 @dataclass
@@ -301,6 +315,10 @@ class CfgWithStates:
     top_vars: list[TopVar] = field(default_factory=list)
     # debug 값 입력 오류(잘못된 interval 등). 비어있지 않으면 프론트가 슬롯 옆에 표시(Fix A).
     diagnostics: list[Diagnostic] = field(default_factory=list)
+    # (2026-11-27) 변수 방식 입력(`userInfo[pid][msg.sender].amount`)이 이번 입력에서 고른 칸 — 화면의 "지금 → 칸" 표시
+    slotCells: dict[str, str] = field(default_factory=dict)
+    # (2026-11-27) 이번 해석에 실제로 놓인 입력 수. 0 = 입력 없이 적용 → 모든 진입 값 ⊤ 로 실행(적용 전 = evaluate 를 부르지 않음 과 구분)
+    appliedInputs: int = 0
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -362,8 +380,32 @@ def _serialize_node_state(n, recorder, env=None) -> dict[str, str]:
         if "" in name or "" in name:      # 내부용 키 (shadowing 보관 · storage 참조의 숨은 index)
             continue
         recorder._flatten_var(var, name, flat)  # fail-loud: 직렬화 구멍은 그대로 터뜨림
+    from Domain.Variable import StorageRef
+    # (2026-11-27) storage 참조의 표시 — 숨은 index 이름(`pool␞site.k0`)을 그 값으로 바꾼다(`poolInfo[0]`)
+    vars_ = getattr(n, "variables", {}) if env is None else env
+    hidden = {k: v for k, v in vars_.items() if "\x1e" in k}
+    for name, var in vars_.items():
+        if isinstance(var, StorageRef) and name in flat and "\x1e" not in name:
+            txt = flat[name]
+            for hk, hv in {**hidden, **(getattr(var, "hidden", None) or {})}.items():
+                if hk in txt:
+                    txt = txt.replace(hk, _index_value_text(hv))
+            flat[name] = txt
     # ⊥(bottom = 도달 불가 분기) 가독화: "[None,None]" → "⊥"
     return {k: ("⊥" if v == "[None,None]" else v) for k, v in flat.items()}
+
+
+def _index_value_text(v) -> str:
+    """숨은 index 값 → 표시: 한 점 interval 은 그 수, 한 주소는 `symbolicAddress N`, 그 밖은 범위 그대로."""
+    val = getattr(v, "value", v)
+    t = str(val)
+    m = _re.fullmatch(r"\[(-?\d+),\s*(-?\d+)\]", t) or _re.fullmatch(r"\w*Interval\(\[(-?\d+),\s*(-?\d+)\]\)", t)
+    if m and m.group(1) == m.group(2):
+        return m.group(1)
+    a = _re.fullmatch(r"AddressSet\(\{(\d+)\}\)", t)
+    if a:
+        return f"symbolicAddress {a.group(1)}"
+    return t
 
 
 _LOOP_COND_TYPES = ("while", "for", "do_while")
@@ -718,6 +760,10 @@ def _value_text(v: RangeValue) -> Optional[str]:
         return v["v"]  # true | false | any
     if t == "address":
         return f'symbolicAddress {v["id"]}'
+    if t == "enum":
+        # (2026-11-27) 멤버 이름 하나(`B` 또는 `S.B`). 비우면 미입력(= 모름)
+        m = str(v.get("v") or "").strip()
+        return m or None
     return None
 
 
@@ -748,6 +794,9 @@ def _debug_value_text(v: RangeValue, slot: Optional["DebugSlot"]):
         return v.get("v", "any"), None
     if t == "address":
         return f'symbolicAddress {v.get("id", 0)}', None
+    if t == "enum":
+        # (2026-11-27) 멤버 이름 하나. 비우면 미입력(= 모름)
+        return _value_text(v), None
     return None, None
 
 
@@ -1080,6 +1129,125 @@ def _interface_handles(f, interface_names) -> dict:
     return out
 
 
+def _type_sig(t) -> str:
+    """타입의 구조 서명 — 같은 타입의 storage 위치 후보를 찾는 데 쓴다."""
+    cat = getattr(t, "typeCategory", None)
+    if cat == "struct":
+        d = getattr(t, "structDef", None)
+        return f"struct {getattr(d, 'owner', None)}.{getattr(d, 'struct_name', getattr(t, 'structTypeName', '?'))}"
+    if cat == "array":
+        n = "" if t.isDynamicArray else str(t.arrayLength)
+        return f"{_type_sig(t.arrayBaseType)}[{n}]"
+    if cat == "mapping":
+        return f"mapping({_type_sig(t.mappingKeyType)}=>{_type_sig(t.mappingValueType)})"
+    return str(getattr(t, "elementaryTypeName", None) or getattr(t, "interfaceName", None) or cat)
+
+
+def _location_candidates(ptype, statevars) -> list:
+    """storage 파라미터가 가리킬 수 있는 상태변수 위치 — 같은 타입의 상태변수 자신, 그 원소(`m[]`, 중첩 `m[][]`), 한 단계 멤버.
+    `[]` 자리는 사용자가 진입 시점 index 식으로 채운다. [(라벨, [`[]` 자리별 키 타입 서명])]"""
+    want, out = _type_sig(ptype), []
+
+    def walk(t, label, keys, depth):
+        if depth > 3 or t is None:
+            return
+        if _type_sig(t) == want:
+            out.append((label, keys))
+        cat = getattr(t, "typeCategory", None)
+        if cat == "mapping":
+            walk(t.mappingValueType, label + "[]", keys + [_type_sig(t.mappingKeyType)], depth + 1)
+        elif cat == "array":
+            walk(t.arrayBaseType, label + "[]", keys + ["uint256"], depth + 1)
+        elif cat == "struct" and depth == 0 and getattr(t, "structDef", None) is not None:
+            for m, mt in t.structDef.members.items():
+                walk(mt, f"{label}.{m}", keys, depth + 1)
+
+    for name, v in sorted(statevars.items()):
+        walk(getattr(v, "typeInfo", None), name, [], 0)
+    return out
+
+
+def _location_options(ptype, statevars) -> list:
+    return [label for label, _ in _location_candidates(ptype, statevars)]
+
+
+# 진입 시점에 값이 있는 전역 — index 제안용 (이름, 타입 서명)
+_GLOBAL_HINTS = (("msg.sender", "address"), ("tx.origin", "address"), ("msg.value", "uint256"),
+                 ("block.timestamp", "uint256"), ("block.number", "uint256"), ("block.chainid", "uint256"))
+
+
+def _location_index_hints(ptype, statevars, params, param_objs) -> dict:
+    """(2026-11-27) 후보마다 `[]` 자리별로 키 타입이 맞는 진입 이름 — 파라미터(선언 순) → 상태변수(이름 순) → 전역.
+    정수는 폭·부호와 무관하게 정수끼리, address 는 payable 과 무관하게 묶는다(index 식은 암시 변환·캐스트가 흔하다)."""
+    def norm(sig):
+        sig = (sig or "").replace(" payable", "")
+        return "int" if _re.fullmatch(r"u?int\d*", sig) else sig
+
+    def sig_of(v):
+        t = getattr(v, "typeInfo", None)
+        if t is None or getattr(t, "typeCategory", None) in ("struct", "array", "mapping"):
+            return None
+        return norm(_type_sig(t))
+
+    names = [(p, sig_of(param_objs.get(p))) for p in params]
+    names += [(n, sig_of(v)) for n, v in sorted(statevars.items())]
+    names += [(g, norm(t)) for g, t in _GLOBAL_HINTS]
+    out = {}
+    for label, keys in _location_candidates(ptype, statevars):
+        out[label] = [[n for n, s in names if s is not None and s == norm(k)] for k in keys]
+    return out
+
+
+def _ireturn_chain_text(chain) -> str:
+    """@IReturn 반환값 접근 → 키 텍스트: ("member",m)→.m, ("index",k)→[k], ("call",g)→.g()"""
+    out = ""
+    for k, x in chain or ():
+        out += f".{x}" if k == "member" else (f"[{x}]" if k == "index" else f".{x}()")
+    return out
+
+
+def _type_at(t, accs):
+    """타입 t 에서 접근자 accs 를 따라간 타입(모르면 None). index 는 mapping 값·배열 원소, member 는 struct 멤버."""
+    for k, x in accs:
+        if t is None:
+            return None
+        cat = getattr(t, "typeCategory", None)
+        if k == "index":
+            t = t.mappingValueType if cat == "mapping" else (t.arrayBaseType if cat == "array" else None)
+        elif k == "member":
+            d = getattr(t, "structDef", None) if cat == "struct" else None
+            t = d.members.get(x) if d is not None else None
+        else:
+            return None
+    return t
+
+
+def _container_info(key, roots) -> dict:
+    """경로 슬롯 키의 첫 index 가 고르는 컨테이너. {container, containerKind, containerLength} (모르면 빈 dict)."""
+    root, accs = _parse_label(key)
+    t = getattr(roots.get(root), "typeInfo", None)
+    label = root
+    for k, x in accs:
+        if t is None:
+            return {}
+        if k == "index":
+            cat = getattr(t, "typeCategory", None)
+            if cat == "mapping":
+                return {"container": label, "containerKind": "mapping"}
+            if cat == "array":
+                if t.isDynamicArray:
+                    return {"container": label, "containerKind": "array"}
+                return {"container": label, "containerKind": "static-array", "containerLength": t.arrayLength}
+            return {}
+        if k == "member":
+            d = getattr(t, "structDef", None) if getattr(t, "typeCategory", None) == "struct" else None
+            t = d.members.get(x) if d is not None else None
+            label = f"{label}.{x}"
+        else:
+            return {}
+    return {}
+
+
 def _declared_locals(f) -> set:
     """함수 안에서 선언된 지역변수 이름 (파라미터 제외)."""
     names = set()
@@ -1096,6 +1264,15 @@ def _index_texts(label: str) -> list:
 
 def _idents_in(text: str) -> set:
     return set(_re.findall(r"(?<![\w$])[A-Za-z_$][\w$]*", text or ""))   # 0x1a 의 x1a 는 식별자 아님
+
+
+_TYPE_WORD = _re.compile(r"address|payable|bool|string|bytes\d*|u?int\d*")
+
+
+def _constant_index(text: str) -> bool:
+    """(2026-11-27) index 식이 진입 이름을 하나도 쓰지 않는 상수인가 — `0`, `bytes32(0)`, `uint256(uint160(0))`.
+    형변환 이름(`bytes32`·`uint256`·`address` …)은 이름이 아니다."""
+    return not any(not _TYPE_WORD.fullmatch(n) for n in _idents_in(text))
 
 
 _CAST_CALL = _re.compile(r"(address|payable|bool|string|bytes\d*|u?int\d*|[A-Z]\w*)$")
@@ -1233,6 +1410,65 @@ def _derive_debug_slots(fcfg, ccf=None, func_src: str = "", func_name: str = "",
     def label_root_name(label):
         return _parse_label(label)[0]
 
+    # (2026-11-27) @IReturn 키 규칙 — Interpreter/Semantics/IReturnKey.py
+    from Interpreter.Semantics import IReturnKey
+    type_names = set(interface_names or ()) | set(contract_cfgs.keys())
+
+    def iface_of(recv, frame):
+        """외부 호출 수신자의 인터페이스 이름(본문 없는 인터페이스만). 캐스트 → 그 타입, 경로 → 그 프레임 함수의 선언 타입,
+        호출 결과(`getPool()`, `a.b()`) → 정적 반환 타입."""
+        if IReturnKey.is_cast(recv, type_names):
+            nm = getattr(recv, "typeName", None) or getattr(getattr(recv, "function", None), "identifier", None)
+            return nm if nm in interface_names else None
+        fn = frame.get("fn")
+        env = getattr(fn, "related_variables", {}) or {}
+        if IReturnKey.has_method_call(recv, type_names):
+            if evaluator is None:
+                return None
+            try:
+                st = evaluator._static_type_of(recv, env)
+            except Exception:                   # noqa: BLE001 — 정적 타입을 못 정하면 IReturn 지점이 아니다
+                return None
+            nm = getattr(st, "interfaceName", None) if getattr(st, "typeCategory", None) == "interface" else None
+            return nm if nm in interface_names else None
+        r, accs = _parse_label(IReturnKey.label(recv))
+        if r is None:
+            return None
+        if not accs and r in frame.get("ifc", {}):
+            return frame["ifc"][r]
+        if not accs and r in ext_roots and r not in frame["locs"]:
+            return ext_roots[r] if ext_roots[r] in interface_names else None
+        rv = env.get(r) or statevars.get(r)
+        t = _type_at(getattr(rv, "typeInfo", None), accs) if rv is not None else None
+        nm = getattr(t, "interfaceName", None) if getattr(t, "typeCategory", None) == "interface" else None
+        return nm if nm in interface_names else None
+
+    site_ids: dict = {}                    # 키 → 덮는 호출 지점(호출식 id)
+
+    def ireturn_sites(e, frame):
+        """접근 사슬 e 의 메서드 호출마다, 수신자가 인터페이스이고 그 함수를 선언했으면 (키, 인터페이스, 함수).
+        키 = `<수신자>.f()` + 그 호출 바로 바깥의 멤버·index 접근(struct 멤버·튜플 원소)."""
+        out, cur, top = [], e, e
+        while True:
+            if _ap_is_index(cur):
+                cur = cur.base
+            elif _ap_is_member(cur):
+                cur = _ap_member_base(cur)
+            elif _ap_is_call(cur) and _ap_is_member(cur.function):
+                recv = _ap_member_base(cur.function)
+                fname = cur.function.member
+                iface = iface_of(recv, frame)
+                if iface is not None and evaluator is not None and \
+                        evaluator._type_declares_member(iface, fname) is True:
+                    key = IReturnKey.call_key(cur, iface, type_names) + \
+                        IReturnKey.label(top)[len(IReturnKey.label(cur)):]
+                    out.append((key, iface, fname))
+                    site_ids.setdefault(IReturnKey.call_key(cur, iface, type_names), set()).add(id(cur))
+                cur, top = recv, recv
+            else:
+                break
+        return out
+
     def scan(e, frame):
         if not isinstance(e, Expression):
             return
@@ -1249,10 +1485,16 @@ def _derive_debug_slots(fcfg, ccf=None, func_src: str = "", func_name: str = "",
             root, accs = _ap_spine(e)
             cls = classify(root, frame)
             has_call = any(k == "call" for k, _ in accs)
+            sites = ireturn_sites(e, frame) if has_call else []
+            for key, iface, fname in sites:
+                ireturn_labels.add(key)
+                ireturn_meta[key] = (iface, fname)
             if cls is not None and not (cls != "IReturn" and has_call):
                 if cls == "IReturn" and not has_call:
                     # (2026-10-25) 호출 없이 함수 멤버만 참조(`I.f.selector`)는 외부 호출이 아니다 — 컴파일 시점 상수, 슬롯 없음(29_H_08).
                     pass
+                elif cls == "IReturn" and sites:
+                    pass                        # (2026-11-27) 위에서 키 규칙대로 등록했다
                 elif cls == "IReturn":
                     # IReturn 값은 **호출 지점 원문**(callee 안이면 callee 의 이름)으로 조회된다(ireturn_registry 키) —
                     #   슬롯 키는 원문이라 타깃 이름으로 번역할 필요가 없다(지역 핸들 `vg.f()` 도). 타입은 루트에서 찾는다.
@@ -1331,12 +1573,31 @@ def _derive_debug_slots(fcfg, ccf=None, func_src: str = "", func_name: str = "",
                 if frame["lib"] is not None:
                     using.append(frame["lib"])
                 seen = set()
+                rt = recv_type(base, frame)
                 for l in using:
                     if id(l) in seen:
                         continue
                     seen.add(id(l))
-                    out += [(g, base) for g in (l.functions.get(member) or {}).values()]
+                    for g in (l.functions.get(member) or {}).values():
+                        # (2026-11-27) 수신자 타입을 알면 첫 파라미터 타입이 같은 것만 — 예전엔 `_tokenOwners.length()` 에
+                        #   EnumerableSet.length(UintSet) 까지 따라가 `_tokenOwners._inner._values` 같은 없는 경로 슬롯이 생겼다
+                        if rt is not None:
+                            ps = list(getattr(g, "parameters", []) or [])
+                            pt = getattr((getattr(g, "related_variables", {}) or {}).get(ps[0]), "typeInfo", None) if ps else None
+                            if pt is not None and _type_sig(pt) != _type_sig(rt):
+                                continue
+                        out.append((g, base))
         return out
+
+    def recv_type(base, frame):
+        """using-for 수신자 식의 타입 — 타깃 진입 이름(상태변수·파라미터) 경로로 옮길 수 있을 때만. 모르면 None."""
+        try:
+            label = lab(base, frame)
+        except _Untranslatable:
+            return None
+        r, accs = _parse_label(label)
+        root = statevars.get(r) or param_objs.get(r)
+        return _type_at(getattr(root, "typeInfo", None), accs) if root is not None else None
 
     def bind(callee, recv, args, named, frame):
         ps = list(getattr(callee, "parameters", []) or [])
@@ -1371,7 +1632,7 @@ def _derive_debug_slots(fcfg, ccf=None, func_src: str = "", func_name: str = "",
         visited.add(key)
         locs = declared_locals(f) | {p for p, (lb, _c) in sub.items() if lb is None}
         ifc = {k: v for k, v in _interface_handles(f, interface_names).items() if k not in sub}
-        queue.append((f, {"sub": sub, "locs": locs, "lib": lib, "strict": depth > 0, "ifc": ifc}, depth))
+        queue.append((f, {"sub": sub, "locs": locs, "lib": lib, "strict": depth > 0, "ifc": ifc, "fn": f}, depth))
 
     def follow_call(e, frame):
         args = list(getattr(e, "arguments", None) or [])
@@ -1390,6 +1651,25 @@ def _derive_debug_slots(fcfg, ccf=None, func_src: str = "", func_name: str = "",
                 continue
             enqueue(mod, bind(mod, None, list(margs or []), {}, frame), None, depth + 1)
 
+    # (2026-11-27) 함수 실행 중 값이 바뀌는 진입 이름 — 그 이름을 index 로 쓰는 변수 방식 슬롯은 진입 값과 접근 시점 값이 다를 수 있다
+    from Interpreter.Semantics.Update import _lhs_roots
+    modified: set = set()
+
+    def note_writes(n, frame, depth):
+        for st in getattr(n, "statements", []) or []:
+            t = getattr(st, "statement_type", None)
+            if t == "assignment":
+                roots = _lhs_roots(st.left)
+            elif t == "unary" and st.operator in ("++", "--", "delete"):
+                roots = _lhs_roots(st.operand)
+            else:
+                continue
+            for r in roots:
+                if depth == 0 and (r in params or r in statevars):
+                    modified.add(r)
+                elif depth > 0 and r in statevars and r not in frame["locs"] and r not in frame["sub"]:
+                    modified.add(r)
+
     frame_depth = [0]
     enqueue(fcfg, {p: (p, "Param") for p in params}, lib_of(fcfg), 0)
     while queue:
@@ -1398,6 +1678,7 @@ def _derive_debug_slots(fcfg, ccf=None, func_src: str = "", func_name: str = "",
         for n in f.graph.nodes():
             for e in _ap_node_exprs(n):
                 scan(e, frame)
+            note_writes(n, frame, depth)
         modifiers_of(f, frame, depth)
 
     # ── intent 가 참조하는 진입 값 (2026-10-23, M8) ───────────────────
@@ -1445,20 +1726,56 @@ def _derive_debug_slots(fcfg, ccf=None, func_src: str = "", func_name: str = "",
 
     seen_keys: set = set()
 
+    def add_slot(s):
+        if s.key not in seen_keys:
+            seen_keys.add(s.key)
+            slots.append(s)
+
     def add(kind, key, vk):
         if key in seen_keys:
             return
         seen_keys.add(key)
         v, opaque, signed, bits = vk
         idx = _index_texts(key) if kind in ("StateVar", "Param") else []
+        req = any(_idents_in(t) & target_locals for t in idx)
+        info = _container_info(key, statevars if kind == "StateVar" else param_objs) if idx else {}
+        if info and all(_constant_index(t) for t in idx):
+            pass                        # index 가 전부 리터럴(`nodes[1]`, `xs[1]`) — 이미 구체 칸이다(값 방식의 칸)
+        elif info.get("containerKind") == "mapping":
+            bad = sorted(set().union(*(_idents_in(t) for t in idx)) & modified)
+            if req:
+                info.update(varMode=False, varModeReason="index 가 함수 지역변수라 진입 시점 값이 없다")
+            elif bad:
+                info.update(varMode=False, varModeReason=f"index `{', '.join(bad)}` 가 함수 안에서 바뀐다")
+            else:
+                info.update(varMode=True)
+        elif info.get("containerKind") in ("array", "static-array"):
+            info.update(varMode=False, varModeReason="배열은 원소 목록으로 입력한다")
+        if v == "enum" and kind in ("StateVar", "Param"):
+            r0, accs0 = _parse_label(key)
+            root0 = (statevars if kind == "StateVar" else param_objs).get(r0)
+            et = _type_at(getattr(root0, "typeInfo", None), accs0) if root0 is not None else None
+            ed = getattr(et, "enumDef", None)
+            if ed is not None:
+                info["enumMembers"] = list(ed.members)
+        if kind == "IReturn":
+            _sk = IReturnKey.split_key(key)
+            n_sites = len(site_ids.get(f"{_sk[0]}.{_sk[1]}()", ())) if _sk else 0
+            if n_sites > 1:
+                info["ireturnSites"] = n_sites
         slots.append(DebugSlot(kind=kind, key=key, label=key, valueKind=v,
                                opaque=bool(opaque), signed=signed, bits=bits,
-                               specializable=bool(idx),
-                               requiresIndex=any(_idents_in(t) & target_locals for t in idx)))
+                               specializable=bool(idx), requiresIndex=req, **info))
 
     # 1) 파라미터 — 타입대로, 복합이면 멤버 leaf 까지
     for p in params:
         po = param_objs.get(p)
+        pt = getattr(po, "typeInfo", None)
+        if getattr(pt, "dataLocation", None) == "storage" and getattr(pt, "typeCategory", None) in ("struct", "array", "mapping"):
+            # (2026-11-27) 타깃 자신의 storage 파라미터 — 가리킬 곳(기본 = 별도 칸). 별도 칸이면 아래 멤버 슬롯이 그 칸의 값이다
+            add_slot(DebugSlot(kind="Param", key=p, label=p, valueKind="location",
+                               locationOptions=_location_options(pt, statevars),
+                               locationIndexHints=_location_index_hints(pt, statevars, params, param_objs)))
         if isinstance(po, StructVariable):
             emit_path(p, "Param", po)
         else:
@@ -1484,6 +1801,12 @@ def _derive_debug_slots(fcfg, ccf=None, func_src: str = "", func_name: str = "",
         ro = root_obj(label, cls)
         if not isinstance(ro, (StructVariable, MappingVariable, ArrayVariable)):
             continue                    # 스칼라 루트의 멤버(`to.balance` 등)는 저장소 경로가 아니다
+        if accs and accs[-1] == ("member", "length"):
+            # (2026-11-27) 동적 배열의 길이 = 입력한 원소 수 — 따로 입력하지 않는다(ROADMAP 결정 4).
+            #   값이 아니라 **타입**으로 판정한다 — mapping 을 지나는 경로(`h[o]._inner._entries.length`)는 칸이 없어 값으로 못 찾는다.
+            bt = _type_at(getattr(ro, "typeInfo", None), accs[:-1])
+            if getattr(bt, "typeCategory", None) == "array" and bt.isDynamicArray:
+                continue
         emit_path(label, cls, _navigate(ro, accs))
 
     # 4) 글로벌 — 기존 등록(usage_sites) ∪ footprint 에서 쓰인 것
@@ -1499,13 +1822,16 @@ def _derive_debug_slots(fcfg, ccf=None, func_src: str = "", func_name: str = "",
     # 5) @IReturn — 스캔 ∪ registry. 튜플 반환이면 원소별 `[k]`
     _handles = _interface_handles(fcfg, interface_names)
     for key in getattr(fcfg, "ireturn_registry", {}) or {}:
-        label = ".".join(str(x) for x in key if x)
+        # (2026-11-27) 입력 키 = (수신자 원문 | `IFace(..)`, 함수 이름, 반환값 접근)
+        recv, fname, chain = key[0], key[1], (key[2] if len(key) > 2 else ())
+        label = f"{recv}.{fname}()" + _ireturn_chain_text(chain)
         ireturn_labels.add(label)
-        if label not in ireturn_meta and len(key) >= 2:      # 입력으로 들어온 키 = (핸들 이름, 함수 이름, 접근 체인)
-            tn = ext_roots.get(key[0]) or _handles.get(key[0]) or \
-                (getattr(fcfg, "interface_var_types", None) or {}).get(key[0])
+        if label not in ireturn_meta:
+            m = _re.fullmatch(r"([A-Za-z_$][\w$]*)\(.*\)", recv)
+            tn = (m.group(1) if m and m.group(1) in interface_names else None) or ext_roots.get(recv) or \
+                _handles.get(recv) or (getattr(fcfg, "interface_var_types", None) or {}).get(recv)
             if tn:
-                ireturn_meta[label] = (tn, key[1])
+                ireturn_meta[label] = (tn, fname)
 
     def ireturn_rejected(label: str) -> bool:
         """IReturn 슬롯이 **아닌가**: 받는 쪽 타입(부모 포함)이 그 이름의 view/pure 함수를 선언하지 않았다.
@@ -1556,13 +1882,19 @@ def _derive_debug_slots(fcfg, ccf=None, func_src: str = "", func_name: str = "",
         cands = ireturn_cands(label)
         arity = max((len(getattr(c, "return_types", []) or []) for c in cands), default=1)
         if arity > 1 and not label.endswith("]"):
+            # (2026-11-27) 원소 슬롯은 그 원소의 반환 타입대로(폭·부호·값 종류) — 예전엔 언제나 256 비트 interval 이라
+            #   `uint40` 원소에 전 범위 입력이 들어가면 변환 오류였다(BorrowLogic getSupplyData)
+            rts_ = list(getattr(cands[0], "return_types", []) or []) if cands else []
             for k in range(arity):
-                add("IReturn", f"{label}[{k}]", ("interval", True, None, None))
+                tk = rts_[k] if k < len(rts_) else None
+                add_ireturn(f"{label}[{k}]", tk)
             continue
         # 반환 타입 → 라벨의 호출 뒤 멤버 체인(`().a.b`)을 따라간 타입. 그 뒤에 또 호출이 있으면 타입을 정하지 않는다.
         rts = list(getattr(cands[0], "return_types", []) or []) if cands else []
         t = rts[0] if len(rts) == 1 else None
-        tail = label.split("()", 1)[1] if "()" in label else ""
+        # (2026-11-27) 수신자의 `()`(`IFace().f()`) 와 구분 — 키 규칙대로 자른다
+        _sk = IReturnKey.split_key(label)
+        tail = _sk[2] if _sk else ""
         if t is not None and _re.fullmatch(r"(?:\.[A-Za-z_]\w*)*", tail):
             for m in [x for x in tail.split(".") if x]:
                 sd = ret_struct_def(t)
@@ -1819,15 +2151,63 @@ class EngineSession:
         self._batch.reset()
         applied = 0
         errors: list[Diagnostic] = []
+        self._ca._pending_ref_bindings = {}
+        self._queued_keys = []
+        # (2026-11-27) 한 mapping 에는 한 방식 — 변수 방식(슬롯 키 그대로) 과 값 방식(index 를 구체값으로 바꾼 키) 을 섞지 않는다
+        modes: dict = {}
+        for key, val in (debug_values or {}).items():
+            slot = self.match_slot(key)
+            if slot is None or slot.containerKind != "mapping" or _value_text(val) is None:
+                continue                # 배열은 값 방식(원소 목록)뿐이다 — 변수 index 입력은 아래에서 따로 거부한다
+            literal = all(_constant_index(t) for t in _index_texts(slot.key))
+            modes.setdefault(slot.container, set()).add("var" if key == slot.key and not literal else "value")
+        mixed = {c for c, ms in modes.items() if len(ms) > 1}
+        for c, ms in sorted(modes.items()):
+            if len(ms) > 1:
+                errors.append(Diagnostic(line=0, severity="error",
+                                         message=f"{c}: 변수 방식 입력과 값 방식 입력을 함께 쓸 수 없다 — 한 방식으로 입력"))
         # (2026-10-23) 디버그 입력은 **동시에** 성립하는 진입 제약이다 — 인덱스 슬롯(`m[i]`)이 위치를 고를 때 선택자(`i`)의
         #   입력값이 이미 놓여 있어야 한다. 접근 경로가 얕은 것부터(`[` 개수) 놓아 입력 순서와 무관하게 만든다.
         for key, val in sorted((debug_values or {}).items(), key=lambda kv: kv[0].count("[")):
             slot = self.match_slot(key)
+            if slot is not None and slot.valueKind == "location":
+                if val.get("t") == "none" or (val.get("t") == "location" and not str(val.get("path") or "").strip()):
+                    continue            # 비움 = 별도 칸(기본)
+                path = str(val.get("path") or "").strip() if val.get("t") == "location" else None
+                err = None if path is not None else "storage 파라미터에는 위치를 준다"
+                if path:
+                    pr, pa = _parse_label(path)
+                    tmpl = [o for o in (slot.locationOptions or []) if _parse_label(o)[0] == pr
+                            and [(k, x if k != "index" else "") for k, x in _parse_label(o)[1]] == [(k, x if k != "index" else "") for k, x in pa]]
+                    locs = getattr(self, "_slot_locals", set()) or set()
+                    if not tmpl:
+                        err = f"`{path}` 는 이 파라미터가 가리킬 수 있는 위치(같은 타입의 상태변수)가 아니다"
+                    elif not all(_entry_index_ok(x, locs) and x for k, x in pa if k == "index"):
+                        err = f"`{path}` 의 index 는 진입 시점에 정해지는 식이어야 한다(파라미터·상태변수·리터럴)"
+                    else:
+                        # index 식의 이름 = 이 함수의 진입 이름(슬롯 루트)이거나 전역·타입 이름
+                        known = {_parse_label(k)[0] for k in self._slots} | {"msg", "block", "tx", "this", "address"}
+                        unknown = sorted(n for k, x in pa if k == "index" for n in _re.findall(r"(?<![\w$.])[A-Za-z_$][\w$]*", x)
+                                         if n not in known and not _re.fullmatch(r"u?int\d*|bytes\d*", n))
+                        if unknown:
+                            err = f"`{path}` 의 index 에 모르는 이름이 있다: {', '.join(unknown)}"
+                if err:
+                    errors.append(Diagnostic(line=0, severity="error", message=f"{key}: {err}"))
+                elif path:
+                    self._ca._pending_ref_bindings[key] = path
+                    applied += 1
+                continue
             if _value_text(val) is None or (val.get("t") == "interval" and not str(val.get("lo", "")).strip()
                                             and not str(val.get("hi", "")).strip()):
                 continue                                  # 빈 칸 = 입력 안 함
             if slot is None:
                 errors.append(Diagnostic(line=0, message=f"{key}: 이 함수의 디버그 슬롯이 아니다", severity="error"))
+                continue
+            if slot.container in mixed:
+                continue                # 방식이 섞인 컨테이너의 입력은 하나도 놓지 않는다(위에서 오류로 알렸다)
+            if slot.container and key == slot.key and not slot.varMode and slot.varModeReason:
+                errors.append(Diagnostic(line=0, severity="error",
+                                         message=f"{key}: 변수 방식으로 입력할 수 없다 ({slot.varModeReason}) — 칸을 지정해 입력"))
                 continue
             if slot.key == key and slot.requiresIndex:
                 errors.append(Diagnostic(line=0, severity="error",
@@ -1849,6 +2229,7 @@ class EngineSession:
                                          message=f"{key}: 디버그 입력 문법으로 읽을 수 없는 키다 ({'; '.join(syn)})"))
                 continue
             self._batch.add(line)
+            self._queued_keys.append(key)
             applied += 1
         self._last_value_errors = errors
         return applied
@@ -1866,11 +2247,14 @@ class EngineSession:
         self._attach_intents(fcfg, self._intents)
 
         applied = self._queue_debug_values(self._last_debug_values)
-        if applied == 0:
-            return fcfg, None  # 값 없음 → 해석 안 함
+        self._last_applied = applied
+        if applied == 0 and self._last_value_errors:
+            # 넣은 값이 전부 입력 오류 — 조용히 ⊤ 로 실행하지 않는다(오류만 보인다)
+            return fcfg, None
+        # (2026-11-27) 입력 0개(오류 없음) = 모든 진입 값 ⊤ 로 해석한다. 예전엔 해석하지 않았다.
 
         self._ca._frozen_debug_fcfg = None
-        self._batch.flush()  # interpret(P1): states 계산 + inline intent 검증 → (restore 직전 freeze)
+        self._batch.flush(target=fcfg)  # interpret(P1): states 계산 + inline intent 검증 → (restore 직전 freeze)
         frozen = getattr(self._ca, "_frozen_debug_fcfg", None)
         if frozen is None:
             # fail-loud: freeze 안 됐으면 states 없음 → baseline 으로 덮지 않고 에러.
@@ -2290,6 +2674,14 @@ class EngineSession:
             return CfgWithStates(scope=self._scope, cfg=cfg, top_vars=[], diagnostics=diags)
 
         self._states_cache[_values_key(debug_values, self._scope)] = frozen
+        cells = {}
+        placed = {k.replace(" ", ""): ident for k, ident in (getattr(self._ca, "_slot_cells", None) or [])}
+        for k in getattr(self, "_queued_keys", []) or []:
+            sl = self._slots.get(k)
+            ident = placed.get(k.replace(" ", ""))
+            if sl is not None and sl.containerKind == "mapping" and ident and ident.replace(" ", "") != k.replace(" ", ""):
+                # 내부 주소 표기(`AddressSet({1})`)를 입력 표기로
+                cells[k] = _re.sub(r"AddressSet\(\{(\d+)\}\)", r"symbolicAddress \1", ident)
 
         # ★ N4. callee 상태(S1 포착) → callee CFG 맵 + 노드별 CalleeRef.
         #   `fcfg`(live)로 호출 지점을 스캔하고, `frozen`(states 스냅샷)으로 CFG 를 직렬화한다.
@@ -2302,7 +2694,8 @@ class EngineSession:
                              node_callees=node_callees)
         top_vars = _collect_top_vars(frozen, scope=self._scope.function)
         return CfgWithStates(scope=self._scope, cfg=cfg, callees=callee_cfgs,
-                             top_vars=top_vars, diagnostics=diags)
+                             top_vars=top_vars, diagnostics=diags, slotCells=cells,
+                             appliedInputs=getattr(self, "_last_applied", 0))
 
     def _require_valid_source(self) -> None:
         """(2026-10-22) 에디터의 현재 소스에 오류가 있으면 디버깅 거부 — 엔진 CFG 는 마지막 정상 버전이라

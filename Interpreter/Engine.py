@@ -124,7 +124,8 @@ class Engine:
             if init_expr is not None:
                 self.an.storage.bind_ref(variables, var_name, init_expr)
             return variables
-        if var_type.typeCategory in ("struct", "array", "mapping"):
+        if var_type.typeCategory in ("struct", "array", "mapping", "enum"):
+            # (2026-11-27) enum 도 — 예전엔 일반 Variables 로 만들어 값이 `symbol_z` 문자열이었다(초기화식 없으면 아래 1-b 가 첫 멤버로)
             # ★ F29. 선언 statement 의 `type_obj` 로 매번 새로 만든다(프로토타입을 저장해 clone 하지 않는다). 만드는 방법은
             #   `ContractAnalyzer._create_variable_object` 하나뿐이다. (2026-11-25) struct·enum 정의는 타입이 들고 있다.
             variables[var_name] = self.an._create_variable_object(var_type, var_name, None)
@@ -162,9 +163,7 @@ class Engine:
             if isinstance(var, (ArrayVariable, StructVariable)):
                 self._delete_composite(var)
             elif isinstance(var, EnumVariable):
-                var.valueIndex = 0
-                if isinstance(getattr(var, "members", None), dict) and var.members:
-                    var.value = next(iter(var.members))
+                var.set_zero()                  # (2026-11-27) 첫 멤버 [0,0]
             elif not isinstance(var, MappingVariable) and not isinstance(getattr(var, "value", None), (str, FunctionRef)):
                 zero = self._zero_of(var)
                 if isinstance(zero, AddressSet) and isinstance(getattr(var, "value", None), AddressSet):
@@ -265,7 +264,7 @@ class Engine:
         """`delete x` 의 결과 = 타입의 0 값 (uint/int/bool/address/enum/bytesN)."""
         from Domain.BytesSet import BytesSet
         if isinstance(var, EnumVariable):
-            return 0
+            return UnsignedIntegerInterval(0, 0, EnumVariable.BITS)     # (2026-11-27) 첫 멤버
         val = getattr(var, "value", None)
         ti = getattr(var, "typeInfo", None)
         et = getattr(ti, "elementaryTypeName", "") or ""
@@ -278,6 +277,8 @@ class Engine:
             return BoolInterval(0, 0)
         if isinstance(val, AddressSet) or et == "address":
             return AddressSet(ids={0})
+        if et in ("string", "bytes"):
+            return ""                       # (2026-11-27) 빈 문자열·빈 bytes — 문자열 리터럴과 같은 표현(Evaluation 의 리터럴 평가)
         if isinstance(val, BytesSet):
             return BytesSet(values={0}, byte_size=val.byte_size)
         raise ValueError(f"delete: zero value of type '{et or type(val).__name__}' is not modeled")
@@ -308,8 +309,7 @@ class Engine:
                 if isinstance(m, (ArrayVariable, StructVariable, MappingVariable)):
                     self._delete_composite(m)
                 elif isinstance(m, EnumVariable):
-                    m.valueIndex = 0
-                    m.value = next(iter(m.members), None) if isinstance(getattr(m, "members", None), dict) else 0
+                    m.set_zero()
                 else:
                     m.value = self._zero_of(m)
 
@@ -1088,8 +1088,8 @@ class Engine:
                 self._havoc(m, owner_cfg)
             return
         if isinstance(v, EnumVariable):
-            raise ValueError(f"recursive-call summary: enum variable '{v.identifier}' cannot be set to ⊤ "
-                             f"(enum 값 도메인에 ⊤ 표현이 없다)")
+            v.set_top()                         # (2026-11-27) enum ⊤ = 모든 멤버
+            return
         v.value = self.eval._top_of_type(v.typeInfo, owner_cfg, v.identifier)
 
     def _recursive_call_summary(self, fcfg, arg_values, caller_env, kind):
@@ -1353,6 +1353,12 @@ class Engine:
                 elif isinstance(v, (MappingVariable, ArrayVariable)):
                     caller_env[k] = v
 
+        # (2026-11-27) callee 의 출구에 어떤 경로도 닿지 않으면(전부 revert) 이 호출 뒤 caller 경로도 도달하지 않는다.
+        #   반환값이 없으므로(None) 그 값을 쓰는 문장은 ⊥ 경로에서 아무것도 하지 않는다(Update 튜플 대입 등).
+        if caller_env is not None and ((_exit_vars and self._is_bottom_env(_exit_vars))
+                                       or (not _exit_vars and not return_values)):
+            self._set_bottom_env(caller_env)
+
         # log_implicit=False → 기록 플래그·컨텍스트와 무관(return_vars / RETURN.return_vals 만 읽음)
         return self._extract_return_value(fcfg, return_values)
 
@@ -1420,6 +1426,11 @@ class Engine:
                 for k, v in caller_env.items():
                     if k not in start_block.variables:
                         start_block.variables[k] = VariableEnv.copy_single_variable(v)
+
+            # (2026-11-27) 타깃 storage 파라미터의 위치 입력 — 진입 환경(입력이 다 놓인 상태)에서 index 를 고정해 묶는다.
+            #   실행용 사본의 환경이라 되돌릴 것이 없다.
+            for p, path in (getattr(an, "_pending_ref_bindings", None) or {}).items():
+                an.storage.bind_ref(start_block.variables, p, an.parse_expression_text(path))
 
             self._call_frames = [self._func_key(run)]     # (2026-10-23) 재귀 감지 — 타깃 함수가 바닥 프레임
             try:

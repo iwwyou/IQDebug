@@ -263,12 +263,12 @@ export const useStore = create<AppState>()(
           deps: [...get().deps, { name, kind: detectKind(content), status: 'building' }],
           depContents: { ...get().depContents, [name]: content },
         })
-        // stub: 실엔진이면 slice_solidity → analyze_file → pkl 저장. 지금은 building→ready.
-        setTimeout(() => {
-          set({
-            deps: get().deps.map((d) => (d.name === name ? { ...d, status: 'ready' } : d)),
-          })
-        }, 1200)
+        // (2026-11-27) 빌드는 서버가 다음 분석 요청에서 한다(deps 내용 해시별 레지스트리). 첨부 즉시 ready 로 두고
+        //   현재 함수를 다시 분석해 새 의존성 세션으로 옮긴다. 빌드·로드 실패는 분석 오류 배너로 나온다.
+        set({
+          deps: get().deps.map((d) => (d.name === name ? { ...d, status: 'ready' } : d)),
+        })
+        void get().runAnalysis(undefined, 'structure')
       },
 
       // tier 체인: structure → evaluate → verify. dirty 신호(tier)에 따라 진입 지점만 다름.
@@ -286,6 +286,7 @@ export const useStore = create<AppState>()(
           source: activeContent(s),
           inputs: s.debugInputs[key] ?? {}, // key = keyOf(contract, fn) — 표시/시드와 동일 키
           intents,
+          deps: s.depContents, // (2026-11-27) 첨부 의존성 — 서버 세션이 로드한다
         }
 
         const cur = get().results[key]
@@ -303,6 +304,8 @@ export const useStore = create<AppState>()(
         let callees = cur?.callees
         let debugSlots = cur?.debugSlots ?? []
         let topVars = cur?.top_vars ?? []
+        let slotCells = cur?.slotCells
+        let appliedInputs = cur?.appliedInputs
         let valueErrors: { line: number; message: string }[] = []
         // structure 를 안 도는 tier(evaluate-only)에선 직전 문법오류를 유지 — 값 계산이
         // 문법 상태를 바꾸진 않으므로 빈 배열로 덮으면 squiggle 이 잘못 사라진다.
@@ -332,6 +335,8 @@ export const useStore = create<AppState>()(
               cfg = ev.cfg // states 채워진 CFG = navigation substrate
               callees = ev.callees
               topVars = ev.top_vars
+              slotCells = ev.slotCells
+              appliedInputs = ev.appliedInputs
               valueErrors = (ev.diagnostics ?? []).map((d) => ({ line: d.line, message: d.message }))
             }
           }
@@ -351,6 +356,8 @@ export const useStore = create<AppState>()(
             top_vars: topVars,
             intents,
             debugSlots,
+            slotCells: needStructure && !needEvaluate ? undefined : slotCells,
+            appliedInputs: needStructure && !needEvaluate ? undefined : appliedInputs,
           }
           set({ results: { ...get().results, [key]: result }, valueErrors, syntaxErrors })
           // evaluate 가 실제로 돈 경우에만 nav 재배치 신호(intent-only verify 는 커서 안 옮김).

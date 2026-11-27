@@ -589,6 +589,11 @@ class DebugInitializer:
             # (2026-10-23) 슬롯을 제공해 놓고 값을 버리면 안 된다 — 입력 오류로 올린다(예전엔 경고만 찍고 건너뛰었다)
             raise ValueError(f"디버그 입력 `{lhs_expr}` 을 놓을 위치를 찾지 못했다: {expr_repr}")
 
+        # (2026-11-27) 이 입력이 놓인 칸 — 변수 방식 슬롯의 "지금 → 칸" 표시
+        cells = getattr(self.an, "_slot_cells", None)
+        if cells is not None:
+            cells.append((str(lhs_expr), getattr(target, "identifier", None)))
+
         # ① snapshot & restore
         self._snapshot_once_for_debug(target)
         if edit_event == "delete":
@@ -701,8 +706,7 @@ class DebugInitializer:
                     f"target_var.members is populated from the enum's own EnumDefinition - if it's empty, "
                     f"the enum type likely wasn't resolved (e.g. an unresolved cross-library qualified type)."
                 )
-            target_var.valueIndex = target_var.members[member_name]
-            target_var.value = member_name
+            target_var.set_member(member_name)     # (2026-11-27) 값 = [i,i]
             return
 
         if isinstance(target_var, VarClass):

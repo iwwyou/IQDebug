@@ -258,3 +258,25 @@ body {
 .cs-reason { color: #888; font-size: 11px; margin-left: 12px; }
 /* 소스를 못 구한 프레임 안내 */
 .pane-note { padding: 16px; color: #888; font-size: 12px; line-height: 1.6; }
+
+/* (2026-11-27) 3단계 슬롯 — 컨테이너 블록 · 입력 방식 · storage 파라미터 위치 */
+.dbg-block { border: 1px solid #333; border-radius: 4px; padding: 2px 6px 4px; margin: 4px 0; }
+.dbg-block.has-error { border-color: #f48771; }
+.dbg-block > summary { cursor: pointer; display: flex; align-items: center; gap: 6px; font-size: 12px; padding: 2px 0; }
+.dbg-block .blk-name { color: #9cdcfe; font-family: 'Consolas', monospace; }
+.dbg-block .badge.kind { background: #2a2f3a; color: #c586c0; }
+.dbg-block .blk-len { color: #b5cea8; font-family: 'Consolas', monospace; font-size: 11px; }
+.dbg-block .blk-count { color: #777; font-size: 11px; margin-left: auto; }
+.mode-toggle { display: flex; align-items: center; gap: 4px; margin: 3px 0; flex-wrap: wrap; }
+.mode-toggle button { background: #2d2d2d; color: #aaa; border: 1px solid #3a3a3a; border-radius: 3px;
+  font-size: 11px; padding: 1px 8px; cursor: pointer; }
+.mode-toggle button.on { color: #fff; border-color: #4fc1ff; background: #1f3a4f; }
+.mode-toggle button:disabled { opacity: 0.45; cursor: default; }
+.mode-toggle .mode-why { font-size: 11px; color: #d7ba7d; font-style: italic; }
+.input-row .var.tmpl { color: #7a9fb5; }
+.cell-note { font-size: 11px; color: #9a9a9a; margin: 0 0 3px 14px; font-family: 'Consolas', monospace; }
+.row-error .input-row .var { color: #f48771; }
+.spec-btn.more, .spec-btn.add-elem { margin: 3px 0 0 14px; }
+.loc-in { display: inline-flex; align-items: center; gap: 3px; }
+.loc-in .idx { width: 92px; background: #2d2d2d; color: #b5cea8; border: 1px solid #3a3a3a;
+  border-radius: 3px; padding: 2px 4px; font-family: 'Consolas', monospace; }

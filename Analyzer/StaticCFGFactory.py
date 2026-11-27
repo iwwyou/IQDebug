@@ -396,7 +396,9 @@ class StaticCFGFactory:
             ev = EnumVariable(identifier=ident,
                               enum_type=sol_type,
                               scope=scope)
-            ev.valueIndex = 0  # 기본값 : 첫 멤버
+            # (2026-11-27) 파라미터 = 모름(생성자 기본), named return 변수 = 0 값(첫 멤버)
+            if is_return_param:
+                ev.set_zero()
             return ev
 
         # ──────────────────────────── ④ interface (address로 취급) ────────

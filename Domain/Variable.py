@@ -422,7 +422,7 @@ class MappingVariable(Variables):
 
         if sol_t.typeCategory == "enum":
             ev = EnumVariable(identifier=sub_id, enum_type=sol_t, scope=self.scope)
-            ev.initialize_enum()
+            ev.initialize_enum(top=True)       # (2026-11-27) 입력하지 않은 칸 = 모름
             return ev
 
         # 4) interface -------------------------------------------------
@@ -556,39 +556,68 @@ class StructVariable(Variables):
         return f"StructVariable({self.identifier}){{{mem_str}}}"
 
 class EnumVariable(Variables):
+    """(2026-11-27) enum 값 = **멤버 index 의 부호 없는 구간(uint8)** — Solidity 가 enum 을 uint8 로 저장하는 것과 같다.
+    한 멤버 = [i,i], 모름(⊤) = [0, 멤버 수 - 1], 0 값(지역 선언·delete) = [0,0]. 합류·비교·좁히기는 정수 구간 연산 그대로.
+    예전엔 값이 멤버 이름 문자열이거나 256 비트 구간이었고, 서로 다른 멤버의 합류는 `symbolicJoin(A,B)` 문자열,
+    "모름" 은 첫 멤버(unsound)였다. 표시는 `label()` 이 멤버 이름으로 돌려준다."""
+    BITS = 8
+
     def __init__(self, identifier=None, enum_type=None, value=None, isConstant=False, scope=None):
         super().__init__(identifier, value, isConstant, scope)
         self.typeInfo = enum_type  # SolType(typeCategory="enum") — 공유(불변)
-        self.members = {}  # 멤버 변수들: 멤버명 -> 정수 값 (열거형의 각 멤버는 정수 값에 매핑됨)
-        self.value = None  # 현재 설정된 멤버의 이름
+        self.members = {}  # 멤버명 -> index
+        self.value = None
+        self.valueIndex = None
+        defn = getattr(enum_type, "enumDef", None)
+        if defn is not None:
+            self.members = {m: i for i, m in enumerate(defn.members)}
+            self.set_top()                     # 기본 = 모름. 값이 정해진 자리(지역 선언·return 변수·delete)는 set_zero
+
+    def _ensure_members(self):
+        if not self.members:
+            defn = getattr(self.typeInfo, "enumDef", None)
+            if defn is None:
+                raise ValueError(f"'{self.identifier}': enum '{getattr(self.typeInfo, 'enumTypeName', '?')}' 의 정의가 없다")
+            self.members = {m: i for i, m in enumerate(defn.members)}
+
+    def set_top(self):
+        self._ensure_members()
+        self.value = UnsignedIntegerInterval(0, max(len(self.members) - 1, 0), self.BITS)
         self.valueIndex = None
 
-    def initialize_enum(self):
-        """타입의 선언(`typeInfo.enumDef`)대로 멤버 표를 채운다(값 = 첫 멤버)."""
-        defn = self.typeInfo.enumDef
-        if defn is None:
-            raise ValueError(f"'{self.identifier}': enum '{self.typeInfo.enumTypeName}' 의 정의가 없다")
-        self.members = {m: i for i, m in enumerate(defn.members)}
+    def set_zero(self):
+        self._ensure_members()
+        self.value = UnsignedIntegerInterval(0, 0, self.BITS)
         self.valueIndex = 0
-        self.value = defn.members[0] if defn.members else None
 
-    def set_member_value(self, member_name):
-        """
-        열거형 변수의 값을 특정 멤버로 설정합니다.
-        :param member_name: 열거형 멤버 이름
-        """
-        if member_name in self.members:
-            self.current_value = member_name
-            self.value = self.members[member_name]  # 멤버의 정수 값을 변수의 값으로 설정
-        else:
-            raise ValueError(f"Member '{member_name}' not found in enum '{self.typeInfo.enumTypeName}'.")
+    def set_member(self, member_name):
+        self._ensure_members()
+        if member_name not in self.members:
+            raise ValueError(f"Member '{member_name}' not found in enum '{self.typeInfo.enumTypeName}' "
+                             f"(members: {list(self.members)})")
+        i = self.members[member_name]
+        self.value = UnsignedIntegerInterval(i, i, self.BITS)
+        self.valueIndex = i
 
-    def get_member_value(self):
-        """
-        열거형 변수의 현재 값을 반환합니다.
-        :return: 현재 설정된 멤버의 이름
-        """
-        return self.current_value
+    def initialize_enum(self, top: bool = False):
+        """타입의 선언(`typeInfo.enumDef`)대로 멤버 표를 채운다. 값 = 0(첫 멤버), top=True 면 모름."""
+        self.members = {}
+        self._ensure_members()
+        self.set_top() if top else self.set_zero()
+
+    def label(self) -> str:
+        """표시용 — 한 멤버면 그 이름, 구간이면 `{A..C}`, 전 범위면 `⊤{A..C}`, ⊥ 면 ⊥."""
+        v = self.value
+        names = list(self.members)
+        if not isinstance(v, UnsignedIntegerInterval) or not names:
+            return str(v)
+        if v.is_bottom():
+            return "⊥"
+        lo, hi = v.min_value, min(v.max_value, len(names) - 1)
+        if lo == hi:
+            return names[lo]
+        tag = "⊤" if (lo == 0 and hi == len(names) - 1) else ""
+        return f"{tag}{{{names[lo]}..{names[hi]}}}"
 
 
 # ──────────────────────────────────────────────────────────────────────

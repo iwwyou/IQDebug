@@ -290,6 +290,9 @@ class RecordManager:
             return
 
         # Leaf (Variables / EnumVariable) ---------------------------------
+        if isinstance(var_obj, EnumVariable) and hasattr(var_obj, "label"):
+            out[prefix] = var_obj.label()       # (2026-11-27) 멤버 이름(`B`, `{A..C}`, `⊤{A..C}`)
+            return
         val_ser = self._serialize_val(getattr(var_obj, "value", None))
         out[prefix] = val_ser
 
